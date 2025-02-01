@@ -12,7 +12,7 @@ public class constants {
 
         public static final int elevatorMotor1CanID = 40;
         public static final int elevatorMotor2CanID = 41;
-        public static final int TridentMotorCanID = 42;
+        public static final int MantaRayMotorCanID = 42;
 
         public static final int armExtensionMotorCanID = 0;
         public static final int armPivotMotorCanID = 0;
@@ -26,11 +26,46 @@ public class constants {
 
     }
 
-    public class Trident {
+    public class MantaRay {
         public static final double IntakeDutyCycle = .3;
         public static final double intakeAmpLimit = 40;
 
         public static final double intakeAmpCutoffThreshold = 15; //20
         public static final double intakeAmpLimittime = .10;
     }
+    public class PlasmaExtension {
+
+        public static final double maxExtension = 10;
+        public static final double minExtension = 0;
+    }
+
+    public class PlasmaPivot {
+
+        public static final double maxPivot = 10;
+        public static final double minPivot = 0;
+
+    }
+
+    public class josiahClimber {
+
+        public class CatchSide {
+            public static final double maxPostion = 10;
+            public static final double minPostion = 0;
+            public static final double LoadPostion = 0;
+            public static final double FullClimbPostion = 0;
+        }
+
+        public class SlideSide {
+            public static final double maxPostion = 20;
+            public static final double minPostion = 0;
+            public static final double LoadPostion = 0;
+            public static final double FullClimbPostion = 0;
+        }
+
+
+
+        
+    }
+
+
 }

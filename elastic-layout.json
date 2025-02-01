@@ -1,0 +1,288 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Trident MotorTemp",
+            "x": 640.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Trident MotorTemp",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Trident rpm",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Trident rpm",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "infos",
+            "x": 1408.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 384.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Alerts/infos",
+              "period": 0.06,
+              "data_type": "string[]",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "warnings",
+            "x": 1280.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 384.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Alerts/warnings",
+              "period": 0.06,
+              "data_type": "string[]",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "errors",
+            "x": 1152.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 384.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Alerts/errors",
+              "period": 0.06,
+              "data_type": "string[]",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Trident StatorCurrent",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Trident StatorCurrent",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Trident IsLoaded",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Trident IsLoaded",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "TridentCurrentPosition",
+            "x": 640.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/TridentCurrentPosition",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "TridentSetpointPosition",
+            "x": 768.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/TridentSetpointPosition",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
+      "name": "TridentTuning",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": " rpm",
+            "x": 896.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Trident/ rpm",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "MotorTemp",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Trident/MotorTemp",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": " P Gain",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Trident/ P Gain",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": " I Gain",
+            "x": 640.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Trident/ I Gain",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": " D Gain",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Trident/ D Gain",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": " StatorCurrent",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Trident/ StatorCurrent",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "CurrentPosition",
+            "x": 1024.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Trident/CurrentPosition",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": " StatorCurrent",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 256.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/SmartDashboard/Trident/ StatorCurrent",
+              "period": 0.033,
+              "data_type": "double",
+              "time_displayed": 5.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": " MotorTemp",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 512.0,
+            "height": 256.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/SmartDashboard/Trident/ MotorTemp",
+              "period": 0.033,
+              "data_type": "double",
+              "time_displayed": 5.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

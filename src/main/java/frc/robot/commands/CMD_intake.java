@@ -3,14 +3,14 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
-import frc.robot.subsystems.Trident;
+import frc.robot.subsystems.MantaRay;
 
 public class CMD_intake extends Command {
     
-    Trident ss_Trident;
+    MantaRay ss_Trident;
     boolean isloaded = false;
     public final Timer startupdebounceTimer = new Timer();
-    public CMD_intake(Trident incomingss_Trident){
+    public CMD_intake(MantaRay incomingss_Trident){
         ss_Trident = incomingss_Trident;
     }
 
@@ -18,7 +18,7 @@ public class CMD_intake extends Command {
     public void initialize() {
         startupdebounceTimer.restart();
         boolean isloaded = false;
-        ss_Trident.setMotorRPM(constants.Trident.IntakeDutyCycle);
+        ss_Trident.setMotorRPM(constants.MantaRay.IntakeDutyCycle);
     }
     
     @Override
