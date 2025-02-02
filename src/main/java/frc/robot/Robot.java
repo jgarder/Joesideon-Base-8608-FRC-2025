@@ -4,27 +4,50 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LoggedRobot;
+
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.AlphaBots.NT;
+import frc.robot.AlphaBots.advantageKitBootstrap;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   private final NT OurNT = new NT();
+  private final advantageKitBootstrap akit = new advantageKitBootstrap(this);
   private final RobotContainer m_robotContainer;
 
   private final boolean kUseLimelight = false;
 
   public Robot() {
+    RobotController.setBrownoutVoltage(6.0);//trade battery life for performance, im sure it will be fine.
+    akit.startAdvantageKitLogger();//before robot container even boots we log.
     m_robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
+        // Switch thread to high priority to improve loop timing
+    Threads.setCurrentThreadPriority(true, 99);
+
+    // Runs the Scheduler. This is responsible for polling buttons, adding
+    // newly-scheduled commands, running already-scheduled commands, removing
+    // finished or interrupted commands, and running subsystem periodic() methods.
+    // This must be called from the robot's periodic block in order for anything in
+    // the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
+    // Return to normal thread priority
+    Threads.setCurrentThreadPriority(false, 10);
+
+    UpdateVision();
+  }
+
+  private void UpdateVision() {
     /*
      * This example of adding Limelight is very simple and may not be sufficient for on-field use.
      * Users typically need to provide a standard deviation that scales with the distance to target

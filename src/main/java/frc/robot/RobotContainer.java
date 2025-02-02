@@ -19,13 +19,22 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.CMD_intake;
+import frc.robot.constants.Climber;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ArmExtension;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MantaRay;
+import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.josiahClimber;
 
 public class RobotContainer {
 
     public final MantaRay ss_Trident = new MantaRay();
+    public final Elevator ss_Elevator = new Elevator();
+    public final Pivot ss_Pivot = new Pivot(ss_Elevator.currentHeight);
+    public final ArmExtension ss_ArmExtension = new ArmExtension(ss_Elevator.currentHeight);
+    public final josiahClimber ss_Climber = new josiahClimber();
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -60,6 +69,13 @@ public class RobotContainer {
 
         joystick.a().whileTrue(new CMD_intake(ss_Trident));
         joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
+
+        joystick.y().onTrue(ss_Elevator.GotoPositonCommand(25));
+        joystick.x().onTrue(ss_Elevator.GotoPositonCommand(2));
+
+        joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
+        
+
         //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.

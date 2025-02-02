@@ -4,6 +4,9 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+
 public class Tools {
     
 
@@ -12,6 +15,7 @@ public class Tools {
       if(tolerance > Math.abs(difference)){
       return true;
       }else {return false;}
+      //we could also just use ->return MathUtil.isNear(setpointPos, currentPos, tolerance);
   }
 
   public static StatusCode SetConfigToTalonFX(TalonFX TalonFX, TalonFXConfiguration Config, String Classname) {
@@ -19,12 +23,13 @@ public class Tools {
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
       //PUT MOTORS TO BE CONFIGED HERE
-      status = TalonFX.getConfigurator().apply(Config);
+      status = TalonFX.getConfigurator().apply(Config,10);
       //
       if (status.isOK()) return status;
     }
     if(!status.isOK()) {
       System.out.println(Classname + " Could not apply configs, error code: " + status.toString());
+      
     }
     return status;
   }
