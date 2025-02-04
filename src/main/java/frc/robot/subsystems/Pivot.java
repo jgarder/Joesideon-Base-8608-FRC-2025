@@ -51,9 +51,9 @@ public class Pivot extends SubsystemBase {
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
   DoubleEntry NT_position = NT.getDoubleEntry(className, "position",0);
   DoubleEntry NT_StatorCurrent = NT.getDoubleEntry(className, "StatorCurrent", 0);
-  DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",constants.Pivot.kP);
-  DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",constants.Pivot.kI);
-  DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",constants.Pivot.kD);
+  DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",constants.PlasmaPivot.kP);
+  DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",constants.PlasmaPivot.kI);
+  DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",constants.PlasmaPivot.kD);
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
 
@@ -77,15 +77,16 @@ public class Pivot extends SubsystemBase {
     _configuration.Slot1.kP = NT_PGain.get();
     _configuration.Slot1.kI = NT_IGain.get();
     _configuration.Slot1.kD = NT_DGain.get();
+    _configuration.Feedback.RotorToSensorRatio = constants.PlasmaPivot.gearRatio;
 
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
-    _configuration.CurrentLimits.StatorCurrentLimit = constants.Pivot.maxStatorCurrent;
+    _configuration.CurrentLimits.StatorCurrentLimit = constants.PlasmaPivot.maxStatorCurrent;
 
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.Pivot.maxposition;
+    _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.PlasmaPivot.maxposition;
 
     _configuration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    _configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = constants.Pivot.minposition;
+    _configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = constants.PlasmaPivot.minposition;
     
     return _configuration;
   }
@@ -108,16 +109,20 @@ public class Pivot extends SubsystemBase {
   }
 
   //is the elevator height low enough that we can fit under the stafe 1 cross bar when retracting (does not account for extension)
-  public BooleanSupplier CanPivotFoldUp = ()->{return LastPosition < constants.Pivot.elevatorheightToFoldUp ? true:false;}; 
-  public BooleanSupplier IsOutPastPastStage1 = ()->{return LastPosition > constants.Pivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
+  public BooleanSupplier CanPivotFoldUp = ()->{return LastPosition < constants.PlasmaPivot.elevatorheightToFoldUp ? true:false;}; 
+  public BooleanSupplier IsOutPastPastStage1 = ()->{return LastPosition > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
   
   //IsSafeToGoDown TODO: this needs a linear interpolation map because at 0 elevator we can only be 90. at mid height we can point down a bit. 
   //also extension will change this number but maybe just assume always extened (ie worst case scenario)
 
-  public BooleanSupplier IsSafeToGoDown = ()->{return LastPosition < constants.Pivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};  
+  public BooleanSupplier IsSafeToGoDown = ()->{return LastPosition < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};  
   
   public Trigger IsPivotOutPastStage1 = new Trigger(IsOutPastPastStage1);
 
+  public double getGearedPostion()
+  {
+    return LastPosition / constants.PlasmaPivot.gearRatio;
+  }
   public Command C_GotoPositon(double positon) {
       return new InstantCommand(()->{
         GotoPosition(positon);

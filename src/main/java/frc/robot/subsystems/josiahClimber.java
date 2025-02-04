@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -48,23 +49,34 @@ public class josiahClimber extends SubsystemBase {
   TalonFXConfiguration slideConfig;
   public double LastPosition = 0;
 
-  DoubleEntry NT_CatchRpm =  NT.getDoubleEntry(className ,"RPM",0);
-  DoubleEntry NT_CatchMotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
-  DoubleEntry NT_Catchposition = NT.getDoubleEntry(className, "position",0);
-  DoubleEntry NT_CatchStatorCurrent = NT.getDoubleEntry(className, "StatorCurrent", 0);
-  DoubleEntry NT_CatchPGain = NT.getDoubleEntry(className , "P Gain",constants.PlasmaExtension.kP);
-  DoubleEntry NT_CatchIGain = NT.getDoubleEntry(className, "I Gain",constants.PlasmaExtension.kI);
-  DoubleEntry NT_CatchDGain = NT.getDoubleEntry(className , "D Gain",constants.PlasmaExtension.kD);
-  DoubleEntry NT_CatchSetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
+  DoubleEntry NT_CatchRpm =  NT.getDoubleEntry(className ,"C_RPM",0);
+  DoubleEntry NT_CatchMotorTemp =  NT.getDoubleEntry(className,"C_MotorTemp",0);
+  DoubleEntry NT_Catchposition = NT.getDoubleEntry(className, "C_position",0);
+  DoubleEntry NT_CatchStatorCurrent = NT.getDoubleEntry(className, "C_StatorCurrent", 0);
+  DoubleEntry NT_CatchPGain = NT.getDoubleEntry(className , "P Gain",0.0);
+  DoubleEntry NT_CatchIGain = NT.getDoubleEntry(className, "I Gain",0.0);
+  DoubleEntry NT_CatchDGain = NT.getDoubleEntry(className , "D Gain",0.0);
+  DoubleEntry NT_CatchSetpointPosition = NT.getDoubleEntry(className , "C_SetpointPosition",0.0);
   BooleanEntry NT_CatchBrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
 
+  DoubleEntry NT_SlideRpm =  NT.getDoubleEntry(className ,"S_RPM",0);
+  DoubleEntry NT_SlideMotorTemp =  NT.getDoubleEntry(className,"S_MotorTemp",0);
+  DoubleEntry NT_Slideposition = NT.getDoubleEntry(className, "S_position",0);
+  DoubleEntry NT_SlideStatorCurrent = NT.getDoubleEntry(className, "S_StatorCurrent", 0);
+  //DoubleEntry NT_SlidePGain = NT.getDoubleEntry(className , "P Gain",constants.PlasmaExtension.kP);
+  //DoubleEntry NT_SlideIGain = NT.getDoubleEntry(className, "I Gain",constants.PlasmaExtension.kI);
+  //DoubleEntry NT_SlideDGain = NT.getDoubleEntry(className , "D Gain",constants.PlasmaExtension.kD);
+  DoubleEntry NT_SlideSetpointPosition = NT.getDoubleEntry(className , "S_SetpointPosition",0.0);
+  //BooleanEntry NT_SlideBrakeEnabled = NT.getBooleanEntry(className , "S_BrakeOn",false);
   public josiahClimber() {
     System.out.println("Creating " + className + " object"); 
     catchConfig = buildCatchMotorConfig();
     slideConfig = buildSlideConfig();
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_CatchMotor,catchConfig,className);
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_SlideMotor,slideConfig,className);
-
+    NT_CatchPGain.set(constants.Climber.kP);
+    NT_CatchIGain.set(constants.Climber.kI);
+    NT_CatchDGain.set(constants.Climber.kD);
 
   }
 
@@ -95,6 +107,10 @@ public class josiahClimber extends SubsystemBase {
     _configuration.Slot1.kI = NT_CatchIGain.get();
     _configuration.Slot1.kD = NT_CatchDGain.get();
     
+    // _configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
+    // _configuration.Feedback.withRotorToSensorRatio(constants.Climber.SlideSide.gearRatio);
+    // _configuration.Feedback.withSensorToMechanismRatio(constants.Climber.SlideSide.gearRatio);
+
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     _configuration.CurrentLimits.StatorCurrentLimit = constants.Climber.maxStatorCurrent;
 
@@ -115,13 +131,24 @@ public class josiahClimber extends SubsystemBase {
     NT_CatchStatorCurrent.set(m_CatchMotor.getStatorCurrent().getValueAsDouble());
     NT_Catchposition.set(m_CatchMotor.getPosition().getValueAsDouble());
 
+    NT_SlideRpm.set(m_SlideMotor.getVelocity().getValueAsDouble() * 60);
+    NT_SlideMotorTemp.set(m_SlideMotor.getDeviceTemp().getValueAsDouble());
+    NT_SlideStatorCurrent.set(m_SlideMotor.getStatorCurrent().getValueAsDouble());
+    NT_Slideposition.set(m_SlideMotor.getPosition().getValueAsDouble());
+
     double p = NT_CatchPGain.getAsDouble();
     double i = NT_CatchIGain.getAsDouble();
     double d = NT_CatchDGain.getAsDouble();
           
-    if((p != catchConfig.Slot1.kP)) { catchConfig.Slot1.kP = p; Tools.SetConfigToTalonFX(m_CatchMotor,catchConfig,className); }
-    if((i != catchConfig.Slot1.kI)) { catchConfig.Slot1.kI = i; Tools.SetConfigToTalonFX(m_CatchMotor,catchConfig,className); }
-    if((d != catchConfig.Slot1.kD)) { catchConfig.Slot1.kD = d; Tools.SetConfigToTalonFX(m_CatchMotor,catchConfig,className); }
+    if((p != catchConfig.Slot1.kP)) { 
+      catchConfig.Slot1.kP = p; Tools.SetConfigToTalonFX(m_CatchMotor,catchConfig,className);
+      slideConfig.Slot1.kP = p; Tools.SetConfigToTalonFX(m_SlideMotor,slideConfig,className); }
+    if((i != catchConfig.Slot1.kI)) { 
+      catchConfig.Slot1.kI = i; Tools.SetConfigToTalonFX(m_CatchMotor,catchConfig,className); 
+      slideConfig.Slot1.kI = i; Tools.SetConfigToTalonFX(m_SlideMotor,slideConfig,className); }
+    if((d != catchConfig.Slot1.kD)) { 
+      catchConfig.Slot1.kD = d; Tools.SetConfigToTalonFX(m_CatchMotor,catchConfig,className); 
+      slideConfig.Slot1.kD = d; Tools.SetConfigToTalonFX(m_SlideMotor,slideConfig,className); }
   }
 
   //this tells us if our extension is retracted enough to allow a fold up into the elevator
@@ -139,7 +166,12 @@ public class josiahClimber extends SubsystemBase {
         CatchGotoPosition(positon);
       });
   }
-  public InstantCommand C_catchStop() {
+  public Command C_SlideGotoPositon(double positon) {
+    return new InstantCommand(()->{
+      SlideGotoPosition(positon);
+    });
+}
+  public InstantCommand C_Stop() {
     return new InstantCommand(()->{
       BRAKE();
     });

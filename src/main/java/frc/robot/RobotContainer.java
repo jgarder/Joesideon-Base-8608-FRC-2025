@@ -67,6 +67,8 @@ public class RobotContainer {
     double TridentEjectMovement = 20;
     private void configureBindings() {
 
+        joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
+
         joystick.a().whileTrue(new CMD_intake(ss_Trident));
         joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
 
@@ -74,7 +76,23 @@ public class RobotContainer {
         joystick.x().onTrue(ss_Elevator.GotoPositonCommand(2));
 
         joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
-        
+
+
+        joystick.povUp().and(MantaState.getAltControlModeEnabled).onTrue(
+            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.maxPostion).alongWith(
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.maxPostion)
+        ));
+        joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
+            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
+                ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
+        ));
+        joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
+            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion).alongWith(
+                ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion)
+        ));
+        joystick.povLeft().and(MantaState.getAltControlModeEnabled).onTrue(
+            ss_Climber.C_Stop()
+        );
 
         //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
         // Note that X is defined as forward according to WPILib convention,
