@@ -45,7 +45,8 @@ public class Pivot extends SubsystemBase {
   
   TalonFXConfiguration configuration;
   
-  public double LastPosition = 0;
+  private double LastPosition = 0;
+  public double gearRatio = constants.PlasmaPivot.gearRatio;
 
   DoubleEntry NT_Rpm =  NT.getDoubleEntry(className ,"RPM",0);
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
@@ -93,11 +94,12 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
+    LastPosition = m_PivotMotor.getPosition().getValueAsDouble();
     // This method will be called once per scheduler run
     NT_Rpm.set(m_PivotMotor.getVelocity().getValueAsDouble() * 60);
     NT_MotorTemp.set(m_PivotMotor.getDeviceTemp().getValueAsDouble());
     NT_StatorCurrent.set(m_PivotMotor.getStatorCurrent().getValueAsDouble());
-    NT_position.set(m_PivotMotor.getPosition().getValueAsDouble());
+    NT_position.set(LastPosition);
 
     double p = NT_PGain.getAsDouble();
     double i = NT_IGain.getAsDouble();
@@ -109,19 +111,19 @@ public class Pivot extends SubsystemBase {
   }
 
   //is the elevator height low enough that we can fit under the stafe 1 cross bar when retracting (does not account for extension)
-  public BooleanSupplier CanPivotFoldUp = ()->{return LastPosition < constants.PlasmaPivot.elevatorheightToFoldUp ? true:false;}; 
-  public BooleanSupplier IsOutPastPastStage1 = ()->{return LastPosition > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
+  public BooleanSupplier CanPivotFoldUp = ()->{return getPosition() < constants.PlasmaPivot.elevatorheightToFoldUp ? true:false;}; 
+  public BooleanSupplier IsOutPastPastStage1 = ()->{return getPosition() > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
   
   //IsSafeToGoDown TODO: this needs a linear interpolation map because at 0 elevator we can only be 90. at mid height we can point down a bit. 
   //also extension will change this number but maybe just assume always extened (ie worst case scenario)
 
-  public BooleanSupplier IsSafeToGoDown = ()->{return LastPosition < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};  
+  public BooleanSupplier IsSafeToGoDown = ()->{return getPosition() < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};  
   
   public Trigger IsPivotOutPastStage1 = new Trigger(IsOutPastPastStage1);
 
-  public double getGearedPostion()
+  public double getPosition()
   {
-    return LastPosition / constants.PlasmaPivot.gearRatio;
+    return LastPosition;//m_PivotMotor.getPosition().getValueAsDouble(); // / gearRatio;
   }
   public Command C_GotoPositon(double positon) {
       return new InstantCommand(()->{
@@ -136,7 +138,7 @@ public class Pivot extends SubsystemBase {
 
   public void HoldPosition(){ 
       LastPosition = m_PivotMotor.getPosition().getValueAsDouble();
-      GotoPosition(LastPosition-(m_PivotMotor.getVelocity().getValueAsDouble()/constants.CanBus.canBusUpdateFrequency));
+      GotoPosition(getPosition()-(m_PivotMotor.getVelocity().getValueAsDouble()/constants.CanBus.canBusUpdateFrequency));
   }
   
 

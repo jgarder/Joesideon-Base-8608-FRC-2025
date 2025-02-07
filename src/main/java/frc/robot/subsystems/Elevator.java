@@ -34,7 +34,7 @@ public class Elevator extends SubsystemBase {
   private final com.ctre.phoenix6.controls.DutyCycleOut m_DutyCycle = new DutyCycleOut(constants.MantaRay.IntakeDutyCycle);
 
   private final StaticBrake m_s_Brake = new StaticBrake();
-  public double LastPosition = 0;
+  private double LastPosition = 0;
   public double kP = 0.013;
   public double kI = 0.0;
   public double kD = 0.0;
@@ -86,9 +86,11 @@ public class Elevator extends SubsystemBase {
   }
 
 
-  @Override
+  @Override // This method will be called once per scheduler run
   public void periodic() {
-    // This method will be called once per scheduler run
+    LastPosition = m_ElevatorMotor1.getPosition().getValueAsDouble();
+    CurrentPosition.set(LastPosition);
+
     RpmPub.set(m_ElevatorMotor1.getVelocity().getValueAsDouble() * 60);
     MotorTemp.set(m_ElevatorMotor1.getDeviceTemp().getValueAsDouble());
     Motor2Temp.set(m_ElevatorMotor2.getDeviceTemp().getValueAsDouble());
@@ -108,16 +110,12 @@ public class Elevator extends SubsystemBase {
     if((i != kI)) { configuration.Slot1.kI = i; kI = i; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className); }
     if((d != kD)) { configuration.Slot1.kD = d; kD = d; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className); }
 
-    double currentRotorposition = m_ElevatorMotor1.getPosition().getValueAsDouble();
-    SmartDashboard.putNumber(className + "CurrentPosition", currentRotorposition);
-    CurrentPosition.set(currentRotorposition);//what is the performance hit of getting this publisher over and over?
-    // if (LastPosition != currentRotorposition) {
-    //     LastPosition = currentRotorposition;
-    // }
-    //
-
   }
 
+  public double getPosition()
+  {
+    return LastPosition;//m_ElevatorMotor1.getPosition().getValueAsDouble(); // / gearRatio;
+  }
 
     public Command GotoPositonCommand(double positon) {
         double rpmgoal = positon;
@@ -140,7 +138,7 @@ public class Elevator extends SubsystemBase {
         GotoPosition(currentRotorposition-(m_ElevatorMotor1.getVelocity().getValueAsDouble()/canBusUpdateFrequency));
     }
     public void GotoPosition(double wantedposition){ 
-        SmartDashboard.putNumber(className + "SetpointPosition", LastPosition);
+        SmartDashboard.putNumber(className + "SetpointPosition", wantedposition);
         m_ElevatorMotor1.setControl(
             new PositionDutyCycle(wantedposition)
             .withEnableFOC(true)

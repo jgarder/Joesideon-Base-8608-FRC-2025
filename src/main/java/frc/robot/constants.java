@@ -43,6 +43,8 @@ public class constants {
 
         public static final double maxStatorCurrent = 40;
 
+        public static final double MoveTolerance = 0;
+
     }
 
     public class PlasmaPivot {
@@ -61,6 +63,8 @@ public class constants {
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double elevatorheightToFoldUp = 5;
+
+        public static final double MoveTolerance = 0;
     }
 
     public class PlasmaExtension {
@@ -74,6 +78,7 @@ public class constants {
         public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
+        public static final double MoveTolerance = 0;
     }
 
 

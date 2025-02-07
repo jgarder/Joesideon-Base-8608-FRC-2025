@@ -45,7 +45,7 @@ public class ArmExtension extends SubsystemBase {
   
   TalonFXConfiguration configuration;
   
-  public double LastPosition = 0;
+  private double LastPosition = 0;
 
   DoubleEntry NT_Rpm =  NT.getDoubleEntry(className ,"RPM",0);
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
@@ -90,10 +90,12 @@ public class ArmExtension extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    LastPosition = m_ExtensionMotor.getPosition().getValueAsDouble();
+    
     NT_Rpm.set(m_ExtensionMotor.getVelocity().getValueAsDouble() * 60);
     NT_MotorTemp.set(m_ExtensionMotor.getDeviceTemp().getValueAsDouble());
     NT_StatorCurrent.set(m_ExtensionMotor.getStatorCurrent().getValueAsDouble());
-    NT_position.set(m_ExtensionMotor.getPosition().getValueAsDouble());
+    NT_position.set(LastPosition);
 
     double p = NT_PGain.getAsDouble();
     double i = NT_IGain.getAsDouble();
@@ -105,7 +107,7 @@ public class ArmExtension extends SubsystemBase {
   }
 
   //this tells us if our extension is retracted enough to allow a fold up into the elevator
-  public BooleanSupplier IsRetractedToGetPastStage1 = ()->{return LastPosition < constants.PlasmaExtension.maxPositionToBeSafeFromStage1Crossbar ? true:false;};
+  public BooleanSupplier IsRetractedToGetPastStage1 = ()->{return getPosition() < constants.PlasmaExtension.maxPositionToBeSafeFromStage1Crossbar ? true:false;};
   
   //IsSafeToGoDown TODO: this needs a linear interpolation map because at 0 elevator we can only be 90. at mid height we can point down a bit. 
   //also extension will change this number but maybe just assume always extened (ie worst case scenario)
@@ -113,6 +115,11 @@ public class ArmExtension extends SubsystemBase {
  
   
   public Trigger IsPivotOutPastStage1 = new Trigger(IsRetractedToGetPastStage1);
+
+  public double getPosition()
+  {
+    return LastPosition;//m_ElevatorMotor1.getPosition().getValueAsDouble(); // / gearRatio;
+  }
 
   public Command C_GotoPositon(double positon) {
       return new InstantCommand(()->{
@@ -126,8 +133,7 @@ public class ArmExtension extends SubsystemBase {
   }
 
   public void HoldPosition(){ 
-      LastPosition = m_ExtensionMotor.getPosition().getValueAsDouble();
-      GotoPosition(LastPosition-(m_ExtensionMotor.getVelocity().getValueAsDouble()/constants.CanBus.canBusUpdateFrequency));
+      GotoPosition(getPosition()-(m_ExtensionMotor.getVelocity().getValueAsDouble()/constants.CanBus.canBusUpdateFrequency));
   }
   
 

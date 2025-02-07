@@ -47,7 +47,8 @@ public class josiahClimber extends SubsystemBase {
   
   TalonFXConfiguration catchConfig;
   TalonFXConfiguration slideConfig;
-  public double LastPosition = 0;
+  private double catchPosition = 0;
+  private double slidePosition = 0;
 
   DoubleEntry NT_CatchRpm =  NT.getDoubleEntry(className ,"C_RPM",0);
   DoubleEntry NT_CatchMotorTemp =  NT.getDoubleEntry(className,"C_MotorTemp",0);
@@ -126,15 +127,18 @@ public class josiahClimber extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    catchPosition = m_CatchMotor.getPosition().getValueAsDouble();
+    slidePosition = m_SlideMotor.getPosition().getValueAsDouble();
+
     NT_CatchRpm.set(m_CatchMotor.getVelocity().getValueAsDouble() * 60);
     NT_CatchMotorTemp.set(m_CatchMotor.getDeviceTemp().getValueAsDouble());
     NT_CatchStatorCurrent.set(m_CatchMotor.getStatorCurrent().getValueAsDouble());
-    NT_Catchposition.set(m_CatchMotor.getPosition().getValueAsDouble());
+    NT_Catchposition.set(catchPosition);
 
     NT_SlideRpm.set(m_SlideMotor.getVelocity().getValueAsDouble() * 60);
     NT_SlideMotorTemp.set(m_SlideMotor.getDeviceTemp().getValueAsDouble());
     NT_SlideStatorCurrent.set(m_SlideMotor.getStatorCurrent().getValueAsDouble());
-    NT_Slideposition.set(m_SlideMotor.getPosition().getValueAsDouble());
+    NT_Slideposition.set(slidePosition);
 
     double p = NT_CatchPGain.getAsDouble();
     double i = NT_CatchIGain.getAsDouble();
@@ -152,12 +156,13 @@ public class josiahClimber extends SubsystemBase {
   }
 
   //this tells us if our extension is retracted enough to allow a fold up into the elevator
-  public BooleanSupplier IsRetractedToGetPastStage1 = ()->{return LastPosition < constants.PlasmaExtension.maxPositionToBeSafeFromStage1Crossbar ? true:false;};
+  public BooleanSupplier IsRetractedToGetPastStage1 = ()->{return catchPosition < constants.PlasmaExtension.maxPositionToBeSafeFromStage1Crossbar ? true:false;};
   
   //IsSafeToGoDown TODO: this needs a linear interpolation map because at 0 elevator we can only be 90. at mid height we can point down a bit. 
   //also extension will change this number but maybe just assume always extened (ie worst case scenario)
 
- 
+  public double getCatchPosition(){return catchPosition;}
+  public double getSlidePosition(){return slidePosition;}
   
   public Trigger IsPivotOutPastStage1 = new Trigger(IsRetractedToGetPastStage1);
 
@@ -178,8 +183,7 @@ public class josiahClimber extends SubsystemBase {
   }
 
   public void CatchHoldPosition(){ 
-      LastPosition = m_CatchMotor.getPosition().getValueAsDouble();
-      CatchGotoPosition(LastPosition-(m_CatchMotor.getVelocity().getValueAsDouble()/constants.CanBus.canBusUpdateFrequency));
+      CatchGotoPosition(catchPosition-(m_CatchMotor.getVelocity().getValueAsDouble()/constants.CanBus.canBusUpdateFrequency));
   }
   
 
