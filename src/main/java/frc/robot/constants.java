@@ -62,6 +62,9 @@ public class constants {
         public static final double intakeAmpLimittime = .10;
     }
     public class Elevator {
+        public static final double kP = 0.013;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
         public static final double gearRatio = (60/11);//60T / 11T (driven/drive) = 5.45454545
 
         public static final double maxElevatorheight = 25;
@@ -71,12 +74,14 @@ public class constants {
 
         public static final double MoveTolerance = 0;
 
+        public static final double CannotPivotParkBelowElevatorPosition = 6;
+        public static final double CannotPivotParkAboveElevatorPosition = 2;
     }
 
     public class PlasmaPivot {
 
         public static final double gearRatio = 3*4*5; //3 stage gearbox with 3:1,4:1,5:1 stacked ontop of each other; creates a 60:1 gear ratio 
-
+        
         public static final double minPositionToBeSafeFromStage1Crossbar = 5; //cant be folded up too much when elevator goes up or else head crashes.
         public static final double maxPositionToBeSafeFromSmashingintoSelf = 20;// cant be pointing down too much when elevator goes down or else head crashes.
 
@@ -88,7 +93,6 @@ public class constants {
         public static final double kP = 0.013;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double elevatorheightToFoldUp = 5;
 
         public static final double MoveTolerance = 0;
     }

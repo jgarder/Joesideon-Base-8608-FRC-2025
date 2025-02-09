@@ -16,7 +16,7 @@ public class C_ElevateToPosition extends Command{
 
     @Override
     public void initialize() {
-        SubSystem.GotoPosition(wantedPosition);
+        SubSystem.RequestPosition(wantedPosition);
     }
 
     @Override

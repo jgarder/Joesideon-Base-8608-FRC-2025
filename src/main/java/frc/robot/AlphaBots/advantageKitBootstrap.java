@@ -27,7 +27,7 @@ public class advantageKitBootstrap {
 
     public void startAdvantageKitLogger() {
       if(loggingactive){return;}else{loggingactive = true;}
-      Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+      Logger.recordMetadata("ProjectName", "MantaJoe"); // Set a metadata value
 
       if (robot.isReal()) {
           Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")

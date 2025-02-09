@@ -58,7 +58,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        MantaState.BuildMantaState(drivetrain,ss_Elevator);
+        MantaState.BuildMantaState(drivetrain,ss_Elevator,ss_Pivot);
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();

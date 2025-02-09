@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Pivot;
 
 public class MantaState {
     // private MantaState(){}
@@ -21,11 +22,17 @@ public class MantaState {
     //     return instance;
     // }
     private static Elevator ss_Elevator;
-    public static void BuildMantaState(CommandSwerveDrivetrain incDriveTrain,Elevator ssElevator)
+    private static Pivot ss_Pivot;
+    public static void BuildMantaState(CommandSwerveDrivetrain incDriveTrain,Elevator ssElevator, Pivot ssPivot)
     {
       DriveTrain = incDriveTrain;
       ss_Elevator = ssElevator;
+      ss_Pivot = ssPivot;
     }
+    
+    public static BooleanSupplier IsPivotFoldedOut = ss_Pivot.IsPivotFoldedOut;
+    public static BooleanSupplier IsPivotFoldedFarOut = ss_Pivot.IsPivotFoldedFarOut;
+    public static BooleanSupplier IsPivotinTravelPosition = ss_Pivot.IsPivotinTravelPosition;
     
     public static double getmaxspeed()
     {
