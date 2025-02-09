@@ -35,7 +35,7 @@ public class RobotContainer {
     public final Pivot ss_Pivot = new Pivot(ss_Elevator.currentHeight);
     public final ArmExtension ss_ArmExtension = new ArmExtension(ss_Elevator.currentHeight);
     public final josiahClimber ss_Climber = new josiahClimber();
-
+    
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -53,14 +53,14 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
+    
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+        MantaState.BuildMantaState(drivetrain,ss_Elevator);
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
-
         configureBindings();
     }
 
