@@ -40,12 +40,12 @@ public class constants {
 
         public static final int elevatorMotor1CanID = 40;
         public static final int elevatorMotor2CanID = 41;
-        public static final int MantaRayMotorCanID = 42;
+        public static final int MantaRayMotorCanID = 0;//42 on rio 
 
         public static final int armExtensionMotorCanID = 0;
         public static final int armPivotMotorCanID = 0;
 
-        public static final int josiahClimberCatchMotorCanID = 42;
+        public static final int josiahClimberCatchMotorCanID = 42;//42 on canivore
         public static final int josiahClimberSlideCanID = 43;
 
         public static final int fryscoopIntakeMotorCanID = 0;

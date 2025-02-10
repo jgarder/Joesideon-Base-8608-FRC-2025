@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.CMD_intake;
 import frc.robot.constants.Climber;
+import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ArmExtension;
@@ -58,6 +60,7 @@ public class RobotContainer {
     
     
     /* Path follower */
+    //edu.wpi.first.networktables.NetworkTableEntry NT_AutoChooser = NT.getStringArrayEntry("Auto" , "Auto Mode",new String[]{});
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
@@ -86,11 +89,11 @@ public class RobotContainer {
         ));
         joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
-                ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
         ));
         joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion).alongWith(
-                ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion)
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion)
         ));
         joystick.povLeft().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_Stop()
