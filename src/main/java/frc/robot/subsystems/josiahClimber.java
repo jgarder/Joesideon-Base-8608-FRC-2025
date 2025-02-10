@@ -42,8 +42,8 @@ public class josiahClimber extends SubsystemBase {
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_CatchMotor = new TalonFX(constants.CanBus.josiahClimberCatchMotorCanID);
-  public final TalonFX m_SlideMotor = new TalonFX(constants.CanBus.josiahClimberSlideCanID);
+  public final TalonFX m_CatchMotor = new TalonFX(constants.CanBus.josiahClimberCatchMotorCanID, "8608ChassisCan");
+  public final TalonFX m_SlideMotor = new TalonFX(constants.CanBus.josiahClimberSlideCanID, "8608ChassisCan");
   
   TalonFXConfiguration catchConfig;
   TalonFXConfiguration slideConfig;
@@ -143,7 +143,10 @@ public class josiahClimber extends SubsystemBase {
     double p = NT_CatchPGain.getAsDouble();
     double i = NT_CatchIGain.getAsDouble();
     double d = NT_CatchDGain.getAsDouble();
-          
+    
+    SmartDashboard.putNumber(className + "catch", m_CatchMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber(className + "slide", m_SlideMotor.getPosition().getValueAsDouble());
+        
     if((p != catchConfig.Slot1.kP)) { 
       catchConfig.Slot1.kP = p; Tools.SetConfigToTalonFX(m_CatchMotor,catchConfig,className);
       slideConfig.Slot1.kP = p; Tools.SetConfigToTalonFX(m_SlideMotor,slideConfig,className); }
