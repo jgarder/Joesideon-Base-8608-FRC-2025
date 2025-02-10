@@ -12,27 +12,34 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 
 public class MantaState {
-    // private MantaState(){}
-    // private MantaState instance;
+    private static MantaState instance;
 
     
-    // public MantaState getInstance()
-    // {
-    //     if (instance == null){instance = new MantaState();}
-    //     return instance;
-    // }
-    private static Elevator ss_Elevator;
-    private static Pivot ss_Pivot;
-    public static void BuildMantaState(CommandSwerveDrivetrain incDriveTrain,Elevator ssElevator, Pivot ssPivot)
+    public static MantaState getInstance()
+    {
+        if (instance == null){
+          return null;//instance = new MantaState();
+        }
+        return instance;
+    }
+    public static Elevator ss_Elevator;
+    public static Pivot ss_Pivot;
+
+    public MantaState(CommandSwerveDrivetrain incDriveTrain,Elevator ssElevator, Pivot ssPivot)
     {
       DriveTrain = incDriveTrain;
       ss_Elevator = ssElevator;
+
       ss_Pivot = ssPivot;
+      IsPivotFoldedOut = ss_Pivot.IsPivotFoldedOut;
+      IsPivotFoldedFarOut = ss_Pivot.IsPivotFoldedFarOut;
+      IsPivotinTravelPosition = ss_Pivot.IsPivotinTravelPosition;
+      instance = this;
     }
-    
-    public static BooleanSupplier IsPivotFoldedOut = ss_Pivot.IsPivotFoldedOut;
-    public static BooleanSupplier IsPivotFoldedFarOut = ss_Pivot.IsPivotFoldedFarOut;
-    public static BooleanSupplier IsPivotinTravelPosition = ss_Pivot.IsPivotinTravelPosition;
+
+    public BooleanSupplier IsPivotFoldedOut;
+    public BooleanSupplier IsPivotFoldedFarOut;
+    public BooleanSupplier IsPivotinTravelPosition;
     
     public static double getmaxspeed()
     {
