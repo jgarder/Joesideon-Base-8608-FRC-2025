@@ -85,9 +85,9 @@ public class josiahClimber extends SubsystemBase {
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
     //_configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     _configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    _configuration.Slot1.kP = NT_CatchPGain.get();
-    _configuration.Slot1.kI = NT_CatchIGain.get();
-    _configuration.Slot1.kD = NT_CatchDGain.get();
+    _configuration.Slot1.kP = constants.Climber.kP;
+    _configuration.Slot1.kI = constants.Climber.kI;
+    _configuration.Slot1.kD = constants.Climber.kD;
 
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     _configuration.CurrentLimits.StatorCurrentLimit = constants.Climber.maxStatorCurrent;

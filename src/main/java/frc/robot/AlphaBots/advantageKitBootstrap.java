@@ -10,7 +10,6 @@ import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -28,7 +27,7 @@ public class advantageKitBootstrap {
 
     public void startAdvantageKitLogger() {
       if(loggingactive){return;}else{loggingactive = true;}
-      Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+      Logger.recordMetadata("ProjectName", "MantaJoe"); // Set a metadata value
 
       if (robot.isReal()) {
           Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")

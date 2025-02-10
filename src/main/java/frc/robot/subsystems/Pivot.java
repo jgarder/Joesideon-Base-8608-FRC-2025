@@ -52,9 +52,9 @@ public class Pivot extends SubsystemBase {
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
   DoubleEntry NT_position = NT.getDoubleEntry(className, "position",0);
   DoubleEntry NT_StatorCurrent = NT.getDoubleEntry(className, "StatorCurrent", 0);
-  DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",constants.PlasmaPivot.kP);
-  DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",constants.PlasmaPivot.kI);
-  DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",constants.PlasmaPivot.kD);
+  DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",0);
+  DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",0);
+  DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",0);
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
 
@@ -62,6 +62,9 @@ public class Pivot extends SubsystemBase {
   InterpolatingDoubleTreeMap heightMaxPivotMap;
   public Pivot(DoubleSupplier elevatorposition) {
     System.out.println("Creating " + className + " object"); 
+    NT_PGain.set(constants.PlasmaPivot.kP);
+    NT_IGain.set(constants.PlasmaPivot.kI);
+    NT_DGain.set(constants.PlasmaPivot.kD);
     elevatorposition = elevatorposition;
     configuration = buildMotorConfig();
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className);
@@ -75,9 +78,9 @@ public class Pivot extends SubsystemBase {
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
     _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     //configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    _configuration.Slot1.kP = NT_PGain.get();
-    _configuration.Slot1.kI = NT_IGain.get();
-    _configuration.Slot1.kD = NT_DGain.get();
+    _configuration.Slot1.kP = constants.PlasmaPivot.kP;
+    _configuration.Slot1.kI = constants.PlasmaPivot.kI;
+    _configuration.Slot1.kD = constants.PlasmaPivot.kD;
     _configuration.Feedback.RotorToSensorRatio = constants.PlasmaPivot.gearRatio;
 
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -91,7 +94,7 @@ public class Pivot extends SubsystemBase {
     
     return _configuration;
   }
-
+  
   @Override
   public void periodic() {
     LastPosition = m_PivotMotor.getPosition().getValueAsDouble();
@@ -111,15 +114,19 @@ public class Pivot extends SubsystemBase {
   }
 
   //is the elevator height low enough that we can fit under the stafe 1 cross bar when retracting (does not account for extension)
-  public BooleanSupplier CanPivotFoldUp = ()->{return getPosition() < constants.PlasmaPivot.elevatorheightToFoldUp ? true:false;}; 
-  public BooleanSupplier IsOutPastPastStage1 = ()->{return getPosition() > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
+  //public BooleanSupplier CanPivotFoldUp = ()->{return getPosition() < constants.PlasmaPivot.elevatorheightToFoldUp ? true:false;}; 
+  //public BooleanSupplier IsOutPastPastStage1 = ()->{return getPosition() > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
   
+  public BooleanSupplier IsPivotFoldedOut = ()->{return LastPosition > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
+  public BooleanSupplier IsPivotFoldedFarOut = ()->{return LastPosition > constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};
+  public BooleanSupplier IsPivotinTravelPosition = ()->{return IsPivotFoldedOut.getAsBoolean() & IsPivotFoldedFarOut.getAsBoolean();};
+
   //IsSafeToGoDown TODO: this needs a linear interpolation map because at 0 elevator we can only be 90. at mid height we can point down a bit. 
   //also extension will change this number but maybe just assume always extened (ie worst case scenario)
 
-  public BooleanSupplier IsSafeToGoDown = ()->{return getPosition() < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};  
+  //public BooleanSupplier IsSafeToGoDown = ()->{return getPosition() < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};  
   
-  public Trigger IsPivotOutPastStage1 = new Trigger(IsOutPastPastStage1);
+  //public Trigger IsPivotOutPastStage1 = new Trigger(IsOutPastPastStage1);
 
   public double getPosition()
   {
