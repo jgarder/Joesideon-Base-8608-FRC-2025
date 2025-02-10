@@ -45,8 +45,8 @@ public class constants {
         public static final int armExtensionMotorCanID = 0;
         public static final int armPivotMotorCanID = 0;
 
-        public static final int josiahClimberCatchMotorCanID = 6;
-        public static final int josiahClimberSlideCanID = 7;
+        public static final int josiahClimberCatchMotorCanID = 42;
+        public static final int josiahClimberSlideCanID = 43;
 
         public static final int fryscoopIntakeMotorCanID = 0;
 
@@ -115,14 +115,14 @@ public class constants {
 
     public class Climber {
         public static final double maxStatorCurrent = 120;
-        public static final double kP = 0.05;
+        public static final double kP = 0.5;
         public static final double kI = 0.04;
         public static final double kD = 0;
 
         public static class CatchSide {
             public static final double gearRatio = 45; //9:1 on a 5:1
-            public static final double maxPostion = 4.12; //max pos will be hook position
-            public static final double minPostion = -8; //min position will be negative and will be prolly be full climb position
+            public static final double maxPostion = 10;//4.12; //max pos will be hook position
+            public static final double minPostion = -9; //min position will be negative and will be prolly be full climb position
             public static final double startPos = 0; // we start at flat across with tips almost touching. this is out start pos
             public static final double LoadPostion = maxPostion; //the position this motor is in when we are in load mode catch side is at max hook height slide is folder back over to allow cage in
             public static final double FullClimbPostion = minPostion;
@@ -131,7 +131,7 @@ public class constants {
         public static class SlideSide {
             public static final double gearRatio = 45; //9:1 on a 5:1
             public static final double maxPostion = 22;
-            public static final double minPostion = -8;
+            public static final double minPostion = -9;
             public static final double startPos = 0;
             public static final double LoadPostion = maxPostion;
             public static final double FullClimbPostion = minPostion;
