@@ -12,6 +12,7 @@ public class C_ElevateToPosition extends Command{
     public C_ElevateToPosition(Elevator subSys, double wantedposition){
         SubSystem = subSys;
         wantedPosition = wantedposition;
+        addRequirements(subSys);
     }
 
     @Override

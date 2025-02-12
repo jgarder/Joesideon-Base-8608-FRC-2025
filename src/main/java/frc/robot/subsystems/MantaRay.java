@@ -29,10 +29,10 @@ public class MantaRay extends SubsystemBase {
     //This will make smartdashboardPuts goto the classes subfolder in the network tables. the / does the subfoldering.
   String className = this.getClass().getSimpleName()+"/";
   
-  public final TalonFX m_TridentMotor = new TalonFX(constants.CanBus.MantaRayMotorCanID, "rio");
+  public final TalonFX m_TridentMotor = new TalonFX(constants.CanBus.MantaRayMotorCanID, constants.CanBus.RioCANBusName);
 
-  private final com.ctre.phoenix6.controls.PositionDutyCycle m_positionDC = new PositionDutyCycle(0);
-  private final com.ctre.phoenix6.controls.DutyCycleOut m_DutyCycle = new DutyCycleOut(constants.MantaRay.IntakeDutyCycle);
+  // private final com.ctre.phoenix6.controls.PositionDutyCycle m_positionDC = new PositionDutyCycle(0);
+  // private final com.ctre.phoenix6.controls.DutyCycleOut m_DutyCycle = new DutyCycleOut(constants.MantaRay.IntakeDutyCycle);
 
   private final StaticBrake m_s_Brake = new StaticBrake();
   

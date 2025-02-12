@@ -42,8 +42,8 @@ public class josiahClimber extends SubsystemBase {
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_CatchMotor = new TalonFX(constants.CanBus.josiahClimberCatchMotorCanID, constants.CanBus.kCANbusName);
-  public final TalonFX m_SlideMotor = new TalonFX(constants.CanBus.josiahClimberSlideCanID, constants.CanBus.kCANbusName);
+  public final TalonFX m_CatchMotor = new TalonFX(constants.CanBus.josiahClimberCatchMotorCanID, constants.CanBus.CanivoreCANBusName);
+  public final TalonFX m_SlideMotor = new TalonFX(constants.CanBus.josiahClimberSlideCanID, constants.CanBus.CanivoreCANBusName);
   
   TalonFXConfiguration catchConfig;
   TalonFXConfiguration slideConfig;

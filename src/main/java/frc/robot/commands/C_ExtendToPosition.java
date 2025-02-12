@@ -14,6 +14,7 @@ public class C_ExtendToPosition extends Command{
     public C_ExtendToPosition(ArmExtension subSys, double wantedposition){
         SubSystem = subSys;
         wantedPosition = wantedposition;
+        addRequirements(subSys);
     }
 
     @Override

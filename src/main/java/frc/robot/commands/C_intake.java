@@ -5,13 +5,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
 import frc.robot.subsystems.MantaRay;
 
-public class CMD_intake extends Command {
+public class C_intake extends Command {
     
     MantaRay ss_Trident;
     boolean isloaded = false;
     public final Timer startupdebounceTimer = new Timer();
-    public CMD_intake(MantaRay incomingss_Trident){
+    private double debounceSecondsNeeded = .30;
+    public C_intake(MantaRay incomingss_Trident){
         ss_Trident = incomingss_Trident;
+        addRequirements(incomingss_Trident);
     }
 
     @Override
@@ -27,7 +29,7 @@ public class CMD_intake extends Command {
     //is called once per periodic and will run the end command when true is returned. 
     @Override
     public boolean isFinished(){
-        if(startupdebounceTimer.get()<.20){return false;}
+        if(startupdebounceTimer.get()<debounceSecondsNeeded){return false;}
 
         boolean isloaded = ss_Trident.isLoaded();
         if(isloaded)

@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -19,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.CMD_intake;
+import frc.robot.commands.C_intake;
 import frc.robot.constants.Climber;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
@@ -30,6 +32,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MantaRay;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.josiahClimber;
+import frc.robot.subsystems.Elevator.POSITION;
 
 public class RobotContainer {
     //Subsystem bootup Zone - Order matters. 
@@ -68,38 +71,32 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();
     }
-
+    BooleanSupplier elevatorisparked = ()->{return ss_Elevator.currentState.equals(Elevator.POSITION.parked);};
     double TridentEjectMovement = 20;
     private void configureBindings() {
 
-        joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
+        
 
-        joystick.a().whileTrue(new CMD_intake(ss_Trident));
-        joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
+        joystick.a().onTrue(new C_intake(ss_Trident).withTimeout(20));
+        //joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
 
-        joystick.y().onTrue(ss_Elevator.GotoPositonCommand(25));
-        joystick.x().onTrue(ss_Elevator.GotoPositonCommand(2));
+        //joystick.y().onTrue(ss_Elevator.GotoPositonCommand(7));
+        //joystick.x().onTrue(ss_Elevator.GotoPositonCommand(2));
 
-        joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
+        //joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
+        joystick.x().onTrue(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition));
+        joystick.y().onTrue(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.ParkPosition));
+        joystick.b().onTrue(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.GroundPickupPosition));
 
-
-        joystick.povUp().and(MantaState.getAltControlModeEnabled).onTrue(
-            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.maxPostion).alongWith(
-            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.maxPostion)
-        ));
-        joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
-            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
-            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
-        ));
-        joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
-            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion).alongWith(
-            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion)
-        ));
-        joystick.povLeft().and(MantaState.getAltControlModeEnabled).onTrue(
-            ss_Climber.C_Stop()
-        );
-
+        joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+        .onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.l1Position).alongWith(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition)));
+        joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+        .onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.minElevatorHeight).alongWith(
+            ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition).unless(ss_Pivot.IsPivotinTravelPosition)
+            ).andThen(
+                ss_Pivot.C_GotoPositon(constants.PlasmaPivot.ParkPosition)));
         //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
+        
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -123,17 +120,31 @@ public class RobotContainer {
         //     forwardStraight.withVelocityX(-0.5).withVelocityY(0))
         // );
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+        configAltCommands();
+    }
+    public void configAltCommands()
+    {
+        joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
+        joystick.povUp().and(MantaState.getAltControlModeEnabled).onTrue(
+            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.maxPostion).alongWith(
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.maxPostion)
+        ));
+        joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
+            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
+        ));
+        joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
+            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion).alongWith(
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion)
+        ));
+        joystick.povLeft().and(MantaState.getAltControlModeEnabled).onTrue(
+            ss_Climber.C_Stop()
+        );
     }
 
     public Command getAutonomousCommand() {

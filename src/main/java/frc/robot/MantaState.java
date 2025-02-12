@@ -15,10 +15,10 @@ public class MantaState {
     private static MantaState instance;
 
     
-    public static MantaState getInstance()
+    public static MantaState getInstance() throws Throwable
     {
         if (instance == null){
-          return null;//instance = new MantaState();
+          throw new Throwable("Calling MantaState Before object was created");//instance = new MantaState();
         }
         return instance;
     }

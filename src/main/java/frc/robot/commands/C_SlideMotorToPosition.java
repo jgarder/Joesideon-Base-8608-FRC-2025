@@ -12,6 +12,7 @@ public class C_SlideMotorToPosition extends Command{
     public C_SlideMotorToPosition(josiahClimber subSys, double wantedposition){
         SubSystem = subSys;
         wantedPosition = wantedposition;
+        addRequirements(subSys);
     }
 
     @Override

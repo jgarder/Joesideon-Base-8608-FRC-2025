@@ -35,13 +35,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
+import frc.robot.commands.C_PivotToPosition;
 
 public class Pivot extends SubsystemBase {
  
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_PivotMotor = new TalonFX(constants.CanBus.armPivotMotorCanID, "rio");
+  public final TalonFX m_PivotMotor = new TalonFX(constants.CanBus.armPivotMotorCanID, constants.CanBus.RioCANBusName);
   
   TalonFXConfiguration configuration;
   
@@ -57,6 +58,12 @@ public class Pivot extends SubsystemBase {
   DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",0);
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
+  BooleanEntry NT_FoldedOut = NT.getBooleanEntry(className , "FoldedOut",false); //this refers to being folded out enough to NOT stage 1 Xbar.
+  BooleanEntry NT_FoldedUpEnough = NT.getBooleanEntry(className , "FoldedUpEnough",false);//This refers to be being folded Up to not be out past striaght sticking out 90 =====<
+  BooleanEntry NT_FoldedUpFromReef = NT.getBooleanEntry(className , "FoldedUpFromReef",false);//This refers to be being folded Up to not be out past striaght sticking out 90 =====<
+
+  BooleanEntry NT_ElevatorTravelPosition = NT.getBooleanEntry(className , "InElevatorTravelPosition",false);// folded out past Stage 1 but folded up past chassis
+
 
   DoubleSupplier elevatorposition;
   InterpolatingDoubleTreeMap heightMaxPivotMap;
@@ -72,6 +79,7 @@ public class Pivot extends SubsystemBase {
     InterpolatingDoubleTreeMap heightMaxPivotMap = new InterpolatingDoubleTreeMap();
     heightMaxPivotMap.put(0.0,10.0);
     heightMaxPivotMap.put(5.0, 14.0);
+    BRAKE();//HoldPosition();
   }
 
   public TalonFXConfiguration buildMotorConfig(){
@@ -104,6 +112,11 @@ public class Pivot extends SubsystemBase {
     NT_StatorCurrent.set(m_PivotMotor.getStatorCurrent().getValueAsDouble());
     NT_position.set(LastPosition);
 
+    NT_FoldedOut.set(IsPivotFoldedOut.getAsBoolean());
+    NT_FoldedUpEnough.set(IsPivotFoldedFarOut.getAsBoolean());
+    NT_FoldedUpFromReef.set(IsPivotAwayFromReef.getAsBoolean());
+    NT_ElevatorTravelPosition.set(IsPivotinTravelPosition.getAsBoolean());
+
     double p = NT_PGain.getAsDouble();
     double i = NT_IGain.getAsDouble();
     double d = NT_DGain.getAsDouble();
@@ -120,8 +133,10 @@ public class Pivot extends SubsystemBase {
   //public BooleanSupplier IsOutPastPastStage1 = ()->{return getPosition() > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
   
   public BooleanSupplier IsPivotFoldedOut = ()->{return LastPosition > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
-  public BooleanSupplier IsPivotFoldedFarOut = ()->{return LastPosition > constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};
-  public BooleanSupplier IsPivotinTravelPosition = ()->{return IsPivotFoldedOut.getAsBoolean() & IsPivotFoldedFarOut.getAsBoolean();};
+  public BooleanSupplier IsPivotAwayFromReef = ()->{return LastPosition < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoReef ? true:false;};
+
+  public BooleanSupplier IsPivotFoldedFarOut = ()->{return LastPosition < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};
+  public BooleanSupplier IsPivotinTravelPosition = ()->{return IsPivotFoldedOut.getAsBoolean() & IsPivotAwayFromReef.getAsBoolean();};
 
   //IsSafeToGoDown TODO: this needs a linear interpolation map because at 0 elevator we can only be 90. at mid height we can point down a bit. 
   //also extension will change this number but maybe just assume always extened (ie worst case scenario)
@@ -135,9 +150,10 @@ public class Pivot extends SubsystemBase {
     return LastPosition;//m_PivotMotor.getPosition().getValueAsDouble(); // / gearRatio;
   }
   public Command C_GotoPositon(double positon) {
-      return new InstantCommand(()->{
-        GotoPosition(positon);
-      });
+    return new C_PivotToPosition(this,positon);
+      // return new InstantCommand(()->{
+      //   GotoPosition(positon);
+      // });
   }
   public InstantCommand C_Stop() {
     return new InstantCommand(()->{
@@ -157,6 +173,7 @@ public class Pivot extends SubsystemBase {
     m_PivotMotor.setControl(
         new PositionDutyCycle(wantedposition)
         .withEnableFOC(true)
+        .withOverrideBrakeDurNeutral(true)
         .withSlot(1)
     );
   }

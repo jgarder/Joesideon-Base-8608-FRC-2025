@@ -30,8 +30,8 @@ public class constants {
     
     public class CanBus {
 
-        public static final String roboRIO = "rio";
-        public static final String kCANbusName = "8608ChassisCan";
+        public static final String RioCANBusName = "rio";
+        public static final String CanivoreCANBusName = "8608ChassisCan";
         public static final double canBusUpdateFrequency = 50;
         public static final double canBusCanivoreUpdateFrequency = 100;
 
@@ -62,9 +62,9 @@ public class constants {
         public static final double intakeAmpLimittime = .10;
     }
     public class Elevator {
-        public static final double kP = 0.013;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kP = 0.1;
+        public static final double kI = 0.01;
+        public static final double kD = 0.01;
 
         public static final double kG = 0.0;
         
@@ -75,29 +75,39 @@ public class constants {
 
         public static final double maxStatorCurrent = 40;
 
-        public static final double MoveTolerance = 0;
+        public static final double MoveTolerance = .5;
 
-        public static final double CannotPivotParkBelowElevatorPosition = 6;
-        public static final double CannotPivotParkAboveElevatorPosition = 2;
+        public static final double CannotPivotParkBelowElevatorPosition = 18;//when elevator is above this, pivot must be in travel position for elevator to go below this number
+        public static final double CannotPivotParkAboveElevatorPosition = 3;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
+    
+        public static final double l1Position = 4.0;
+    
+    
     }
 
     public class PlasmaPivot {
 
         public static final double gearRatio = 3*4*5; //3 stage gearbox with 3:1,4:1,5:1 stacked ontop of each other; creates a 60:1 gear ratio 
         
-        public static final double minPositionToBeSafeFromStage1Crossbar = 5; //cant be folded up too much when elevator goes up or else head crashes.
-        public static final double maxPositionToBeSafeFromSmashingintoSelf = 20;// cant be pointing down too much when elevator goes down or else head crashes.
+        public static final double minPositionToBeSafeFromStage1Crossbar = 3.55; //cant be folded up too much when elevator goes up or else head crashes.
+        public static final double maxPositionToBeSafeFromSmashingintoReef = 7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
+        public static final double maxPositionToBeSafeFromSmashingintoSelf = 14;// cant be pointing down too much when elevator goes down or else head crashes. 
 
-        public static final double maxposition = 25;
+        public static final double maxposition = 27;
         public static final double minposition = 0;
+
+        public static final double ParkPosition = 0.1;
+        public static final double TravelPosition = 3.75;
+        public static final double GroundPickupPosition = 12.0;
+        public static final double l4ReadyPosition = 4;
 
         public static final double maxStatorCurrent = 40;
 
-        public static final double kP = 0.013;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kP = 0.08;
+        public static final double kI = 0.02;
+        public static final double kD = 0.0105;
 
-        public static final double MoveTolerance = 0;
+        public static final double MoveTolerance = .5;
     }
 
     public class PlasmaExtension {

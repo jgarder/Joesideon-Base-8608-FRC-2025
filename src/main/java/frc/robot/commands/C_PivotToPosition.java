@@ -12,6 +12,7 @@ public class C_PivotToPosition extends Command{
     public C_PivotToPosition(Pivot subSys, double wantedposition){
         SubSystem = subSys;
         wantedPosition = wantedposition;
+        addRequirements(subSys);
     }
 
     @Override

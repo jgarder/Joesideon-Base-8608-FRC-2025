@@ -22,14 +22,22 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.MantaState;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
+import frc.robot.AlphaBots.Tools;
+import frc.robot.commands.C_ElevateToPosition;
 
 public class Elevator extends SubsystemBase {
  
+  public static enum POSITION
+  {
+    parked,
+    up,
+  }
+  public POSITION currentState = POSITION.parked;
   //This will make smartdashboardPuts goto the classes subfolder in the network tables. the / does the subfoldering.
-  private final String className = this.getClass().getSimpleName()+"/";
+  private final String className = this.getClass().getSimpleName(); //+"/"
   
-  public final TalonFX m_ElevatorMotor1 = new TalonFX(constants.CanBus.elevatorMotor1CanID, "8608ChassisCan");
-  public final TalonFX m_ElevatorMotor2 = new TalonFX(constants.CanBus.elevatorMotor2CanID, "8608ChassisCan");
+  public final TalonFX m_ElevatorMotor1 = new TalonFX(constants.CanBus.elevatorMotor1CanID, constants.CanBus.CanivoreCANBusName);
+  public final TalonFX m_ElevatorMotor2 = new TalonFX(constants.CanBus.elevatorMotor2CanID, constants.CanBus.CanivoreCANBusName);
 
 
   private final com.ctre.phoenix6.controls.PositionDutyCycle m_positionDC = new PositionDutyCycle(0);
@@ -47,11 +55,12 @@ public class Elevator extends SubsystemBase {
   TalonFXConfiguration configuration;
   public DoubleSupplier currentHeight = ()->{return currentPosition;};
 
-  DoubleTopic RpmTopic = NT.table.getDoubleTopic(className + " rpm");
-  DoublePublisher RpmPub =  RpmTopic.publish();
-  DoublePublisher MotorTemp =  NT.table.getDoubleTopic(className + "MotorTemp").publish();
-  DoublePublisher Motor2Temp =  NT.table.getDoubleTopic(className + "Motor2Temp").publish();
-  DoublePublisher NT_CurrentPosition = NT.table.getDoubleTopic(className + "CurrentPosition").publish();
+  DoubleEntry NT_Rpm = NT.getDoubleEntry(className , " rpm",0.0);
+  DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className , "MotorTemp",0.0);
+  DoubleEntry NT_Motor2Temp =  NT.getDoubleEntry(className ,"Motor2Temp",0.0);
+  DoubleEntry NT_StatorCurrent =  NT.getDoubleEntry(className , "StatorCurrent",0.0);
+  DoubleEntry NT_StatorCurrent2 =  NT.getDoubleEntry(className ,"StatorCurrent2",0.0);
+  DoubleEntry NT_CurrentPosition = NT.getDoubleEntry(className , "CurrentPosition",0.0);
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
   DoubleEntry NT_RequestedPosition = NT.getDoubleEntry(className , "RequestedPosition",0.0);
   DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",0);
@@ -67,6 +76,8 @@ public class Elevator extends SubsystemBase {
     NT_PGain.set(constants.Elevator.kP);
     NT_IGain.set(constants.Elevator.kI);
     NT_DGain.set(constants.Elevator.kD);
+    NT_RequestedPosition.set(requestedPosition);
+    NT_SetpointPosition.set(setPointPosition);
   }
 
 
@@ -98,19 +109,23 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     currentPosition = m_ElevatorMotor1.getPosition().getValueAsDouble();
     NT_CurrentPosition.set(currentPosition);
+    NT_SetpointPosition.set(setPointPosition);
+    NT_RequestedPosition.set(requestedPosition);
 
-    RpmPub.set(m_ElevatorMotor1.getVelocity().getValueAsDouble() * 60);
-    MotorTemp.set(m_ElevatorMotor1.getDeviceTemp().getValueAsDouble());
-    Motor2Temp.set(m_ElevatorMotor2.getDeviceTemp().getValueAsDouble());
-    
+    NT_Rpm.set(m_ElevatorMotor1.getVelocity().getValueAsDouble() * 60);
+    NT_MotorTemp.set(m_ElevatorMotor1.getDeviceTemp().getValueAsDouble());
+    NT_Motor2Temp.set(m_ElevatorMotor2.getDeviceTemp().getValueAsDouble());
+    NT_StatorCurrent.set(m_ElevatorMotor1.getStatorCurrent().getValueAsDouble());
+    NT_StatorCurrent2.set(m_ElevatorMotor2.getStatorCurrent().getValueAsDouble());
+
     //SmartDashboard.putNumber(className + " rpm", (m_TridentMotor.getVelocity().getValueAsDouble() * 60));
-    SmartDashboard.putNumber(className + " MotorTemp", m_ElevatorMotor1.getDeviceTemp().getValueAsDouble());
-    SmartDashboard.putNumber(className + " StatorCurrent", m_ElevatorMotor1.getStatorCurrent().getValueAsDouble());
+    // SmartDashboard.putNumber(className + " MotorTemp", m_ElevatorMotor1.getDeviceTemp().getValueAsDouble());
+    // SmartDashboard.putNumber(className + " StatorCurrent", m_ElevatorMotor1.getStatorCurrent().getValueAsDouble());
 
-    SmartDashboard.putNumber(className + " Motor2Temp", m_ElevatorMotor2.getDeviceTemp().getValueAsDouble());
-    SmartDashboard.putNumber(className + " Stator2Current", m_ElevatorMotor2.getStatorCurrent().getValueAsDouble());
+    // SmartDashboard.putNumber(className + " Motor2Temp", m_ElevatorMotor2.getDeviceTemp().getValueAsDouble());
+    // SmartDashboard.putNumber(className + " Stator2Current", m_ElevatorMotor2.getStatorCurrent().getValueAsDouble());
 
-    SmartDashboard.putNumber(className + "Elevator position", m_ElevatorMotor1.getPosition().getValueAsDouble());
+    // SmartDashboard.putNumber(className + "Elevator position", m_ElevatorMotor1.getPosition().getValueAsDouble());
 
     double p = NT_PGain.getAsDouble();
     double i = NT_IGain.getAsDouble();
@@ -126,7 +141,7 @@ public class Elevator extends SubsystemBase {
       if(currentPosition > constants.Elevator.CannotPivotParkBelowElevatorPosition)
       {
         //if we are going below the cannot fold position
-        if(requestedPosition < constants.Elevator.CannotPivotParkBelowElevatorPosition)
+        if(requestedPosition <= constants.Elevator.CannotPivotParkBelowElevatorPosition)
         {
           //check if pivot is in a safe travel position
           if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
@@ -141,31 +156,56 @@ public class Elevator extends SubsystemBase {
             GotoPosition(constants.Elevator.CannotPivotParkBelowElevatorPosition);
           }
         }
-      }
-      //////////////////
-        //if we are below the CannotFoldabove position
-        if(currentPosition < constants.Elevator.CannotPivotParkAboveElevatorPosition)
+        else{
+          //if we are above the safe zone and staying above the safe zone then request the new position. 
+          GotoPosition(requestedPosition);
+        }
+      }   //if we are below the CannotFoldabove position
+      else if(currentPosition < constants.Elevator.CannotPivotParkAboveElevatorPosition)
+      {
+        //if we are going above the cannot fold position
+        if(requestedPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
         {
-          //if we are going above the cannot fold position
-          if(requestedPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
+          //check if pivot is in a safe travel position
+          if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
           {
-            //check if pivot is in a safe travel position
-            if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
-            {
-                //if/when we are folded out, set position to requested position
-              //safe to goto requestion position
-              GotoPosition(requestedPosition);
-            }
-            else{
-              //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-              //ONLY safe to goto CannotFoldBelowPosition
-              GotoPosition(constants.Elevator.CannotPivotParkAboveElevatorPosition);
-            }
+              //if/when we are folded out, set position to requested position
+            //safe to goto requestion position
+            GotoPosition(requestedPosition);
+          }
+          else{
+            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
+            //ONLY safe to goto CannotFoldBelowPosition
+            GotoPosition(constants.Elevator.CannotPivotParkAboveElevatorPosition);
           }
         }
+        else{
+          //if we are below the safe zone and going below the safe zone then request the new position. 
+          GotoPosition(requestedPosition);
+        }
+      }//if we are not above the nogo and we are not below the nogo we are in the nogo. make sure we are in travel position and goto the called position
+      else 
+      {
+        //check if pivot is in a safe travel position
+        if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
+        {
+            //if/when we are folded out, set position to requested position
+          //safe to goto requestion position
+          GotoPosition(requestedPosition);
+        }
+        else{
+          //if not IsPivotinTravelPosition, dont move we are in the No-go zone already. 
+        }
+      }
+    }// else if we are close to parked and we are requesting a park. then just brake mode. 
+    else if ((setPointPosition < ElevatorBrakeParkTolerance) & (requestedPosition < ElevatorBrakeParkTolerance) & Tools.isPosAtSetpoint(currentPosition, constants.Elevator.minElevatorHeight, ElevatorBrakeParkTolerance))
+    {
+      //System.out.println("elevator Braking");
+      currentState = POSITION.parked;
+      BRAKE();
     }
   }
-
+  public double ElevatorBrakeParkTolerance = 0.5;
   public double canBusUpdateFrequency = 50;
   public double getPosition()
   {
@@ -173,10 +213,10 @@ public class Elevator extends SubsystemBase {
   }
 
     public Command GotoPositonCommand(double positon) {
-        double rpmgoal = positon;
-        return new InstantCommand(()->{
-          RequestPosition(rpmgoal);
-        });
+      return new C_ElevateToPosition(this, positon);
+        // return new InstantCommand(()->{
+        //   RequestPosition(positon);
+        // });
     }
     public InstantCommand Stop() {
       return new InstantCommand(()->{
@@ -190,14 +230,14 @@ public class Elevator extends SubsystemBase {
     
     public void RequestPosition(double wantedposition)
     {
-      NT_RequestedPosition.set(wantedposition);
       requestedPosition = wantedposition;
     }
     private void GotoPosition(double wantedposition){
         setPointPosition = wantedposition;
-        NT_SetpointPosition.set(wantedposition);
+        currentState = POSITION.up;
         m_ElevatorMotor1.setControl(
             new PositionDutyCycle(wantedposition)
+            .withOverrideBrakeDurNeutral(true)
             .withEnableFOC(true)
             .withSlot(1)
         );
