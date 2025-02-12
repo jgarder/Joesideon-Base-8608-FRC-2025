@@ -40,10 +40,10 @@ public class constants {
 
         public static final int elevatorMotor1CanID = 40;
         public static final int elevatorMotor2CanID = 41;
-        public static final int MantaRayMotorCanID = 42;
+        public static final int MantaRayMotorCanID = 44;
 
-        public static final int armExtensionMotorCanID = 0;
-        public static final int armPivotMotorCanID = 0;
+        public static final int armExtensionMotorCanID = 46;
+        public static final int armPivotMotorCanID = 45;
 
         public static final int josiahClimberCatchMotorCanID = 42;
         public static final int josiahClimberSlideCanID = 43;
@@ -65,6 +65,9 @@ public class constants {
         public static final double kP = 0.013;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
+
+        public static final double kG = 0.0;
+        
         public static final double gearRatio = (60/11);//60T / 11T (driven/drive) = 5.45454545
 
         public static final double maxElevatorheight = 25;

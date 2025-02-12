@@ -41,7 +41,7 @@ public class Pivot extends SubsystemBase {
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_PivotMotor = new TalonFX(constants.CanBus.armPivotMotorCanID);
+  public final TalonFX m_PivotMotor = new TalonFX(constants.CanBus.armPivotMotorCanID, "rio");
   
   TalonFXConfiguration configuration;
   
@@ -60,12 +60,12 @@ public class Pivot extends SubsystemBase {
 
   DoubleSupplier elevatorposition;
   InterpolatingDoubleTreeMap heightMaxPivotMap;
-  public Pivot(DoubleSupplier elevatorposition) {
+  public Pivot(DoubleSupplier elevatorPosition) {
     System.out.println("Creating " + className + " object"); 
     NT_PGain.set(constants.PlasmaPivot.kP);
     NT_IGain.set(constants.PlasmaPivot.kI);
     NT_DGain.set(constants.PlasmaPivot.kD);
-    elevatorposition = elevatorposition;
+    elevatorposition = elevatorPosition;
     configuration = buildMotorConfig();
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className);
 
@@ -111,6 +111,8 @@ public class Pivot extends SubsystemBase {
     if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
     if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
+  
+    SmartDashboard.putNumber(className + "Pivot Position", m_PivotMotor.getPosition().getValueAsDouble());
   }
 
   //is the elevator height low enough that we can fit under the stafe 1 cross bar when retracting (does not account for extension)

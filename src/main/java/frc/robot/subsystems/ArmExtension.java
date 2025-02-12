@@ -41,7 +41,7 @@ public class ArmExtension extends SubsystemBase {
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_ExtensionMotor = new TalonFX(constants.CanBus.armExtensionMotorCanID);
+  public final TalonFX m_ExtensionMotor = new TalonFX(constants.CanBus.armExtensionMotorCanID, "rio");
   
   TalonFXConfiguration configuration;
   
@@ -104,6 +104,8 @@ public class ArmExtension extends SubsystemBase {
     if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p; Tools.SetConfigToTalonFX(m_ExtensionMotor,configuration,className); }
     if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; Tools.SetConfigToTalonFX(m_ExtensionMotor,configuration,className); }
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; Tools.SetConfigToTalonFX(m_ExtensionMotor,configuration,className); }
+  
+    SmartDashboard.putNumber(className + "Extension position", m_ExtensionMotor.getPosition().getValueAsDouble());
   }
 
   //this tells us if our extension is retracted enough to allow a fold up into the elevator
