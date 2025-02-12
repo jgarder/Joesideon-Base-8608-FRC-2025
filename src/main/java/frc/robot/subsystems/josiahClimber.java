@@ -42,8 +42,8 @@ public class josiahClimber extends SubsystemBase {
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_CatchMotor = new TalonFX(constants.CanBus.josiahClimberCatchMotorCanID, "8608ChassisCan");
-  public final TalonFX m_SlideMotor = new TalonFX(constants.CanBus.josiahClimberSlideCanID, "8608ChassisCan");
+  public final TalonFX m_CatchMotor = new TalonFX(constants.CanBus.josiahClimberCatchMotorCanID, constants.CanBus.kCANbusName);
+  public final TalonFX m_SlideMotor = new TalonFX(constants.CanBus.josiahClimberSlideCanID, constants.CanBus.kCANbusName);
   
   TalonFXConfiguration catchConfig;
   TalonFXConfiguration slideConfig;
@@ -104,9 +104,9 @@ public class josiahClimber extends SubsystemBase {
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
     //_configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     _configuration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    _configuration.Slot1.kP = NT_CatchPGain.get();
-    _configuration.Slot1.kI = NT_CatchIGain.get();
-    _configuration.Slot1.kD = NT_CatchDGain.get();
+    _configuration.Slot1.kP = constants.Climber.kP;
+    _configuration.Slot1.kI = constants.Climber.kI;
+    _configuration.Slot1.kD = constants.Climber.kD;
     
     // _configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
     // _configuration.Feedback.withRotorToSensorRatio(constants.Climber.SlideSide.gearRatio);

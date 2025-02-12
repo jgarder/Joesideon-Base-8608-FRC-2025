@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.CMD_intake;
 import frc.robot.constants.Climber;
+import frc.robot.AlphaBots.NT;
+import frc.robot.AlphaBots.Tools;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ArmExtension;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -29,13 +32,15 @@ import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.josiahClimber;
 
 public class RobotContainer {
-
+    //Subsystem bootup Zone - Order matters. 
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final MantaRay ss_Trident = new MantaRay();
     public final Elevator ss_Elevator = new Elevator();
     public final Pivot ss_Pivot = new Pivot(ss_Elevator.currentHeight);
     public final ArmExtension ss_ArmExtension = new ArmExtension(ss_Elevator.currentHeight);
     public final josiahClimber ss_Climber = new josiahClimber();
-    
+    public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot);
+
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -52,13 +57,13 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    
     
     /* Path follower */
+    //edu.wpi.first.networktables.NetworkTableEntry NT_AutoChooser = NT.getStringArrayEntry("Auto" , "Auto Mode",new String[]{});
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        MantaState.BuildMantaState(drivetrain,ss_Elevator,ss_Pivot);
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();
@@ -84,11 +89,11 @@ public class RobotContainer {
         ));
         joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
-                ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
         ));
         joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion).alongWith(
-                ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion)
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion)
         ));
         joystick.povLeft().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_Stop()
@@ -100,8 +105,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(Tools.getExpoJoystickInput(-joystick.getLeftY(),MaxSpeed)) // Drive forward with negative Y (forward)
+                    .withVelocityY(Tools.getExpoJoystickInput(-joystick.getLeftX(),MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );

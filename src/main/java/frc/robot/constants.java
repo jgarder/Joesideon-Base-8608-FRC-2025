@@ -45,7 +45,7 @@ public class constants {
         public static final int armExtensionMotorCanID = 46;
         public static final int armPivotMotorCanID = 45;
 
-        public static final int josiahClimberCatchMotorCanID = 42;
+        public static final int josiahClimberCatchMotorCanID = 42;//42 on canivore
         public static final int josiahClimberSlideCanID = 43;
 
         public static final int fryscoopIntakeMotorCanID = 0;

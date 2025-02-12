@@ -129,7 +129,7 @@ public class Elevator extends SubsystemBase {
         if(requestedPosition < constants.Elevator.CannotPivotParkBelowElevatorPosition)
         {
           //check if pivot is in a safe travel position
-          if(MantaState.IsPivotinTravelPosition.getAsBoolean())
+          if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
           {
              //if/when we are folded out, set position to requested position
             //safe to goto requestion position
@@ -150,7 +150,7 @@ public class Elevator extends SubsystemBase {
           if(requestedPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
           {
             //check if pivot is in a safe travel position
-            if(MantaState.IsPivotinTravelPosition.getAsBoolean())
+            if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
             {
                 //if/when we are folded out, set position to requested position
               //safe to goto requestion position
