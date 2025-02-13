@@ -4,6 +4,7 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 
@@ -39,5 +40,15 @@ public class Tools {
     //Y for X, X for Y, because FRC? //this doesn't make sense anymore because of code optimizations
     double output = ((0.2*getLeftAxis)+(0.8*Math.pow(getLeftAxis, 3))) * MaxSpeed;
     return -output;
+  }
+
+  public static double getdistancetopose(Pose2d currentPose2d,Pose2d targetPose2d)
+  {
+    double Xpose_Offset = currentPose2d.getX() - targetPose2d.getX();
+    double Ypose_Offset = currentPose2d.getY() - targetPose2d.getY();   
+
+    var Currdistance = Math.abs(Math.hypot(Xpose_Offset, Ypose_Offset));
+
+    return Currdistance;
   }
 }

@@ -1,6 +1,11 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 public class constants {
+
+    public static final double ReefWidthCenteronCenter = Units.inchesToMeters(15);
+    
     public static class drivetrainThings{
         public static final double minXposeErrorToCorrect = .06;
         public static final double minYposeErrorToCorrect = .06;
@@ -62,9 +67,9 @@ public class constants {
         public static final double intakeAmpLimittime = .10;
     }
     public class Elevator {
-        public static final double kP = 5.0;
-        public static final double kI = 0.0;
-        public static final double kD = 0.00;
+        public static final double kP = 0.1; //5.0; MotionMagic
+        public static final double kI = 0.01;
+        public static final double kD = 0.01;
 
         public static final double kG = 0.0;
         
@@ -73,16 +78,19 @@ public class constants {
         public static final double maxElevatorheight = 25;
         public static final double minElevatorHeight = 0;
 
-        public static final double maxStatorCurrent = 40;
+        public static final double maxStatorCurrent = 120;
 
         public static final double MoveTolerance = .5;
 
         public static final double CannotPivotParkBelowElevatorPosition = 18;//when elevator is above this, pivot must be in travel position for elevator to go below this number
         public static final double CannotPivotParkAboveElevatorPosition = 3;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
-    
+        
+        public static final double ProcessorPos = 4.0;
         public static final double l1Position = 4.0;
-    
-    
+        public static final double l2Position = 8.0;
+        public static final double l3Position = 12.0;
+        public static final double l4Position = 20.0;
+        public static final double BargePosition = maxElevatorheight-1;
     }
 
     public class PlasmaPivot {

@@ -74,8 +74,9 @@ public class Elevator extends SubsystemBase {
 
   public Elevator() {
     System.out.println("Creating " + className + " object"); 
-
+    m_ElevatorMotor1.setPosition(0,1);
     setMotorConfig();
+    
     m_ElevatorMotor2.setControl(
       new StrictFollower(constants.CanBus.elevatorMotor1CanID)
     );
@@ -110,6 +111,7 @@ public class Elevator extends SubsystemBase {
     
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className);
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor2,configuration,className);
+
   }
 
 
@@ -245,13 +247,13 @@ public class Elevator extends SubsystemBase {
         setPointPosition = wantedposition;
         currentState = POSITION.up;
         m_ElevatorMotor1.setControl(
-          new MotionMagicTorqueCurrentFOC(wantedposition)
-          .withFeedForward(0)
-          .withSlot(1)
-            // new PositionDutyCycle(wantedposition)
-            // .withOverrideBrakeDurNeutral(true)
-            // .withEnableFOC(true)
-            // .withSlot(1)
+          // new MotionMagicTorqueCurrentFOC(wantedposition)
+          // .withFeedForward(0)
+          // .withSlot(1)
+            new PositionDutyCycle(wantedposition)
+            .withOverrideBrakeDurNeutral(true)
+            .withEnableFOC(true)
+            .withSlot(1)
         );
       
     }

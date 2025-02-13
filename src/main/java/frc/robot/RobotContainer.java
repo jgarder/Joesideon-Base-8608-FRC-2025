@@ -27,6 +27,7 @@ import frc.robot.constants.Climber;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AprilTagManager;
 import frc.robot.subsystems.ArmExtension;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -36,8 +37,10 @@ import frc.robot.subsystems.josiahClimber;
 import frc.robot.subsystems.Elevator.POSITION;
 
 public class RobotContainer {
-    //Subsystem bootup Zone - Order matters. 
+    //Subsystem bootup Zone - Order matters.
+   
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final AprilTagManager ATMan = new AprilTagManager(drivetrain); 
     public final MantaRay ss_Trident = new MantaRay();
     public final Elevator ss_Elevator = new Elevator();
     public final Pivot ss_Pivot = new Pivot(ss_Elevator.currentHeight);
@@ -77,7 +80,23 @@ public class RobotContainer {
     ////////////// movement commands
     public Command gotoL1Travel()
     {
-        return ss_Elevator.GotoPositonCommand(constants.Elevator.l1Position).alongWith(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition));
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l1Position).alongWith(GotoTravelPostion());
+    }
+    public Command gotoL2Travel()
+    {
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l2Position).alongWith(GotoTravelPostion());
+    }
+    public Command gotoL3Travel()
+    {
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l3Position).alongWith(GotoTravelPostion());
+    }
+    public Command gotoL4Travel()
+    {
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l4Position).alongWith(GotoTravelPostion());
+    }
+    public Command GotoTravelPostion()
+    {
+        return ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
     }
     public Command ParkElevatorAndHead()
     {
@@ -105,8 +124,17 @@ public class RobotContainer {
         joystick.b().onTrue(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.GroundPickupPosition));
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(gotoL1Travel());
+        .onTrue(gotoL4Travel());
+        joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+        .onTrue(gotoL3Travel());
+        joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+        .onTrue(gotoL2Travel());
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+        .onTrue(gotoL1Travel());
+
+
+   
+        joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
         .onTrue(ParkElevatorAndHead());
         //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
         
