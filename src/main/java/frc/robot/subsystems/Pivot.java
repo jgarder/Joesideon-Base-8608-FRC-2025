@@ -14,6 +14,7 @@ import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.BooleanEntry;
@@ -79,7 +80,7 @@ public class Pivot extends SubsystemBase {
     InterpolatingDoubleTreeMap heightMaxPivotMap = new InterpolatingDoubleTreeMap();
     heightMaxPivotMap.put(0.0,10.0);
     heightMaxPivotMap.put(5.0, 14.0);
-    BRAKE();//HoldPosition();
+    //BRAKE();//HoldPosition();
   }
 
   public TalonFXConfiguration buildMotorConfig(){
@@ -100,6 +101,7 @@ public class Pivot extends SubsystemBase {
     _configuration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     _configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = constants.PlasmaPivot.minposition;
     
+    _configuration.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
     return _configuration;
   }
   

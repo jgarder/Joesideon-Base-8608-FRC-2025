@@ -73,6 +73,19 @@ public class RobotContainer {
     }
     BooleanSupplier elevatorisparked = ()->{return ss_Elevator.currentState.equals(Elevator.POSITION.parked);};
     double TridentEjectMovement = 20;
+    ////////////// movement commands
+    public Command gotoL1Travel()
+    {
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l1Position).alongWith(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition));
+    }
+    public Command ParkElevatorAndHead()
+    {
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.minElevatorHeight).alongWith(
+            ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition).unless(ss_Pivot.IsPivotinTravelPosition)
+            ).andThen(
+                ss_Pivot.C_GotoPositon(constants.PlasmaPivot.ParkPosition));
+    }
+    ///////////////
     private void configureBindings() {
 
         
@@ -89,12 +102,9 @@ public class RobotContainer {
         joystick.b().onTrue(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.GroundPickupPosition));
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.l1Position).alongWith(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition)));
+        .onTrue(gotoL1Travel());
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.minElevatorHeight).alongWith(
-            ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition).unless(ss_Pivot.IsPivotinTravelPosition)
-            ).andThen(
-                ss_Pivot.C_GotoPositon(constants.PlasmaPivot.ParkPosition)));
+        .onTrue(ParkElevatorAndHead());
         //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
         
         // Note that X is defined as forward according to WPILib convention,
