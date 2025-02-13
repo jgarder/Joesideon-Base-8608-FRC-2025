@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.StrictFollower;
@@ -56,26 +57,33 @@ public class Elevator extends SubsystemBase {
   public DoubleSupplier currentHeight = ()->{return currentPosition;};
 
   DoubleEntry NT_Rpm = NT.getDoubleEntry(className , " rpm",0.0);
+
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className , "MotorTemp",0.0);
   DoubleEntry NT_Motor2Temp =  NT.getDoubleEntry(className ,"Motor2Temp",0.0);
+
   DoubleEntry NT_StatorCurrent =  NT.getDoubleEntry(className , "StatorCurrent",0.0);
   DoubleEntry NT_StatorCurrent2 =  NT.getDoubleEntry(className ,"StatorCurrent2",0.0);
+
   DoubleEntry NT_CurrentPosition = NT.getDoubleEntry(className , "CurrentPosition",0.0);
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
   DoubleEntry NT_RequestedPosition = NT.getDoubleEntry(className , "RequestedPosition",0.0);
+
   DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",0);
   DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",0);
   DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",0);
 
   public Elevator() {
     System.out.println("Creating " + className + " object"); 
+
     setMotorConfig();
     m_ElevatorMotor2.setControl(
       new StrictFollower(constants.CanBus.elevatorMotor1CanID)
     );
+
     NT_PGain.set(constants.Elevator.kP);
     NT_IGain.set(constants.Elevator.kI);
     NT_DGain.set(constants.Elevator.kD);
+
     NT_RequestedPosition.set(requestedPosition);
     NT_SetpointPosition.set(setPointPosition);
   }
@@ -108,6 +116,7 @@ public class Elevator extends SubsystemBase {
   @Override // This method will be called once per scheduler run
   public void periodic() {
     currentPosition = m_ElevatorMotor1.getPosition().getValueAsDouble();
+
     NT_CurrentPosition.set(currentPosition);
     NT_SetpointPosition.set(setPointPosition);
     NT_RequestedPosition.set(requestedPosition);
@@ -236,11 +245,15 @@ public class Elevator extends SubsystemBase {
         setPointPosition = wantedposition;
         currentState = POSITION.up;
         m_ElevatorMotor1.setControl(
-            new PositionDutyCycle(wantedposition)
-            .withOverrideBrakeDurNeutral(true)
-            .withEnableFOC(true)
-            .withSlot(1)
+          new MotionMagicTorqueCurrentFOC(wantedposition)
+          .withFeedForward(0)
+          .withSlot(1)
+            // new PositionDutyCycle(wantedposition)
+            // .withOverrideBrakeDurNeutral(true)
+            // .withEnableFOC(true)
+            // .withSlot(1)
         );
+      
     }
 
     public void BRAKE(){

@@ -7,10 +7,13 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.StrictFollower;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -52,12 +55,23 @@ public class Pivot extends SubsystemBase {
 
   DoubleEntry NT_Rpm =  NT.getDoubleEntry(className ,"RPM",0);
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
-  DoubleEntry NT_position = NT.getDoubleEntry(className, "position",0);
   DoubleEntry NT_StatorCurrent = NT.getDoubleEntry(className, "StatorCurrent", 0);
+
   DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",0);
   DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",0);
   DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",0);
+
+  DoubleEntry NT_SGain = NT.getDoubleEntry(className , "S Gain",0);
+  DoubleEntry NT_GGain = NT.getDoubleEntry(className , "G Gain",0);
+
+  DoubleEntry NT_Acceleration = NT.getDoubleEntry(className , "Acceleration",0);
+  DoubleEntry NT_Jerk = NT.getDoubleEntry(className , "Jerk",0);
+  DoubleEntry NT_Cruise = NT.getDoubleEntry(className , "Cruise",0);
+
+
+  DoubleEntry NT_position = NT.getDoubleEntry(className, "position",0);
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
+ 
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
   BooleanEntry NT_FoldedOut = NT.getBooleanEntry(className , "FoldedOut",false); //this refers to being folded out enough to NOT stage 1 Xbar.
   BooleanEntry NT_FoldedUpEnough = NT.getBooleanEntry(className , "FoldedUpEnough",false);//This refers to be being folded Up to not be out past striaght sticking out 90 =====<
@@ -68,13 +82,24 @@ public class Pivot extends SubsystemBase {
 
   DoubleSupplier elevatorposition;
   InterpolatingDoubleTreeMap heightMaxPivotMap;
+
   public Pivot(DoubleSupplier elevatorPosition) {
     System.out.println("Creating " + className + " object"); 
+
     NT_PGain.set(constants.PlasmaPivot.kP);
     NT_IGain.set(constants.PlasmaPivot.kI);
     NT_DGain.set(constants.PlasmaPivot.kD);
+
+    NT_SGain.set(constants.PlasmaPivot.kS);
+    NT_GGain.set(constants.PlasmaPivot.kG);
+
+    NT_Acceleration.set(constants.PlasmaPivot.Accel);
+    NT_Jerk.set(constants.PlasmaPivot.Jerk);
+    NT_Cruise.set(constants.PlasmaPivot.Cruise);
+
     elevatorposition = elevatorPosition;
     configuration = buildMotorConfig();
+
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className);
 
     InterpolatingDoubleTreeMap heightMaxPivotMap = new InterpolatingDoubleTreeMap();
@@ -85,15 +110,30 @@ public class Pivot extends SubsystemBase {
 
   public TalonFXConfiguration buildMotorConfig(){
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
+
     _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+
     //configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     _configuration.Slot1.kP = constants.PlasmaPivot.kP;
     _configuration.Slot1.kI = constants.PlasmaPivot.kI;
     _configuration.Slot1.kD = constants.PlasmaPivot.kD;
+
+    _configuration.Slot1.kG = constants.PlasmaPivot.kG;
+    _configuration.Slot1.kS = constants.PlasmaPivot.kS;
+
     _configuration.Feedback.RotorToSensorRatio = constants.PlasmaPivot.gearRatio;
 
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     _configuration.CurrentLimits.StatorCurrentLimit = constants.PlasmaPivot.maxStatorCurrent;
+
+    _configuration.TorqueCurrent.PeakForwardTorqueCurrent = constants.PlasmaPivot.maxStatorCurrent;
+    _configuration.TorqueCurrent.PeakReverseTorqueCurrent = constants.PlasmaPivot.maxStatorCurrent;
+
+    _configuration.TorqueCurrent.TorqueNeutralDeadband = 0.1;
+
+    _configuration.MotionMagic.MotionMagicAcceleration = constants.PlasmaPivot.Accel;
+    _configuration.MotionMagic.MotionMagicJerk = constants.PlasmaPivot.Jerk;
+    _configuration.MotionMagic.MotionMagicCruiseVelocity = constants.PlasmaPivot.Cruise;
 
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.PlasmaPivot.maxposition;
@@ -108,10 +148,12 @@ public class Pivot extends SubsystemBase {
   @Override
   public void periodic() {
     LastPosition = m_PivotMotor.getPosition().getValueAsDouble();
+
     // This method will be called once per scheduler run
     NT_Rpm.set(m_PivotMotor.getVelocity().getValueAsDouble() * 60);
     NT_MotorTemp.set(m_PivotMotor.getDeviceTemp().getValueAsDouble());
     NT_StatorCurrent.set(m_PivotMotor.getStatorCurrent().getValueAsDouble());
+
     NT_position.set(LastPosition);
 
     NT_FoldedOut.set(IsPivotFoldedOut.getAsBoolean());
@@ -119,15 +161,30 @@ public class Pivot extends SubsystemBase {
     NT_FoldedUpFromReef.set(IsPivotAwayFromReef.getAsBoolean());
     NT_ElevatorTravelPosition.set(IsPivotinTravelPosition.getAsBoolean());
 
+    //feedback
     double p = NT_PGain.getAsDouble();
     double i = NT_IGain.getAsDouble();
     double d = NT_DGain.getAsDouble();
-          
+
+    //feedforward
+    double s = NT_DGain.getAsDouble();
+    double g = NT_DGain.getAsDouble();
+
+    double mA = NT_Acceleration.getAsDouble();
+    double mJ = NT_Jerk.getAsDouble();
+    double mC = NT_Cruise.getAsDouble();
+         
     if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
     if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
   
-    SmartDashboard.putNumber(className + "Pivot Position", m_PivotMotor.getPosition().getValueAsDouble());
+    if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
+    if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
+
+    if((mA != configuration.MotionMagic.MotionMagicAcceleration)) { configuration.MotionMagic.MotionMagicAcceleration = mA; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
+    if((mJ != configuration.MotionMagic.MotionMagicJerk)) { configuration.MotionMagic.MotionMagicJerk = mJ; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
+    if((mC != configuration.MotionMagic.MotionMagicCruiseVelocity)) { configuration.MotionMagic.MotionMagicCruiseVelocity = mC; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
+
   }
 
   //is the elevator height low enough that we can fit under the stafe 1 cross bar when retracting (does not account for extension)
@@ -172,11 +229,12 @@ public class Pivot extends SubsystemBase {
   public void GotoPosition(double wantedposition){ 
     NT_BrakeEnabled.set(false);
     NT_SetpointPosition.set(wantedposition);
-    m_PivotMotor.setControl(
-        new PositionDutyCycle(wantedposition)
-        .withEnableFOC(true)
-        .withOverrideBrakeDurNeutral(true)
-        .withSlot(1)
+
+    m_PivotMotor.setControl( 
+      new MotionMagicTorqueCurrentFOC(wantedposition)
+      .withOverrideCoastDurNeutral(false)
+      .withSlot(1)
+  
     );
   }
 

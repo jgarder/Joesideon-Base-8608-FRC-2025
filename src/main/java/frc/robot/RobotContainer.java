@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.C_intake;
@@ -89,7 +90,9 @@ public class RobotContainer {
     private void configureBindings() {
 
         
-
+        joystick.rightBumper().onTrue(ss_Trident.bumpout()
+            .andThen(new WaitCommand(0.2))
+            .andThen(ss_Trident.Stop()));
         joystick.a().onTrue(new C_intake(ss_Trident).withTimeout(20));
         //joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
 
@@ -131,8 +134,8 @@ public class RobotContainer {
         // );
 
 
-        // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // reset the field-centric heading on start button press
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
         configAltCommands();
