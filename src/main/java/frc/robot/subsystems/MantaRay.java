@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 
@@ -172,6 +173,7 @@ public class MantaRay extends SubsystemBase {
     public Command bumpout()
     {
         return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-1.0));});
+        
     }
 
     public void BRAKE(){

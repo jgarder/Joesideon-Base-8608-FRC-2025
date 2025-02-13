@@ -50,7 +50,7 @@ public class constants {
 
         public static final int fryscoopIntakeMotorCanID = 0;
 
-        public static final int CANdleID = 11;
+        public static final int CANdleID = 2;
 
     }
 
@@ -62,9 +62,9 @@ public class constants {
         public static final double intakeAmpLimittime = .10;
     }
     public class Elevator {
-        public static final double kP = 0.1;
-        public static final double kI = 0.01;
-        public static final double kD = 0.01;
+        public static final double kP = 5.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.00;
 
         public static final double kG = 0.0;
         
@@ -103,9 +103,17 @@ public class constants {
 
         public static final double maxStatorCurrent = 40;
 
-        public static final double kP = 0.08;
-        public static final double kI = 0.02;
-        public static final double kD = 0.0105;
+        public static final double kP = 200.0;
+        public static final double kI = 0.00;
+        public static final double kD = 0.00;
+
+        public static final double kS = 0.0;
+        public static final double kG = 0.0;
+
+        public static final double Accel = 100.0;
+        public static final double Jerk = 200.0;
+        public static final double Cruise = 50.0;
+
 
         public static final double MoveTolerance = .5;
     }

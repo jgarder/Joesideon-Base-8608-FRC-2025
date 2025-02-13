@@ -105,7 +105,7 @@ public class ArmExtension extends SubsystemBase {
     if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; Tools.SetConfigToTalonFX(m_ExtensionMotor,configuration,className); }
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; Tools.SetConfigToTalonFX(m_ExtensionMotor,configuration,className); }
   
-    SmartDashboard.putNumber(className + "Extension position", m_ExtensionMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber(className + " position", m_ExtensionMotor.getPosition().getValueAsDouble());
   }
 
   //this tells us if our extension is retracted enough to allow a fold up into the elevator

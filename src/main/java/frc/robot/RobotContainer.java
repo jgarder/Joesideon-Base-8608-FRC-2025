@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.C_intake;
@@ -76,7 +77,9 @@ public class RobotContainer {
     private void configureBindings() {
 
         
-
+        joystick.rightBumper().onTrue(ss_Trident.bumpout()
+            .andThen(new WaitCommand(0.2))
+            .andThen(ss_Trident.Stop()));
         joystick.a().onTrue(new C_intake(ss_Trident).withTimeout(20));
         //joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
 
@@ -89,12 +92,14 @@ public class RobotContainer {
         joystick.b().onTrue(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.GroundPickupPosition));
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.l1Position).alongWith(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition)));
+            .onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.maxElevatorheight)
+            .alongWith(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition)));
+        
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.minElevatorHeight).alongWith(
-            ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition).unless(ss_Pivot.IsPivotinTravelPosition)
-            ).andThen(
-                ss_Pivot.C_GotoPositon(constants.PlasmaPivot.ParkPosition)));
+        .onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.minElevatorHeight)
+        .alongWith(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition)
+            .unless(ss_Pivot.IsPivotinTravelPosition))
+        .andThen(ss_Pivot.C_GotoPositon(constants.PlasmaPivot.ParkPosition)));
         //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
         
         // Note that X is defined as forward according to WPILib convention,
@@ -121,8 +126,8 @@ public class RobotContainer {
         // );
 
 
-        // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // reset the field-centric heading on start button press
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
         configAltCommands();
