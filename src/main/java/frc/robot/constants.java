@@ -78,8 +78,9 @@ public class constants {
         public static final double maxElevatorheight = 25;
         public static final double minElevatorHeight = 0;
 
-        public static final double maxStatorCurrent = 120;
-
+        public static final double maxStatorCurrent = 60;
+        
+        public static final double ElevatorBrakeParkTolerance = 1.0;
         public static final double MoveTolerance = .5;
 
         public static final double CannotPivotParkBelowElevatorPosition = 18;//when elevator is above this, pivot must be in travel position for elevator to go below this number
@@ -104,10 +105,17 @@ public class constants {
         public static final double maxposition = 27;
         public static final double minposition = 0;
 
-        public static final double ParkPosition = 0.1;
+        public static final double ParkPosition = 0.0;
         public static final double TravelPosition = 3.75;
         public static final double GroundPickupPosition = 12.0;
-        public static final double l4ReadyPosition = 4;
+
+        public static final double l1ReadyPosition = 7.5;
+        public static final double l1ScorePosition = l1ReadyPosition + 1;
+
+        public static final double l2ReadyPosition = 7.5;
+        public static final double l2ScorePosition = l2ReadyPosition + 1;
+
+        public static final double l4ReadyPosition = l1ReadyPosition;
 
         public static final double maxStatorCurrent = 40;
 
@@ -128,16 +136,20 @@ public class constants {
 
     public class PlasmaExtension {
         public static final double gearRatio = 60;
-        public static final double maxExtension = 10;
-        public static final double minExtension = 0;
         public static final double maxPositionToBeSafeFromStage1Crossbar = 0;
-        public static final double maxStatorCurrent = 0;
-        public static final double maxposition = 0;
+        public static final double maxStatorCurrent = 40;
+        public static final double maxposition = 117;
         public static final double minposition = 0;
-        public static final double kP = 0;
-        public static final double kI = 0;
+        public static final double kP = 0.06;
+        public static final double kI = 0.01;
         public static final double kD = 0;
-        public static final double MoveTolerance = 0;
+        public static final double MoveTolerance = 1.0;
+
+        public static final double l1ReadyPosition = 40.0;
+        public static final double l1ScorePosition = 40.0;
+
+        public static final double l2ReadyPosition = l1ReadyPosition;
+        public static final double l2ScorePosition = 0;
     }
 
 

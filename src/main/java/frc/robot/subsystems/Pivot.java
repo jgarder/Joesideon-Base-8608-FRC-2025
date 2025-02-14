@@ -129,7 +129,7 @@ public class Pivot extends SubsystemBase {
     _configuration.TorqueCurrent.PeakForwardTorqueCurrent = constants.PlasmaPivot.maxStatorCurrent;
     _configuration.TorqueCurrent.PeakReverseTorqueCurrent = constants.PlasmaPivot.maxStatorCurrent;
 
-    _configuration.TorqueCurrent.TorqueNeutralDeadband = 0.1;
+    _configuration.TorqueCurrent.TorqueNeutralDeadband = 1.0;
 
     _configuration.MotionMagic.MotionMagicAcceleration = constants.PlasmaPivot.Accel;
     _configuration.MotionMagic.MotionMagicJerk = constants.PlasmaPivot.Jerk;
@@ -167,24 +167,24 @@ public class Pivot extends SubsystemBase {
     double d = NT_DGain.getAsDouble();
 
     //feedforward
-    double s = NT_DGain.getAsDouble();
-    double g = NT_DGain.getAsDouble();
+    double s = NT_SGain.getAsDouble();
+    double g = NT_GGain.getAsDouble();
 
     double mA = NT_Acceleration.getAsDouble();
     double mJ = NT_Jerk.getAsDouble();
     double mC = NT_Cruise.getAsDouble();
-         
-    if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
-    if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
-    if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
+    boolean motorNeedsConfig = false;
+    if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p; motorNeedsConfig = true; }
+    if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; motorNeedsConfig = true; }
+    if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; motorNeedsConfig = true; }
   
-    if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
-    if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
+    if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; motorNeedsConfig = true; }
+    if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; motorNeedsConfig = true; }
 
-    if((mA != configuration.MotionMagic.MotionMagicAcceleration)) { configuration.MotionMagic.MotionMagicAcceleration = mA; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
-    if((mJ != configuration.MotionMagic.MotionMagicJerk)) { configuration.MotionMagic.MotionMagicJerk = mJ; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
-    if((mC != configuration.MotionMagic.MotionMagicCruiseVelocity)) { configuration.MotionMagic.MotionMagicCruiseVelocity = mC; Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className); }
-
+    if((mA != configuration.MotionMagic.MotionMagicAcceleration)) { configuration.MotionMagic.MotionMagicAcceleration = mA; motorNeedsConfig = true; }
+    if((mJ != configuration.MotionMagic.MotionMagicJerk)) { configuration.MotionMagic.MotionMagicJerk = mJ; motorNeedsConfig = true; }
+    if((mC != configuration.MotionMagic.MotionMagicCruiseVelocity)) { configuration.MotionMagic.MotionMagicCruiseVelocity = mC; motorNeedsConfig = true; }
+    if (motorNeedsConfig){Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className);}
   }
 
   //is the elevator height low enough that we can fit under the stafe 1 cross bar when retracting (does not account for extension)
@@ -232,7 +232,7 @@ public class Pivot extends SubsystemBase {
 
     m_PivotMotor.setControl( 
       new MotionMagicTorqueCurrentFOC(wantedposition)
-      .withOverrideCoastDurNeutral(false)
+      // .withOverrideCoastDurNeutral(false)
       .withSlot(1)
   
     );

@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.MantaState;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
@@ -46,7 +45,7 @@ public class Elevator extends SubsystemBase {
 
   private final StaticBrake m_s_Brake = new StaticBrake();
   
-
+  public final BooleanSupplier elevatorisparked = ()->{return currentState.equals(Elevator.POSITION.parked);};
 
   private double currentPosition = 0;
   private double requestedPosition = 0;
@@ -146,6 +145,11 @@ public class Elevator extends SubsystemBase {
     if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i;  frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className); }
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d;  frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className); }
 
+    doTravelIfInCorrectPosition();
+  }
+
+  public void doTravelIfInCorrectPosition()
+  {
     if (setPointPosition != requestedPosition) {
       
       //if we are above the CannotFoldBelow position
@@ -209,14 +213,23 @@ public class Elevator extends SubsystemBase {
         }
       }
     }// else if we are close to parked and we are requesting a park. then just brake mode. 
-    else if ((setPointPosition < ElevatorBrakeParkTolerance) & (requestedPosition < ElevatorBrakeParkTolerance) & Tools.isPosAtSetpoint(currentPosition, constants.Elevator.minElevatorHeight, ElevatorBrakeParkTolerance))
+    else if ((setPointPosition < constants.Elevator.ElevatorBrakeParkTolerance) 
+          & (requestedPosition < constants.Elevator.ElevatorBrakeParkTolerance)
+          &  m_ElevatorMotor1.getVelocity().getValueAsDouble() < 100
+          & Tools.isPosAtSetpoint(currentPosition, constants.Elevator.minElevatorHeight, constants.Elevator.ElevatorBrakeParkTolerance))
     {
       //System.out.println("elevator Braking");
+      // //HACK FIX HACK FIX HACK FIX
+      // if(currentPosition > .5 ){}
+      // m_ElevatorMotor1.setPosition(0,.5);//HACK FIX HACK FIX HACK FIX
+      // //HACK FIX HACK FIX HACK FIX
+      
       currentState = POSITION.parked;
       BRAKE();
     }
   }
-  public double ElevatorBrakeParkTolerance = 0.5;
+  
+  
   public double canBusUpdateFrequency = 50;
   public double getPosition()
   {

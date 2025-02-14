@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.TunerConstants;
-import frc.robot.MantaState;
+import frc.robot.subsystems.MantaState;
 import frc.robot.RobotContainer;
 import frc.robot.constants;
 //import frc.robot.AlphaBots.CommandSwerveDrivetrain;

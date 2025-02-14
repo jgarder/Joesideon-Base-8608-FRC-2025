@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -6,14 +6,16 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Pivot;
 
-public class MantaState {
+public class MantaState extends SubsystemBase {
     private static MantaState instance;
 
+    @Override
+    public void periodic() {
+      
+    }
     
     public static MantaState getInstance() throws Throwable
     {

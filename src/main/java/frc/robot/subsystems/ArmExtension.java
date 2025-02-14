@@ -3,30 +3,15 @@ package frc.robot.subsystems;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.StrictFollower;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.BooleanEntry;
-import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.DoubleTopic;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -51,9 +36,11 @@ public class ArmExtension extends SubsystemBase {
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
   DoubleEntry NT_position = NT.getDoubleEntry(className, "position",0);
   DoubleEntry NT_StatorCurrent = NT.getDoubleEntry(className, "StatorCurrent", 0);
-  DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",constants.PlasmaExtension.kP);
-  DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",constants.PlasmaExtension.kI);
-  DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",constants.PlasmaExtension.kD);
+  
+  DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",0);
+  DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",0);
+  DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",0);
+
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
 
@@ -64,6 +51,9 @@ public class ArmExtension extends SubsystemBase {
     configuration = buildMotorConfig();
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ExtensionMotor,configuration,className);
 
+    NT_PGain.set(constants.PlasmaExtension.kP);
+    NT_IGain.set(constants.PlasmaExtension.kI);
+    NT_DGain.set(constants.PlasmaExtension.kD);
 
   }
 

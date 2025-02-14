@@ -142,12 +142,12 @@ public class AprilTagManager extends SubsystemBase
         new AprilTag(11,"reefSW",new Pose2d(Units.inchesToMeters(497.77),Units.inchesToMeters(130.17),Rotation2d.fromDegrees(240)),0).WithAlgaeOnUpper().WithType(TagType.Reef)
         );
 
-         StructEntry<Pose2d> NT_myloc = NT.getStructEntry_Pose2D("Poses","TagLoc",new Pose2d());
+  StructEntry<Pose2d> NT_myloc = NT.getStructEntry_Pose2D("Poses","TagLoc",new Pose2d());
   StructEntry<Pose2d> NT_myStraightloc = NT.getStructEntry_Pose2D("Poses","StraightLoc",new Pose2d());//straight out from the april tag. a centered pick for de-algae/processor/pickup 
   StructEntry<Pose2d> NT_Leftloc = NT.getStructEntry_Pose2D("Poses","leftLoc",new Pose2d());//LEFT FROM Robot TOWARDS tag view!
   StructEntry<Pose2d> NT_rightloc = NT.getStructEntry_Pose2D("Poses","rightLoc",new Pose2d());//Right Given View Robot TOWARDS tag!
   StructEntry<Pose2d> NT_ClosestTag = NT.getStructEntry_Pose2D("Poses","ClosestTag",new Pose2d());//shows closest tag to robotchassis
-  StructEntry<Pose2d> NT_Simloc = NT.getStructEntry_Pose2D("Poses","SimChassisLoc",new Pose2d());
+  StructEntry<Pose2d> NT_Simloc = NT.getStructEntry_Pose2D("Poses","ChassisLoc",new Pose2d());
   StructEntry<Pose2d> NT_ClosestSource = NT.getStructEntry_Pose2D("Poses","ClosestSource",new Pose2d());
   StructEntry<Pose2d> NT_ClosestReef = NT.getStructEntry_Pose2D("Poses","ClosestReef",new Pose2d());
   StructEntry<Pose2d> NT_ClosestProcessor = NT.getStructEntry_Pose2D("Poses","ClosestProcessor",new Pose2d());
@@ -167,12 +167,15 @@ public class AprilTagManager extends SubsystemBase
     // NT_myStraightloc.set(AprilTagManager.getStraightOutLoc(chosenAprilTagID, Units.inchesToMeters(6)));
     // NT_Leftloc.set(getOffSet90Loc(chosenAprilTagID, Units.inchesToMeters(6), constants.ReefWidthCenteronCenter,true));
     // NT_rightloc.set(getOffSet90Loc(chosenAprilTagID, Units.inchesToMeters(6), constants.ReefWidthCenteronCenter,false));
+    if(DriverStation.isDSAttached())
+    {
+      NT_Simloc.set(SimRobotChassisLoc);
+      NT_ClosestSource.set(getClosestTagofTypeToRobotCenter(SimRobotChassisLoc,TagType.Source).Pose);
+      NT_ClosestProcessor.set(getClosestTagofTypeToRobotCenter(SimRobotChassisLoc,TagType.Processor).Pose);
+      NT_ClosestReef.set(getClosestTagofTypeToRobotCenter(SimRobotChassisLoc,TagType.Reef).Pose);
+      NT_ClosestBarge.set(getClosestTagofTypeToRobotCenter(SimRobotChassisLoc,(DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? TagType.BlueBarge:TagType.RedBarge).Pose);
+      NT_ClosestTag.set(getClosestTagToRobotCenter(SimRobotChassisLoc).Pose);
+    }
 
-    NT_ClosestSource.set(getClosestTagofTypeToRobotCenter(SimRobotChassisLoc,TagType.Source).Pose);
-    NT_ClosestProcessor.set(getClosestTagofTypeToRobotCenter(SimRobotChassisLoc,TagType.Processor).Pose);
-    NT_ClosestReef.set(getClosestTagofTypeToRobotCenter(SimRobotChassisLoc,TagType.Reef).Pose);
-    NT_ClosestBarge.set(getClosestTagofTypeToRobotCenter(SimRobotChassisLoc,(DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? TagType.BlueBarge:TagType.RedBarge).Pose);
-
-    NT_ClosestTag.set(getClosestTagToRobotCenter(SimRobotChassisLoc).Pose);
   }
   }

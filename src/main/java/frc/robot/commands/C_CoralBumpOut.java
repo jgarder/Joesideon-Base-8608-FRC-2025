@@ -5,13 +5,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
 import frc.robot.subsystems.MantaRay;
 
-public class C_intake extends Command {
+public class C_CoralBumpOut extends Command {
     
     MantaRay ss_Trident;
     boolean isloaded = false;
     public final Timer startupdebounceTimer = new Timer();
-    private double debounceSecondsNeeded = .30;
-    public C_intake(MantaRay incomingss_Trident){
+    private double GuarenteedRuntime = .30;
+    public C_CoralBumpOut(MantaRay incomingss_Trident){
         ss_Trident = incomingss_Trident;
         addRequirements(incomingss_Trident);
     }
@@ -20,7 +20,7 @@ public class C_intake extends Command {
     public void initialize() {
         startupdebounceTimer.restart();
         boolean isloaded = false;
-        ss_Trident.setMotorRPM(constants.MantaRay.IntakeDutyCycle);
+        ss_Trident.bumpout();
     }
     
     @Override
@@ -29,21 +29,16 @@ public class C_intake extends Command {
     //is called once per periodic and will run the end command when true is returned. 
     @Override
     public boolean isFinished(){
-        if(startupdebounceTimer.get()<debounceSecondsNeeded){return false;}
+        if(startupdebounceTimer.get() < GuarenteedRuntime){return false;}
 
-        boolean isloaded = ss_Trident.isLoaded();
-        if(isloaded)
-        {
-            ss_Trident.HoldPosition();
-        }
-        return isloaded;
+        return true;
     }
 
     // If "isfinished" end true OR if we cancel this command for some reason. 
     // we need some actions to happen no matter what. 
     @Override
     public void end(boolean interrupted) {
-        ss_Trident.HoldPosition();
+        ss_Trident.Stop();
     }
 
 }

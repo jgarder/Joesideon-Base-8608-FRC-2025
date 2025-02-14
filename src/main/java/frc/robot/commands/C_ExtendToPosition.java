@@ -27,6 +27,11 @@ public class C_ExtendToPosition extends Command{
         return frc.robot.AlphaBots.Tools.isPosAtSetpoint(SubSystem.getPosition(), wantedPosition, Tolerance);
     }
 
+    @Override
+    public void end(boolean interrupted) {
+        SubSystem.BRAKE();
+    }
+
    
 
 }
