@@ -96,7 +96,7 @@ public class constants {
 
     public class PlasmaPivot {
 
-        public static final double gearRatio = 3*4*5; //3 stage gearbox with 3:1,4:1,5:1 stacked ontop of each other; creates a 60:1 gear ratio 
+        public static final double gearRatio = 4*4*5; //3 stage gearbox with 4:1,4:1,5:1 stacked ontop of each other; creates a 80:1 gear ratio 
         
         public static final double minPositionToBeSafeFromStage1Crossbar = 3.55; //cant be folded up too much when elevator goes up or else head crashes.
         public static final double maxPositionToBeSafeFromSmashingintoReef = 7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
@@ -135,7 +135,7 @@ public class constants {
     }
 
     public class PlasmaExtension {
-        public static final double gearRatio = 60;
+        public static final double gearRatio = 3*3*3; //27:1 gear reduction
         public static final double maxPositionToBeSafeFromStage1Crossbar = 0;
         public static final double maxStatorCurrent = 40;
         public static final double maxposition = 117;
