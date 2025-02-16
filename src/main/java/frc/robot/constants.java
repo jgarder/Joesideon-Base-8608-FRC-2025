@@ -48,7 +48,9 @@ public class constants {
         public static final int MantaRayMotorCanID = 44;
 
         public static final int armExtensionMotorCanID = 46;
+        
         public static final int armPivotMotorCanID = 45;
+        public static final int pivotAbsoluteEncoder = 0;
 
         public static final int josiahClimberCatchMotorCanID = 42;//42 on canivore
         public static final int josiahClimberSlideCanID = 43;
@@ -56,6 +58,7 @@ public class constants {
         public static final int fryscoopIntakeMotorCanID = 0;
 
         public static final int CANdleID = 2;
+        
 
     }
 
@@ -97,11 +100,13 @@ public class constants {
     public class PlasmaPivot {
 
         public static final double gearRatio = 3*4*5; //3 stage gearbox with 3:1,4:1,5:1 stacked ontop of each other; creates a 60:1 gear ratio 
-        
+        public static final double absoMagnetOffset = -0.22836753125;
+       
         public static final double minPositionToBeSafeFromStage1Crossbar = 3.55; //cant be folded up too much when elevator goes up or else head crashes.
         public static final double maxPositionToBeSafeFromSmashingintoReef = 7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
         public static final double maxPositionToBeSafeFromSmashingintoSelf = 14;// cant be pointing down too much when elevator goes down or else head crashes. 
-
+        
+        public static final double MoveTolerance = .5;
         public static final double maxposition = 27;
         public static final double minposition = 0;
 
@@ -131,7 +136,9 @@ public class constants {
         public static final double Cruise = 50.0;
 
 
-        public static final double MoveTolerance = .5;
+       
+
+        
     }
 
     public class PlasmaExtension {
