@@ -11,7 +11,9 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -71,6 +73,14 @@ public class Elevator extends SubsystemBase {
   DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",0);
   DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",0);
 
+  DoubleEntry NT_SGain = NT.getDoubleEntry(className , "S Gain",0);
+  DoubleEntry NT_GGain = NT.getDoubleEntry(className , "G Gain",0);
+  DoubleEntry NT_VGain = NT.getDoubleEntry(className , "V Gain",0);
+
+  DoubleEntry NT_Acceleration = NT.getDoubleEntry(className , "Acceleration",0);
+  DoubleEntry NT_Jerk = NT.getDoubleEntry(className , "Jerk",0);
+  DoubleEntry NT_Cruise = NT.getDoubleEntry(className , "Cruise",0);
+
   public Elevator() {
     System.out.println("Creating " + className + " object"); 
     m_ElevatorMotor1.setPosition(0,1);
@@ -84,6 +94,15 @@ public class Elevator extends SubsystemBase {
     NT_IGain.set(constants.Elevator.kI);
     NT_DGain.set(constants.Elevator.kD);
 
+    NT_VGain.set(constants.Elevator.kV);
+
+    NT_SGain.set(constants.Elevator.kS);
+    NT_GGain.set(constants.Elevator.kG);
+
+    NT_Acceleration.set(constants.Elevator.Accel);
+    NT_Jerk.set(constants.Elevator.Jerk);
+    NT_Cruise.set(constants.Elevator.Cruise);
+
     NT_RequestedPosition.set(requestedPosition);
     NT_SetpointPosition.set(setPointPosition);
   }
@@ -94,9 +113,17 @@ public class Elevator extends SubsystemBase {
     configuration = new TalonFXConfiguration();
     configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     //configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    configuration.Slot1.kP = constants.Elevator.kP;
-    configuration.Slot1.kI = constants.Elevator.kI;
-    configuration.Slot1.kD = constants.Elevator.kD;
+    configuration.Slot1.kP = constants.PlasmaPivot.kP;
+    configuration.Slot1.kI = constants.PlasmaPivot.kI;
+    configuration.Slot1.kD = constants.PlasmaPivot.kD;
+
+    configuration.Slot1.kV = constants.PlasmaPivot.kV;
+
+    configuration.Slot1.kG = constants.PlasmaPivot.kG;
+    configuration.Slot1.GravityType = GravityTypeValue.Elevator_Static;
+
+    configuration.Slot1.kS = constants.PlasmaPivot.kS;
+    configuration.Slot1.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
     configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     configuration.CurrentLimits.StatorCurrentLimit = constants.Elevator.maxStatorCurrent;
@@ -137,13 +164,34 @@ public class Elevator extends SubsystemBase {
 
     // SmartDashboard.putNumber(className + "Elevator position", m_ElevatorMotor1.getPosition().getValueAsDouble());
 
+    //feedback
     double p = NT_PGain.getAsDouble();
     double i = NT_IGain.getAsDouble();
     double d = NT_DGain.getAsDouble();
-          
-    if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p;  frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className); }
-    if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i;  frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className); }
-    if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d;  frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className); }
+
+    //feedforward
+    double v = NT_VGain.getAsDouble();
+    double s = NT_SGain.getAsDouble();
+    double g = NT_GGain.getAsDouble();
+
+    double mA = NT_Acceleration.getAsDouble();
+    double mJ = NT_Jerk.getAsDouble();
+    double mC = NT_Cruise.getAsDouble();
+    boolean motorNeedsConfig = false;
+
+    if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p; motorNeedsConfig = true; }
+    if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; motorNeedsConfig = true; }
+    if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; motorNeedsConfig = true; }
+  
+    if((v != configuration.Slot1.kV)) { configuration.Slot1.kV = v; motorNeedsConfig = true; }
+    if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; motorNeedsConfig = true; }
+    if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; motorNeedsConfig = true; }
+
+    if((mA != configuration.MotionMagic.MotionMagicAcceleration)) { configuration.MotionMagic.MotionMagicAcceleration = mA; motorNeedsConfig = true; }
+    if((mJ != configuration.MotionMagic.MotionMagicJerk)) { configuration.MotionMagic.MotionMagicJerk = mJ; motorNeedsConfig = true; }
+    if((mC != configuration.MotionMagic.MotionMagicCruiseVelocity)) { configuration.MotionMagic.MotionMagicCruiseVelocity = mC; motorNeedsConfig = true; }
+    
+    if (motorNeedsConfig){Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className);}
 
     doTravelIfInCorrectPosition();
   }
@@ -256,13 +304,12 @@ public class Elevator extends SubsystemBase {
         setPointPosition = wantedposition;
         currentState = POSITION.up;
         m_ElevatorMotor1.setControl(
-          // new MotionMagicTorqueCurrentFOC(wantedposition)
-          // .withFeedForward(0)
-          // .withSlot(1)
-            new PositionDutyCycle(wantedposition)
-            .withOverrideBrakeDurNeutral(true)
-            .withEnableFOC(true)
-            .withSlot(1)
+          new MotionMagicTorqueCurrentFOC(wantedposition)
+          .withSlot(1)
+            // new PositionDutyCycle(wantedposition)
+            // .withOverrideBrakeDurNeutral(true)
+            // .withEnableFOC(true)
+            // .withSlot(1)
         );
       
     }

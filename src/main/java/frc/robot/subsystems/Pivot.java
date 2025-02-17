@@ -20,9 +20,11 @@ import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.BooleanEntry;
@@ -69,6 +71,7 @@ public class Pivot extends SubsystemBase {
 
   DoubleEntry NT_SGain = NT.getDoubleEntry(className , "S Gain",0);
   DoubleEntry NT_GGain = NT.getDoubleEntry(className , "G Gain",0);
+  DoubleEntry NT_VGain = NT.getDoubleEntry(className , "V Gain",0);
 
   DoubleEntry NT_Acceleration = NT.getDoubleEntry(className , "Acceleration",0);
   DoubleEntry NT_Jerk = NT.getDoubleEntry(className , "Jerk",0);
@@ -95,6 +98,8 @@ public class Pivot extends SubsystemBase {
     NT_PGain.set(constants.PlasmaPivot.kP);
     NT_IGain.set(constants.PlasmaPivot.kI);
     NT_DGain.set(constants.PlasmaPivot.kD);
+
+    NT_VGain.set(constants.PlasmaPivot.kV);
 
     NT_SGain.set(constants.PlasmaPivot.kS);
     NT_GGain.set(constants.PlasmaPivot.kG);
@@ -124,8 +129,13 @@ public class Pivot extends SubsystemBase {
     _configuration.Slot1.kI = constants.PlasmaPivot.kI;
     _configuration.Slot1.kD = constants.PlasmaPivot.kD;
 
+    _configuration.Slot1.kV = constants.PlasmaPivot.kV;
+
     _configuration.Slot1.kG = constants.PlasmaPivot.kG;
+    _configuration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
+
     _configuration.Slot1.kS = constants.PlasmaPivot.kS;
+    _configuration.Slot1.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
     _configuration.Feedback.RotorToSensorRatio = constants.PlasmaPivot.gearRatio;
 
@@ -156,7 +166,7 @@ public class Pivot extends SubsystemBase {
       //Setting this to 0 makes the absolute position always negative [-1, 0) 
       cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
       
-      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
       cc_cfg.MagnetSensor.MagnetOffset = constants.PlasmaPivot.absoMagnetOffset;// ;
       pivotAbsoluteEncoder.getConfigurator().apply(cc_cfg);
 
@@ -164,7 +174,7 @@ public class Pivot extends SubsystemBase {
        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
        .withRotorToSensorRatio(constants.PlasmaPivot.gearRatio).withSensorToMechanismRatio(1.0);
 
-    configuration.withFeedback(AbsoluteEncoderFeedbackConfig);
+    _configuration.withFeedback(AbsoluteEncoderFeedbackConfig);
 
     return _configuration;
   }
@@ -191,6 +201,7 @@ public class Pivot extends SubsystemBase {
     double d = NT_DGain.getAsDouble();
 
     //feedforward
+    double v = NT_VGain.getAsDouble();
     double s = NT_SGain.getAsDouble();
     double g = NT_GGain.getAsDouble();
 
@@ -203,6 +214,7 @@ public class Pivot extends SubsystemBase {
     if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; motorNeedsConfig = true; }
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; motorNeedsConfig = true; }
   
+    if((v != configuration.Slot1.kV)) { configuration.Slot1.kV = v; motorNeedsConfig = true; }
     if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; motorNeedsConfig = true; }
     if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; motorNeedsConfig = true; }
 

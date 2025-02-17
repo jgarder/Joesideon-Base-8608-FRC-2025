@@ -68,7 +68,7 @@ public class RobotContainer {
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.Velocity);
 
-    //private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
@@ -105,9 +105,16 @@ public class RobotContainer {
     {
         return new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition);//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
     }
+    BooleanSupplier jake = ()->{return ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.l1Position;};
+    BooleanSupplier jake2 = ()->{return ss_Elevator.m_ElevatorMotor1.getVelocity().getValueAsDouble() < 100;};
+
+    public Command elevator2StepPark()
+    {   //& jake2.getAsBoolean()
+       return new  C_ElevateToPosition(ss_Elevator,constants.Elevator.l1Position).until(()->{return jake.getAsBoolean();}).andThen(new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight));//C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight);
+    }
     public Command ParkElevatorAndHead()
     {
-        return new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
+        return elevator2StepPark()//new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition))
         .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition).unless(ss_Pivot.IsPivotinTravelPosition)
             ).andThen(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.ParkPosition));
@@ -135,18 +142,20 @@ public class RobotContainer {
     DoubleSupplier gettestchoice = ()->{return testchoice;};
     private void configureBindings() {
 
-        
+        // reset the field-centric heading on start button press
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
         joystick.rightBumper().onTrue(TridentCoralBumpOut());
         joystick.a().onTrue(new C_TridentIntake(ss_Trident).withTimeout(20));
         //joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
 
-        joystick.y().onTrue(ss_ArmExtension.C_GotoPositon(constants.PlasmaExtension.maxposition));
-        joystick.b().onTrue(ss_ArmExtension.C_GotoPositon(constants.PlasmaExtension.minposition));
+        //joystick.y().onTrue(ss_ArmExtension.C_GotoPositon(constants.PlasmaExtension.maxposition));
+        //joystick.b().onTrue(ss_ArmExtension.C_GotoPositon(constants.PlasmaExtension.minposition));
         //joystick.x().onTrue(ss_Elevator.GotoPositonCommand(2));
 
         //joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
-        //joystick.x().onTrue(new InstantCommand(()->{testchoice= testchoice +1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
-        //joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
+        joystick.x().onTrue(new InstantCommand(()->{testchoice= testchoice +1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
+        joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
 
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
@@ -159,7 +168,8 @@ public class RobotContainer {
         .onTrue(gotoL1Travel().andThen(PivotIntoReef()));
 
         joystick.leftTrigger().onTrue(CoralDropScoreL2().andThen(ParkElevatorAndHead()));
-   
+        //joystick.leftTrigger().onTrue(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.GroundPickupPosition));
+        joystick.rightTrigger().onTrue(GotoTravelPostion());
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
         .onTrue(ParkElevatorAndHead());
         //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
@@ -188,10 +198,9 @@ public class RobotContainer {
         // );
 
 
-        // reset the field-centric heading on start button press
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+   
 
-        //drivetrain.registerTelemetry(logger::telemeterize);
+        drivetrain.registerTelemetry(logger::telemeterize);
         configAltCommands();
     }
     public void configAltCommands()

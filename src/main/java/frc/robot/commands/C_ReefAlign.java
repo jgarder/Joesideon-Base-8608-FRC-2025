@@ -18,7 +18,7 @@ public class C_ReefAlign extends Command{
     AprilTagManager ATMan;
     CommandSwerveDrivetrain drivetrain;
     IntSupplier AlignOnLeft = ()->{return 1;}; //0 left, 1 center, 2 right
-    public C_ReefAlign C_ReefAlign(CommandSwerveDrivetrain _drivetrain,AprilTagManager _ATMan){IntSupplier jake = ()->{return 1;}; return new C_ReefAlign(_drivetrain, _ATMan,jake);}
+    public C_ReefAlign C_ReefAlign(CommandSwerveDrivetrain _drivetrain,AprilTagManager _ATMan){IntSupplier jake = ()->{return 1;}; return new C_ReefAlign(_drivetrain, _ATMan,jake);}//this is for algae alignment. always lines up middle. 
     public C_ReefAlign(CommandSwerveDrivetrain _drivetrain,AprilTagManager _ATMan,IntSupplier _AlignOnLeft ){
         ATMan = _ATMan;
         drivetrain =_drivetrain;

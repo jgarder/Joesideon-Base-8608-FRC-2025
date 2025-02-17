@@ -39,7 +39,7 @@ public class Tools {
   public static double getExpoJoystickInput(double getLeftAxis, double MaxSpeed){
     //Y for X, X for Y, because FRC? //this doesn't make sense anymore because of code optimizations
     double output = ((0.2*getLeftAxis)+(0.8*Math.pow(getLeftAxis, 3))) * MaxSpeed;
-    return -output;
+    return output;
   }
 
   public static double getdistancetopose(Pose2d currentPose2d,Pose2d targetPose2d)
