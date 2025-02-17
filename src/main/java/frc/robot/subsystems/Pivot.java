@@ -4,6 +4,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -15,9 +17,12 @@ import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.BooleanEntry;
@@ -47,7 +52,8 @@ public class Pivot extends SubsystemBase {
   String className = this.getClass().getSimpleName();
   
   public final TalonFX m_PivotMotor = new TalonFX(constants.CanBus.armPivotMotorCanID, constants.CanBus.RioCANBusName);
-  
+  public final CANcoder pivotAbsoluteEncoder = new CANcoder(constants.CanBus.pivotAbsoluteEncoder, constants.CanBus.RioCANBusName);
+
   TalonFXConfiguration configuration;
   
   private double LastPosition = 0;
@@ -142,6 +148,24 @@ public class Pivot extends SubsystemBase {
     _configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = constants.PlasmaPivot.minposition;
     
     _configuration.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
+
+      CANcoderConfiguration cc_cfg = new CANcoderConfiguration();
+      //cc_cfg.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf; old 2024 and before way. 
+      //Setting this to 1 makes the absolute position unsigned [0, 1)
+      //Setting this to 0.5 makes the absolute position signed [-0.5, 0.5)
+      //Setting this to 0 makes the absolute position always negative [-1, 0) 
+      cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+      
+      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+      cc_cfg.MagnetSensor.MagnetOffset = constants.PlasmaPivot.absoMagnetOffset;// ;
+      pivotAbsoluteEncoder.getConfigurator().apply(cc_cfg);
+
+    var AbsoluteEncoderFeedbackConfig = new FeedbackConfigs().withFeedbackRemoteSensorID(pivotAbsoluteEncoder.getDeviceID())
+       .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+       .withRotorToSensorRatio(constants.PlasmaPivot.gearRatio).withSensorToMechanismRatio(1.0);
+
+    configuration.withFeedback(AbsoluteEncoderFeedbackConfig);
+
     return _configuration;
   }
   

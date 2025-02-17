@@ -125,13 +125,13 @@ public class RobotContainer {
     }
     public Command TridentCoralBumpOut()
     {
-        return ss_Trident.bumpout()
-        .andThen(new WaitCommand(0.2))
+        return ss_Trident.LooseGrip()
+        .andThen(new WaitCommand(1.2))
         .andThen(ss_Trident.Stop());
     }
 
     ///////////////
-    private double testchoice =0;
+    private double testchoice = 0;
     DoubleSupplier gettestchoice = ()->{return testchoice;};
     private void configureBindings() {
 

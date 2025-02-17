@@ -219,10 +219,6 @@ public class Elevator extends SubsystemBase {
           & Tools.isPosAtSetpoint(currentPosition, constants.Elevator.minElevatorHeight, constants.Elevator.ElevatorBrakeParkTolerance))
     {
       //System.out.println("elevator Braking");
-      // //HACK FIX HACK FIX HACK FIX
-      // if(currentPosition > .5 ){}
-      // m_ElevatorMotor1.setPosition(0,.5);//HACK FIX HACK FIX HACK FIX
-      // //HACK FIX HACK FIX HACK FIX
       
       currentState = POSITION.parked;
       BRAKE();

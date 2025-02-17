@@ -175,6 +175,11 @@ public class MantaRay extends SubsystemBase {
         return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-1.0));});
         
     }
+    public Command LooseGrip()
+    {
+        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-.2));});
+        
+    }
 
     public void BRAKE(){
       m_TridentMotor.setControl(m_s_Brake);
