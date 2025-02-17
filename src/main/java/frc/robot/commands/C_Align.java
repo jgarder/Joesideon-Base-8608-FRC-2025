@@ -19,6 +19,7 @@ import frc.robot.subsystems.MantaState;
 import frc.robot.RobotContainer;
 import frc.robot.constants;
 //import frc.robot.AlphaBots.CommandSwerveDrivetrain;
+import frc.robot.AlphaBots.AprilTag;
 
 public class C_Align extends Command{
     public final frc.robot.subsystems.CommandSwerveDrivetrain drivetrain = MantaState.DriveTrain;
@@ -44,7 +45,7 @@ public class C_Align extends Command{
     Pose2d TargetPose;//this is where we wnt to go in field space coords X,y,Rotation
     Pose2d PoseOffset;//This is how far we are from where we want to be. this is CurrentPose minus TargetPose.
 
-
+    public C_Align(AprilTag PosePositionGoal){new C_Align(PosePositionGoal.Pose);}
     public C_Align(Pose2d PosePositionGoal){
         TargetPose = PosePositionGoal;
         AlignXController.setSetpoint(TargetPose.getX());
