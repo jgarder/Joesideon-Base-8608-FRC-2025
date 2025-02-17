@@ -30,8 +30,8 @@ public class TunerConstants {
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs driveGains = new Slot0Configs()
-        .withKP(8.0).withKI(0).withKD(0)
-        .withKS(1.0).withKV(0.0);
+        .withKP(2.0).withKI(0).withKD(0)
+        .withKS(1.0).withKV(4.0);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -63,7 +63,7 @@ public class TunerConstants {
             new CurrentLimitsConfigs()
                 // Swerve azimuth does not require much torque output, so we can set a relatively low
                 // stator current limit to help avoid brownouts without impacting performance.
-                .withStatorCurrentLimit(Amps.of(40))
+                .withStatorCurrentLimit(Amps.of(50))
                 .withStatorCurrentLimitEnable(true)
         );
     private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
@@ -80,7 +80,8 @@ public class TunerConstants {
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
-    private static final double kCoupleRatio = 0;//3.8181818181818183;
+    private static final double kCoupleRatio = 2.6;//3.8181818181818183;
+    //i have no idea how to calculate this, so i just locked the bevel gear on the swerve and rotated and counted the steer motor until the drive motor spun once and it was about 2.6
 
     private static final double kDriveGearRatio = 5.89;
     private static final double kSteerGearRatio = 12.1;

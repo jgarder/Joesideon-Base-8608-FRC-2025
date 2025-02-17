@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.generated.TunerConstants;
 
@@ -15,6 +16,11 @@ public class MantaState extends SubsystemBase {
     @Override
     public void periodic() {
       
+      //temporary, probably
+      SmartDashboard.putNumber("Module 1",DriveTrain.getModule(0).getEncoder().getPosition().getValueAsDouble());
+      SmartDashboard.putNumber("Module 2",DriveTrain.getModule(1).getEncoder().getPosition().getValueAsDouble());
+      SmartDashboard.putNumber("Module 3",DriveTrain.getModule(2).getEncoder().getPosition().getValueAsDouble());
+      SmartDashboard.putNumber("Module 4",DriveTrain.getModule(3).getEncoder().getPosition().getValueAsDouble());
     }
     
     public static MantaState getInstance() throws Throwable

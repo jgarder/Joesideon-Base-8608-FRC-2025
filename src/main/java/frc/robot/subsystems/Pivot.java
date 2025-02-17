@@ -174,6 +174,7 @@ public class Pivot extends SubsystemBase {
     double mJ = NT_Jerk.getAsDouble();
     double mC = NT_Cruise.getAsDouble();
     boolean motorNeedsConfig = false;
+
     if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p; motorNeedsConfig = true; }
     if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; motorNeedsConfig = true; }
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; motorNeedsConfig = true; }
@@ -184,6 +185,7 @@ public class Pivot extends SubsystemBase {
     if((mA != configuration.MotionMagic.MotionMagicAcceleration)) { configuration.MotionMagic.MotionMagicAcceleration = mA; motorNeedsConfig = true; }
     if((mJ != configuration.MotionMagic.MotionMagicJerk)) { configuration.MotionMagic.MotionMagicJerk = mJ; motorNeedsConfig = true; }
     if((mC != configuration.MotionMagic.MotionMagicCruiseVelocity)) { configuration.MotionMagic.MotionMagicCruiseVelocity = mC; motorNeedsConfig = true; }
+    
     if (motorNeedsConfig){Tools.SetConfigToTalonFX(m_PivotMotor,configuration,className);}
   }
 
@@ -232,7 +234,6 @@ public class Pivot extends SubsystemBase {
 
     m_PivotMotor.setControl( 
       new MotionMagicTorqueCurrentFOC(wantedposition)
-      // .withOverrideCoastDurNeutral(false)
       .withSlot(1)
   
     );
