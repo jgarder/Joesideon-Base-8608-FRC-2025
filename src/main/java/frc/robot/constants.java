@@ -70,18 +70,18 @@ public class constants {
         public static final double intakeAmpLimittime = .10;
     }
     public class Elevator {
-        public static final double kP = 5.0; //MotionMagic
-        public static final double kI = 0.0;
+        public static final double kP = 15.0; //MotionMagic
+        public static final double kI = 6.0;
         public static final double kD = 0.0;
 
-        public static final double kS = 23.0;
-        public static final double kG = 10;
+        public static final double kS = 0.0;
+        public static final double kG = 20;
         public static final double kV = 0.0;
         
 
-        public static final double Accel = 90.0;
-        public static final double Jerk = 400.0;
-        public static final double Cruise = 30.0;
+        public static final double Accel = 50.0;
+        public static final double Jerk = 160.0;
+        public static final double Cruise = 100.0;
 
 
 
@@ -116,12 +116,12 @@ public class constants {
         public static final double maxPositionToBeSafeFromSmashingintoReef = -.107;//0.060;//7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
         public static final double maxPositionToBeSafeFromSmashingintoSelf = -.24;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
         
-        public static final double MoveTolerance = .03;
+        public static final double MoveTolerance = .003;
         public static final double maxposition = 0;
         public static final double minposition = -0.240234375;
 
         public static final double ParkPosition = minposition;
-        public static final double TravelPosition = -.150;//.0319;//3.75;
+        public static final double TravelPosition = -.120;//.0319;//3.75;
         public static final double GroundPickupPosition = -0.05;//0.102;//12.0;
 
         public static final double l1ReadyPosition = -.107;//0.06388;
@@ -134,16 +134,16 @@ public class constants {
 
         public static final double maxStatorCurrent = 40;
 
-        public static final double kP = 250.0;
-        public static final double kI = 10.00;
+        public static final double kP = 150.0;
+        public static final double kI = 50.00;
         public static final double kD = 0.00;
 
-        public static final double kV = 0.3;
-        public static final double kS = 5.0;
-        public static final double kG = -18.5;
+        public static final double kV = 0.0;
+        public static final double kS = 3.0;
+        public static final double kG = -20.0;
 
-        public static final double Accel = 5000.0;
-        public static final double Jerk = 0.0;//800
+        public static final double Accel = 250.0;
+        public static final double Jerk = 480.0;
         public static final double Cruise = 100.0;
         
 
@@ -159,8 +159,8 @@ public class constants {
         public static final double maxStatorCurrent = 40;
         public static final double maxposition = 49;//117;
         public static final double minposition = 0;
-        public static final double kP = 0.06;
-        public static final double kI = 0.01;
+        public static final double kP = 1;
+        public static final double kI = 0.0;
         public static final double kD = 0;
         public static final double MoveTolerance = 1.0;
 

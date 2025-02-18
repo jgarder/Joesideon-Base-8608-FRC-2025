@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.generated.TunerConstants;
@@ -15,12 +17,28 @@ public class MantaState extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+      //hoping this works, stolen from Elastic Documentation
+      // SmartDashboard.putData("Swerve Drive", new Sendable() {
+      //   @Override
+      //   public void initSendable(SendableBuilder builder) {
+      //     builder.setSmartDashboardType("SwerveDrive");
       
-      //temporary, probably
-      SmartDashboard.putNumber("Module 1",DriveTrain.getModule(0).getEncoder().getPosition().getValueAsDouble());
-      SmartDashboard.putNumber("Module 2",DriveTrain.getModule(1).getEncoder().getPosition().getValueAsDouble());
-      SmartDashboard.putNumber("Module 3",DriveTrain.getModule(2).getEncoder().getPosition().getValueAsDouble());
-      SmartDashboard.putNumber("Module 4",DriveTrain.getModule(3).getEncoder().getPosition().getValueAsDouble());
+      //     builder.addDoubleProperty("Front Left Angle", () -> DriveTrain.getModule(0).getEncoder().getPosition().getValueAsDouble(), null);
+      //     builder.addDoubleProperty("Front Left Velocity", () -> DriveTrain.getModule(0).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+      //     builder.addDoubleProperty("Front Right Angle", () -> DriveTrain.getModule(1).getEncoder().getPosition().getValueAsDouble(), null);
+      //     builder.addDoubleProperty("Front Right Velocity", () -> DriveTrain.getModule(1).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+      //     builder.addDoubleProperty("Back Left Angle", () -> DriveTrain.getModule(2).getEncoder().getPosition().getValueAsDouble(), null);
+      //     builder.addDoubleProperty("Back Left Velocity", () -> DriveTrain.getModule(2).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+      //     builder.addDoubleProperty("Back Right Angle", () -> DriveTrain.getModule(3).getEncoder().getPosition().getValueAsDouble(), null);
+      //     builder.addDoubleProperty("Back Right Velocity", () -> DriveTrain.getModule(3).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+      //     builder.addDoubleProperty("Robot Angle", () -> DriveTrain.getRotation3d().getX(), null);
+      //   }
+      // });
     }
     
     public static MantaState getInstance() throws Throwable

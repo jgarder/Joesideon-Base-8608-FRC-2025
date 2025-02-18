@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -57,11 +58,11 @@ public class RobotContainer {
     public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot);
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.2) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -110,13 +111,19 @@ public class RobotContainer {
 
     public Command elevator2StepPark()
     {   //& jake2.getAsBoolean()
-       return new  C_ElevateToPosition(ss_Elevator,constants.Elevator.l1Position).until(()->{return jake.getAsBoolean();}).andThen(new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight));//C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight);
+       return new C_ElevateToPosition(ss_Elevator,constants.Elevator.l1Position)
+        .until(()->{return jake.getAsBoolean();})
+        .andThen(new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight));//C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight);
+    }
+    public Command elevator1StepPark(){
+        return new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight);
     }
     public Command ParkElevatorAndHead()
     {
-        return elevator2StepPark()//new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
+        return elevator1StepPark()//new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition))
-        .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition).unless(ss_Pivot.IsPivotinTravelPosition)
+        .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition)
+        //.unless(ss_Pivot.IsPivotinTravelPosition) Why is this here? it seems redundant?
             ).andThen(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.ParkPosition));
     }
     public Command PivotIntoReef()
@@ -137,16 +144,28 @@ public class RobotContainer {
         .andThen(ss_Trident.Stop());
     }
 
+    //started working on this, not done yet
+    public Command Intake(){
+        return new ParallelCommandGroup(
+            new C_TridentIntake(ss_Trident).withTimeout(20),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight)
+            );
+    }
     ///////////////
     private double testchoice = 0;
     DoubleSupplier gettestchoice = ()->{return testchoice;};
     private void configureBindings() {
 
         // reset the field-centric heading on start button press
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        joystick.rightBumper().onTrue(TridentCoralBumpOut());
+        //joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        
         joystick.a().onTrue(new C_TridentIntake(ss_Trident).withTimeout(20));
+        joystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
+        joystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
+        joystick.y().onTrue(gotoL4Travel()
+        .andThen(new C_PivotToPosition(ss_Pivot, -0.2))
+        .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition)));
         //joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
 
         //joystick.y().onTrue(ss_ArmExtension.C_GotoPositon(constants.PlasmaExtension.maxposition));
@@ -154,8 +173,8 @@ public class RobotContainer {
         //joystick.x().onTrue(ss_Elevator.GotoPositonCommand(2));
 
         //joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
-        joystick.x().onTrue(new InstantCommand(()->{testchoice= testchoice +1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
-        joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
+        // joystick.x().onTrue(new InstantCommand(()->{testchoice= testchoice +1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
+        // joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
 
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
@@ -167,11 +186,17 @@ public class RobotContainer {
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
         .onTrue(gotoL1Travel().andThen(PivotIntoReef()));
 
-        joystick.leftTrigger().onTrue(CoralDropScoreL2().andThen(ParkElevatorAndHead()));
         //joystick.leftTrigger().onTrue(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.GroundPickupPosition));
         joystick.rightTrigger().onTrue(GotoTravelPostion());
+        joystick.rightBumper().onTrue(TridentCoralBumpOut());
+
+        joystick.leftTrigger().onTrue(CoralDropScoreL2().andThen(ParkElevatorAndHead()));
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
         .onTrue(ParkElevatorAndHead());
+
+        joystick.start().whileTrue(Intake());
+
+        
         //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
         
         // Note that X is defined as forward according to WPILib convention,
@@ -181,7 +206,7 @@ public class RobotContainer {
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(Tools.getExpoJoystickInput(-joystick.getLeftY(),MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(Tools.getExpoJoystickInput(-joystick.getLeftX(),MaxSpeed)) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                    .withRotationalRate(Tools.getExpoJoystickInput(-joystick.getRightX(), MaxAngularRate)) // Drive counterclockwise with negative X (left)
             )
         );
 
