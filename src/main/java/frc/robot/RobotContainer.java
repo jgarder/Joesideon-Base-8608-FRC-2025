@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -28,6 +29,7 @@ import frc.robot.commands.C_DropElevateToScore;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
 import frc.robot.commands.C_PivotToPosition;
+import frc.robot.commands.C_ReefAlign;
 import frc.robot.commands.C_TridentIntake;
 import frc.robot.constants.Climber;
 import frc.robot.AlphaBots.NT;
@@ -73,7 +75,16 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-
+    private final IntSupplier OptionalButtonSupplier = ()-> {
+        if(joystick.x().getAsBoolean())
+        {
+            return 2;//2 is the rightsideoption on the reef
+        }
+            //default option is that x is not pressed and we score left side.
+        else return 0;//0 is the left side option on reef
+        
+    };
+    private final CommandXboxController Testjoystick = new CommandXboxController(1);
     
     
     /* Path follower */
@@ -132,9 +143,14 @@ public class RobotContainer {
         return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l1ReadyPosition)
                 .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l1ReadyPosition));
     }
+    public Command PivotIntoReefL4()
+    {
+        return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l1ReadyPosition)
+                .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l4ScorePosition));
+    }
     public Command CoralDropScoreL2()
     {
-        return new C_DropElevateToScore(ss_Elevator).andThen(new WaitCommand(.25),TridentCoralBumpOut());
+        return new C_DropElevateToScore(ss_Elevator).alongWith(TridentCoralBumpOut());
         //
         // return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
         //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
@@ -143,7 +159,13 @@ public class RobotContainer {
     public Command TridentCoralBumpOut()
     {
         return ss_Trident.LooseGrip()
-        .andThen(new WaitCommand(1.2))
+        .andThen(new WaitCommand(2))
+        .andThen(ss_Trident.Stop());
+    }
+    public Command TridentAlgaeBumpOut()
+    {
+        return ss_Trident.bumpout()
+        .andThen(new WaitCommand(2))
         .andThen(ss_Trident.Stop());
     }
 
@@ -160,15 +182,23 @@ public class RobotContainer {
     DoubleSupplier gettestchoice = ()->{return testchoice;};
     private void configureBindings() {
 
+        //TEST CONFIGURATIONS
+        Testjoystick.leftTrigger().onTrue(CoralDropScoreL2().andThen(ParkElevatorAndHead()));
+        Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
+        Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
         // reset the field-centric heading on start button press
         //joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
         joystick.a().onTrue(new C_TridentIntake(ss_Trident).withTimeout(20));
-        joystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
-        joystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
+
         joystick.y().onTrue(gotoL4Travel()
         .andThen(new C_PivotToPosition(ss_Pivot, -0.2))
         .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition)));
+
+
+
+        joystick.leftTrigger().whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier));
+
         //joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
 
         //joystick.y().onTrue(ss_ArmExtension.C_GotoPositon(constants.PlasmaExtension.maxposition));
@@ -181,7 +211,7 @@ public class RobotContainer {
 
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(gotoL4Travel().andThen(PivotIntoReef()));
+        .onTrue(gotoL4Travel().andThen(PivotIntoReefL4()));
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
         .onTrue(gotoL3Travel().andThen(PivotIntoReef()));
         joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
@@ -193,7 +223,7 @@ public class RobotContainer {
         joystick.rightTrigger().onTrue(GotoTravelPostion());
         joystick.rightBumper().onTrue(TridentCoralBumpOut());
 
-        joystick.leftTrigger().onTrue(CoralDropScoreL2().andThen(ParkElevatorAndHead()));
+        
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
         .onTrue(ParkElevatorAndHead());
 

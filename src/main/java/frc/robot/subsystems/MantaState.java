@@ -6,15 +6,29 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.StructEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants;
+import frc.robot.AlphaBots.NT;
 import frc.robot.generated.TunerConstants;
 
 public class MantaState extends SubsystemBase {
     private static MantaState instance;
 
+    public static StructEntry<Pose2d> NT_AlignSetpoint = NT.getStructEntry_Pose2D("Poses","AlignSetpoint",new Pose2d());
+    
+    public static DoubleEntry NT_XPGain = NT.getDoubleEntry("pidAlignment" , "XP Gain",constants.drivetrainThings.k_PoseX_P);
+    public static DoubleEntry NT_XIGain = NT.getDoubleEntry("pidAlignment", "XI Gain",constants.drivetrainThings.k_PoseX_I);
+    public static DoubleEntry NT_XDGain = NT.getDoubleEntry("pidAlignment" , "XD Gain",constants.drivetrainThings.k_PoseX_D);
+
+    public static DoubleEntry NT_ZPGain = NT.getDoubleEntry("pidAlignment" , "ZP Gain",constants.drivetrainThings.k_RZ_P);
+    public static DoubleEntry NT_ZIGain = NT.getDoubleEntry("pidAlignment", "ZI Gain",constants.drivetrainThings.k_RZ_I);
+    public static DoubleEntry NT_ZDGain = NT.getDoubleEntry("pidAlignment" , "ZD Gain",constants.drivetrainThings.k_RZ_D);
     @Override
     public void periodic() {
 
@@ -61,6 +75,8 @@ public class MantaState extends SubsystemBase {
       IsPivotFoldedFarOut = ss_Pivot.IsPivotFoldedFarOut;
       IsPivotinTravelPosition = ss_Pivot.IsPivotinTravelPosition;
       instance = this;
+
+      NT_AlignSetpoint.set(new Pose2d());//send out a default;
     }
 
     public BooleanSupplier IsPivotFoldedOut;

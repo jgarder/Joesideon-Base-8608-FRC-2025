@@ -8,7 +8,7 @@ public class C_DropElevateToScore extends Command{
     Elevator SubSystem;
     double wantedPosition;
     double Tolerance = constants.Elevator.MoveTolerance;
-    double positionAmountToDrop = 5;
+    double positionAmountToDrop = 6;
     public C_DropElevateToScore(Elevator subSys){
         SubSystem = subSys;
         wantedPosition = 0;

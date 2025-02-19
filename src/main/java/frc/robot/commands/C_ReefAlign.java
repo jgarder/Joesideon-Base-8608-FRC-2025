@@ -12,37 +12,40 @@ import frc.robot.AlphaBots.AprilTag;
 import frc.robot.AlphaBots.AprilTag.TagType;
 import frc.robot.subsystems.AprilTagManager;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.MantaState;
 
 public class C_ReefAlign extends Command{
     
-    AprilTagManager ATMan;
+  
+    //AprilTagManager ATMan;
     CommandSwerveDrivetrain drivetrain;
     IntSupplier AlignOnLeft = ()->{return 1;}; //0 left, 1 center, 2 right
-    public C_ReefAlign C_ReefAlign(CommandSwerveDrivetrain _drivetrain,AprilTagManager _ATMan){IntSupplier jake = ()->{return 1;}; return new C_ReefAlign(_drivetrain, _ATMan,jake);}//this is for algae alignment. always lines up middle. 
-    public C_ReefAlign(CommandSwerveDrivetrain _drivetrain,AprilTagManager _ATMan,IntSupplier _AlignOnLeft ){
-        ATMan = _ATMan;
+    public C_ReefAlign C_ReefAlign(CommandSwerveDrivetrain _drivetrain){IntSupplier jake = ()->{return 1;}; return new C_ReefAlign(_drivetrain,jake);}//this is for algae alignment. always lines up middle. 
+    public C_ReefAlign(CommandSwerveDrivetrain _drivetrain,IntSupplier _AlignOnLeft ){
+        //ATMan = _ATMan;
         drivetrain =_drivetrain;
         AlignOnLeft = _AlignOnLeft;
     }
     Command m_command;
     @Override
     public void initialize() {
-        AprilTag targetTag = ATMan.getClosestTagofTypeToRobotCenterForAlliance(drivetrain.getState().Pose, TagType.Reef);
-        Pose2d locationToAlignTo = ATMan.getPose2DStraightLocTranslation(targetTag,AprilTagManager.robotmetersdistToCenter);
+
+        AprilTag targetTag = AprilTagManager.getClosestTagofTypeToRobotCenterForAlliance(drivetrain.getState().Pose, TagType.Reef);
+        Pose2d locationToAlignTo = AprilTagManager.getPose2DStraightLocTranslation(targetTag,0.0);
         switch (AlignOnLeft.getAsInt()) {
             case 0://left
-            locationToAlignTo = ATMan.getOffSet90Loc(targetTag,AprilTagManager.robotmetersdistToCenter,constants.ReefWidthCenteronCenter,true);
+            locationToAlignTo = AprilTagManager.getOffSet90Loc(targetTag,0.0,constants.ReefWidthCenterOffset,true);
                 break;
             case 1://center is already the default. 
                 break;
             case 2://right
-            locationToAlignTo = ATMan.getOffSet90Loc(targetTag,AprilTagManager.robotmetersdistToCenter,constants.ReefWidthCenteronCenter,false);
+            locationToAlignTo = AprilTagManager.getOffSet90Loc(targetTag,0.0,constants.ReefWidthCenterOffset,false);
                 break;
             default:
                 break;
         }
-        
-        m_command =  new C_Align(locationToAlignTo);
+        MantaState.NT_AlignSetpoint.set(locationToAlignTo);
+        m_command =  new C_Align(locationToAlignTo);//align to pose2d provided above. 
  
         if (m_command != null) {
             m_command.schedule();

@@ -23,9 +23,10 @@ import frc.robot.AlphaBots.NT;
 public class AprilTagManager extends SubsystemBase
   {
     //public static ArrayList<AprilTag> tagList = new ArrayList<AprilTag>(22);
-    public static double RobotDefaultOffset = .25;//adds a 1/4 inch extra space at locations. 
-    public static double bumperthickness = 3.5;
-    public static double robotmetersdistToCenter = Units.inchesToMeters(RobotDefaultOffset+(26.75+bumperthickness*2)/2);
+    public static double RobotDefaultOffset = 0.0;//adds a 1/4 inch extra space at locations. 
+    public static double bumperthickness = 3.00*2; //real 3.35"
+    public static double robotsize = 31.625/2;
+    public static double robotmetersdistToCenter = Units.inchesToMeters(RobotDefaultOffset+robotsize+bumperthickness);
     public static AprilTag getTagbyID(int _ID)
     {
       for (AprilTag aprilTag : tagList) {
@@ -99,11 +100,11 @@ public class AprilTagManager extends SubsystemBase
     //     return RightAprilTag;
     // }
     
-    public static int GetLeftSourceID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 13:1;}//first num blue second red.
-    public static int GetRightSourceID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 12:2;}//first num blue second red.
+    //public static int GetLeftSourceID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 13:1;}//first num blue second red.
+    //public static int GetRightSourceID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 12:2;}//first num blue second red.
 
-    public static int GetProcessorID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 16:3;}//first num blue second red.
-    public static int GetBargeID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 14:5;}//first num blue second red.
+    //public static int GetProcessorID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 16:3;}//first num blue second red.
+    //public static int GetBargeID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 14:5;}//first num blue second red.
     
     public static Pose2d getStraightOutLoc(int TagID,double MetersFromAprilTag)
     {
@@ -121,7 +122,7 @@ public class AprilTagManager extends SubsystemBase
         double offsetangle = positive ? -Math.PI/2 : Math.PI/2;//offset 90 degrees from tag ID. and if positive or not.
 
         Pose2d StraightLoc = getPose2DStraightLocTranslation(Thistag,MetersFromAprilTag);
-        Pose2d offsetLoc = getPose2DOffset90LocTranslation(Thistag,MetersFromAprilTag,offcenter90distMeters,offsetangle);
+        Pose2d offsetLoc = getPose2DOffset90LocTranslation(Thistag,offcenter90distMeters,offsetangle);
         return new Pose2d(StraightLoc.getX() +offsetLoc.getX(), StraightLoc.getY() + offsetLoc.getY(), Thistag.Pose.getRotation().plus(Rotation2d.fromDegrees(180)));
     }
     public static Pose2d getPose2DStraightLocTranslation(AprilTag Thistag,double MetersFromAprilTag)
@@ -131,7 +132,7 @@ public class AprilTagManager extends SubsystemBase
         double newY = Thistag.Pose.getY() + ((Thistag.extraOffsetWhenTargeting + numberwithrobotdepth)* Math.sin(Thistag.Pose.getRotation().getRadians()));
         return new Pose2d(newX, newY, Thistag.Pose.getRotation().plus(Rotation2d.fromDegrees(180)));
     }
-    public static Pose2d getPose2DOffset90LocTranslation(AprilTag Thistag,double MetersFromAprilTag,double offcenter90distMeters,double offsetangle)
+    public static Pose2d getPose2DOffset90LocTranslation(AprilTag Thistag,double offcenter90distMeters,double offsetangle)
     {
 
       double offcenterX = ((Thistag.offset90Offset + offcenter90distMeters)* Math.cos(Thistag.Pose.getRotation().getRadians()+offsetangle));
@@ -172,7 +173,7 @@ public class AprilTagManager extends SubsystemBase
   StructEntry<Pose2d> NT_Leftloc = NT.getStructEntry_Pose2D("Poses","leftLoc",new Pose2d());//LEFT FROM Robot TOWARDS tag view!
   StructEntry<Pose2d> NT_rightloc = NT.getStructEntry_Pose2D("Poses","rightLoc",new Pose2d());//Right Given View Robot TOWARDS tag!
   StructEntry<Pose2d> NT_ClosestTag = NT.getStructEntry_Pose2D("Poses","ClosestTag",new Pose2d());//shows closest tag to robotchassis
-  StructEntry<Pose2d> NT_Simloc = NT.getStructEntry_Pose2D("Poses","ChassisLoc",new Pose2d());
+  StructEntry<Pose2d> NT_Simloc = NT.getStructEntry_Pose2D("Poses","ChassisLoc",new Pose2d());//NT_Simloc
   StructEntry<Pose2d> NT_ClosestSource = NT.getStructEntry_Pose2D("Poses","ClosestSource",new Pose2d());
   StructEntry<Pose2d> NT_ClosestReef = NT.getStructEntry_Pose2D("Poses","ClosestReef",new Pose2d());
   StructEntry<Pose2d> NT_ClosestProcessor = NT.getStructEntry_Pose2D("Poses","ClosestProcessor",new Pose2d());

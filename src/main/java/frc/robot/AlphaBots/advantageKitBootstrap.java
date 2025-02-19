@@ -10,6 +10,9 @@ import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,7 +25,7 @@ public class advantageKitBootstrap {
         robot = robot2;
         startAdvantageKitLogger();//run before robot container boots. //declare in robot as a private final?
 
-        //StartWpiLogger();
+        StartWpiLogger(); //let them both sing and see which is better?
     }
 
     public void startAdvantageKitLogger() {
@@ -74,18 +77,22 @@ public class advantageKitBootstrap {
       Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
   }
 
-  // private void StartWpiLogger() {
-  //   //wpilogger test
-  //   // Set out log file to be in its own folder
-  //   if (Robot.isSimulation()) {
-  //     DataLogManager.start("src/main");
-  //   } else {
-  //    DataLogManager.start();
-  //   }
-  //   // Log data that is being put to shuffleboard
-  //  DataLogManager.logNetworkTables(true);
-  //   // Log the DS data and joysticks (doesnt work if advantage kit is active)
-  //   DriverStation.startDataLog(DataLogManager.getLog(), true);
-  // }
+
+  //Dont forget to use epilogue https://docs.wpilib.org/en/stable/docs/software/telemetry/robot-telemetry-with-annotations.html
+  private void StartWpiLogger() {
+    //wpilogger test
+    // Set out log file to be in its own folder
+    if (Robot.isSimulation()) {
+      DataLogManager.start("src/main");
+    } else {
+     DataLogManager.start();
+    }
+    // Record both DS control and joystick data
+    DriverStation.startDataLog(DataLogManager.getLog());
+    // Log data that is being put to shuffleboard
+   DataLogManager.logNetworkTables(true);
+    // Log the DS data and joysticks (doesnt work if advantage kit is active)
+    DriverStation.startDataLog(DataLogManager.getLog(), true);
+  }
 
 }

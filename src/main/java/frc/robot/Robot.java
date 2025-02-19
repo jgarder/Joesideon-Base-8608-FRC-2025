@@ -74,7 +74,10 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {LimeLightPoseFilter.limelightupdateDrivetrain(constants.CanBus.limelightBackName);}
+  public void disabledPeriodic() {
+    LimeLightPoseFilter.limelightupdateDrivetrain(constants.CanBus.limelightFrontName);
+    LimeLightPoseFilter.limelightupdateDrivetrain(constants.CanBus.limelightBackName);
+  }
 
   @Override
   public void disabledExit() {}

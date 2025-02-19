@@ -9,11 +9,13 @@ import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructEntry;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.Timer;
@@ -177,7 +179,7 @@ public class MantaRay extends SubsystemBase {
     }
     public Command LooseGrip()
     {
-        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-.1));});
+        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-.05));});
         
     }
 
