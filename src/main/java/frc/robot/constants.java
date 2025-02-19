@@ -125,10 +125,10 @@ public class constants {
         public static final double GroundPickupPosition = -0.05;//0.102;//12.0;
 
         public static final double l1ReadyPosition = -.107;//0.06388;
-        public static final double l1ScorePosition = l1ReadyPosition + .008;
+        public static final double l1ScorePosition = l1ReadyPosition + .04;
 
         public static final double l2ReadyPosition = -.117;//0.06388;
-        public static final double l2ScorePosition = l2ReadyPosition + .008;
+        public static final double l2ScorePosition = l2ReadyPosition + .04;
 
         public static final double l4ReadyPosition = l1ReadyPosition;
 

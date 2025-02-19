@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.C_DropElevateToScore;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
 import frc.robot.commands.C_PivotToPosition;
@@ -109,12 +110,12 @@ public class RobotContainer {
     BooleanSupplier jake = ()->{return ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.l1Position;};
     BooleanSupplier jake2 = ()->{return ss_Elevator.m_ElevatorMotor1.getVelocity().getValueAsDouble() < 100;};
 
-    public Command elevator2StepPark()
-    {   //& jake2.getAsBoolean()
-       return new C_ElevateToPosition(ss_Elevator,constants.Elevator.l1Position)
-        .until(()->{return jake.getAsBoolean();})
-        .andThen(new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight));//C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight);
-    }
+    // public Command elevator2StepPark()
+    // {   //& jake2.getAsBoolean()
+    //    return new C_ElevateToPosition(ss_Elevator,constants.Elevator.l1Position)
+    //     .until(()->{return jake.getAsBoolean();})
+    //     .andThen(new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight));//C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight);
+    // }
     public Command elevator1StepPark(){
         return new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight);
     }
@@ -133,9 +134,11 @@ public class RobotContainer {
     }
     public Command CoralDropScoreL2()
     {
-        return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
-                .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
-                .alongWith(TridentCoralBumpOut());
+        return new C_DropElevateToScore(ss_Elevator).andThen(new WaitCommand(.25),TridentCoralBumpOut());
+        //
+        // return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
+        //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
+        //         .alongWith(TridentCoralBumpOut());
     }
     public Command TridentCoralBumpOut()
     {
