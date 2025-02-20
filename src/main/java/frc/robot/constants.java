@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 public class constants {
 
     public static final double ReefWidthCenterOffset = Units.inchesToMeters(12.875)/2; //Reef Width CenteronCenter divided in half
-    
+    public static final double SourcePickupWidthCenterOffset = Units.inchesToMeters(24)/2; //Reef Width CenteronCenter divided in half
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -173,6 +173,7 @@ public class constants {
         public static final double l2ScorePosition = 0;
 
         public static final double l4ScorePosition = maxposition-8;
+        public static final double ReefAlgaePickupExtension = maxposition-10;
     }
 
 

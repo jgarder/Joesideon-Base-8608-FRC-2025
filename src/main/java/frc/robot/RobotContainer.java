@@ -20,8 +20,10 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -30,8 +32,11 @@ import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
 import frc.robot.commands.C_PivotToPosition;
 import frc.robot.commands.C_ReefAlign;
+import frc.robot.commands.C_SourceAlign;
 import frc.robot.commands.C_TridentIntake;
 import frc.robot.constants.Climber;
+import frc.robot.AlphaBots.AprilTag;
+import frc.robot.AlphaBots.AprilTag.TagType;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
 import frc.robot.generated.TunerConstants;
@@ -78,7 +83,7 @@ public class RobotContainer {
     private final IntSupplier OptionalButtonSupplier = ()-> {
         if(joystick.x().getAsBoolean())
         {
-            return 2;//2 is the rightsideoption on the reef
+            return 2;//2 is the right side option on the reef
         }
             //default option is that x is not pressed and we score left side.
         else return 0;//0 is the left side option on reef
@@ -113,6 +118,24 @@ public class RobotContainer {
     public Command gotoL4Travel()
     {
         return ss_Elevator.GotoPositonCommand(constants.Elevator.l4Position).alongWith(GotoTravelPostion());
+    }
+    public Command gotoUpperAlgaeTravel()
+    {
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l3Position).alongWith(GotoTravelPostion());
+    }
+    public Command gotoLowerAlgaeTravel()
+    {
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l2Position).alongWith(GotoTravelPostion());
+    }
+    public Command AlgaeReefIntake()
+    {
+        return 
+            
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition)
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
+            .alongWith(new C_TridentIntake(ss_Trident).withTimeout(5))
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition))
+            .alongWith(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
     }
     public Command GotoTravelPostion()
     {
@@ -170,9 +193,18 @@ public class RobotContainer {
     }
 
     //started working on this, not done yet
+    double intaketimeout = 20;
     public Command Intake(){
         return new ParallelCommandGroup(
-            new C_TridentIntake(ss_Trident).withTimeout(20),
+            new C_TridentIntake(ss_Trident).withTimeout(intaketimeout),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition),
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight)
+            );
+    }
+    double groundintakeTimeout = 20; //auton this command will run until finished or this timeout. 
+    public Command GroundIntake(){
+        return new ParallelCommandGroup(
+            new C_TridentIntake(ss_Trident).withTimeout(groundintakeTimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight)
             );
@@ -180,58 +212,63 @@ public class RobotContainer {
     ///////////////
     private double testchoice = 0;
     DoubleSupplier gettestchoice = ()->{return testchoice;};
+    BooleanSupplier NearestTagIsUpperAlgae = ()->{AprilTag targetTag = AprilTagManager.getClosestTagofTypeToRobotCenterForAlliance(drivetrain.getState().Pose, TagType.Reef); return targetTag.algaeOnUpper;};
     private void configureBindings() {
 
         //TEST CONFIGURATIONS
-        Testjoystick.leftTrigger().onTrue(CoralDropScoreL2().andThen(ParkElevatorAndHead()));
+        Testjoystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));// reset the field-centric heading on start button press
+        
         Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
         Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
-        // reset the field-centric heading on start button press
-        //joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        
-        joystick.a().onTrue(new C_TridentIntake(ss_Trident).withTimeout(20));
-
-        joystick.y().onTrue(gotoL4Travel()
-        .andThen(new C_PivotToPosition(ss_Pivot, -0.2))
-        .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition)));
-
-
-
-        joystick.leftTrigger().whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier));
-
-        //joystick.b().onTrue(ss_Trident.bumpout()).onFalse(ss_Trident.Stop());
-
-        //joystick.y().onTrue(ss_ArmExtension.C_GotoPositon(constants.PlasmaExtension.maxposition));
-        //joystick.b().onTrue(ss_ArmExtension.C_GotoPositon(constants.PlasmaExtension.minposition));
-        //joystick.x().onTrue(ss_Elevator.GotoPositonCommand(2));
-
+        Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());
+        Testjoystick.leftTrigger().onTrue(CoralDropScoreL2().andThen(ParkElevatorAndHead()));
         //joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
         // joystick.x().onTrue(new InstantCommand(()->{testchoice= testchoice +1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
         // joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
 
+        
+        joystick.start().whileTrue(GroundIntake());
+        joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
+
+        joystick.a().onTrue(Intake());
+
+        joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
+        joystick.x();
+        joystick.y().onTrue(gotoL4Travel()
+            .andThen(new C_PivotToPosition(ss_Pivot, -0.2))
+            .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition)));
+
+
+        joystick.rightTrigger().whileTrue(
+            new C_ReefAlign(drivetrain,()->{return 1;})
+            .andThen(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),NearestTagIsUpperAlgae))
+            .andThen(AlgaeReefIntake()));
+
+        joystick.rightBumper().onTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).alongWith(Intake()));
+        
+
+        joystick.leftTrigger();
+        joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+            .onTrue(ParkElevatorAndHead());
+    
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(gotoL4Travel().andThen(PivotIntoReefL4()));
+            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).andThen(gotoL4Travel(),PivotIntoReefL4()));
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(gotoL3Travel().andThen(PivotIntoReef()));
+            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).andThen(gotoL3Travel(),PivotIntoReef()));
         joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(gotoL2Travel().andThen(PivotIntoReef()));
+            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).andThen(gotoL2Travel(),PivotIntoReef()));
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(gotoL1Travel().andThen(PivotIntoReef()));
+            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).andThen(gotoL1Travel(),PivotIntoReef()));
 
-        //joystick.leftTrigger().onTrue(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.GroundPickupPosition));
-        joystick.rightTrigger().onTrue(GotoTravelPostion());
-        joystick.rightBumper().onTrue(TridentCoralBumpOut());
 
-        
-        joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        .onTrue(ParkElevatorAndHead());
-
-        joystick.start().whileTrue(Intake());
+ 
 
         
-        //joystick.b().onTrue(new InstantCommand(()->{ss_Trident.GotoPosition(ss_Trident.LastPosition-TridentEjectMovement);}));
         
+
+       
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -243,19 +280,6 @@ public class RobotContainer {
             )
         );
 
-        //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        // ));
-
-        // joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
-        //     forwardStraight.withVelocityX(0.5).withVelocityY(0))
-        // );
-        // joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
-        //     forwardStraight.withVelocityX(-0.5).withVelocityY(0))
-        // );
-
-
    
 
         drivetrain.registerTelemetry(logger::telemeterize);
@@ -263,7 +287,7 @@ public class RobotContainer {
     }
     public void configAltCommands()
     {
-        joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
+        
         joystick.povUp().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.maxPostion).alongWith(
             ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.maxPostion)
