@@ -105,7 +105,7 @@ public class LimeLightPoseFilter {
                 
                
                 //System.out.println(thislimelight + " Cant see tags from this disabled location!!!");
-                LimelightHelpers.printPoseEstimate(mt1);
+                //LimelightHelpers.printPoseEstimate(mt1);
                 //CANdleSystem.noAprilTagOnBoot_strobeRed();
                 if(!bootupAprilTagError)
                 {
@@ -132,11 +132,13 @@ public class LimeLightPoseFilter {
     {
         if(mt1 == null){return;}
         //MantaState.DriveTrain.seedFieldCentric();
+        var m_gyro = MantaState.DriveTrain.getPigeon2();
+        m_gyro.setYaw(mt1.pose.getRotation().getDegrees(),5);
         MantaState.DriveTrain.resetPose(new Pose2d(mt1.pose.getX(),mt1.pose.getY(),mt1.pose.getRotation()));//MantaState.DriveTrain.seedFieldRelative(new Pose2d(mt1.pose.getX(),mt1.pose.getY(),mt1.pose.getRotation()));
         //LimelightHelpers.SetRobotOrientation("limelight",mt1.pose.getRotation().getDegrees() ,0 , 0, 0, 0, 0);//m_gyro.getRate()
         LimelightHelpers.SetRobotOrientation(constants.CanBus.limelightFrontName,mt1.pose.getRotation().getDegrees() ,0 , 0, 0, 0, 0);//m_gyro.getRate()
         LimelightHelpers.SetRobotOrientation(constants.CanBus.limelightBackName,mt1.pose.getRotation().getDegrees() ,0 , 0, 0, 0, 0);//m_gyro.getRate()
-
+        
         BootupRobotOrientationSet = true;
     }
     public static void updateOdometry() {

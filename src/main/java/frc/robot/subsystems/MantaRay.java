@@ -30,7 +30,7 @@ import frc.robot.AlphaBots.NT;
 public class MantaRay extends SubsystemBase {
  
     //This will make smartdashboardPuts goto the classes subfolder in the network tables. the / does the subfoldering.
-  String className = this.getClass().getSimpleName()+"/";
+  String className = this.getClass().getSimpleName();
   
   public final TalonFX m_TridentMotor = new TalonFX(constants.CanBus.MantaRayMotorCanID, constants.CanBus.RioCANBusName);
 
@@ -108,7 +108,7 @@ public class MantaRay extends SubsystemBase {
     public InstantCommand SpinUp(double rpmGoal) {
         double rpmgoal = rpmGoal;
         return new InstantCommand(()->{
-            setMotorRPM(rpmgoal);
+            setDutyCycle(rpmgoal);
         });
 
     }
@@ -148,9 +148,9 @@ public class MantaRay extends SubsystemBase {
         return false;
     }
     public double canBusUpdateFrequency = 50;
-    public void setMotorRPM(double rpmgoal) {
+    public void setDutyCycle(double DutyPercent) {
       //m_TridentMotor.setControl(m_torqueVelocity.withVelocity(rpmgoal/60));
-      m_TridentMotor.setControl(new DutyCycleOut(rpmgoal));
+      m_TridentMotor.setControl(new DutyCycleOut(DutyPercent));
     }
 
     public InstantCommand Stop() {
@@ -179,7 +179,7 @@ public class MantaRay extends SubsystemBase {
     }
     public Command LooseGrip()
     {
-        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-.05));});
+        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-.03));});
         
     }
 

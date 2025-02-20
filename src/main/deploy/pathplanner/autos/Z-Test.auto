@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MoveInCenter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpinOutCenter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpinInCenter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpinOutLower"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SpinInLower"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

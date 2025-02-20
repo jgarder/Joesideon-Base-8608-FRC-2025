@@ -234,6 +234,7 @@ public class Pivot extends SubsystemBase {
 
   public BooleanSupplier IsPivotFoldedFarOut = ()->{return LastPosition < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};
   public BooleanSupplier IsPivotinTravelPosition = ()->{return IsPivotFoldedOut.getAsBoolean() & IsPivotAwayFromReef.getAsBoolean();};
+  public BooleanSupplier IsPivotParked = ()->{return frc.robot.AlphaBots.Tools.isPosAtSetpoint(getPosition(),constants.PlasmaPivot.ParkPosition,constants.PlasmaPivot.MoveTolerance);};
 
   //IsSafeToGoDown TODO: this needs a linear interpolation map because at 0 elevator we can only be 90. at mid height we can point down a bit. 
   //also extension will change this number but maybe just assume always extened (ie worst case scenario)

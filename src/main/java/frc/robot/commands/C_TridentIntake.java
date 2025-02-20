@@ -11,6 +11,13 @@ public class C_TridentIntake extends Command {
     boolean isloaded = false;
     public final Timer startupdebounceTimer = new Timer();
     private double debounceSecondsNeeded = .30;
+    private double dutycycleSpeed = constants.MantaRay.IntakeDutyCycle;
+    public C_TridentIntake(MantaRay incomingss_Trident,double _dutycycleSpeed)
+    {
+        dutycycleSpeed =_dutycycleSpeed;
+        ss_Trident = incomingss_Trident;
+        addRequirements(incomingss_Trident);
+    }
     public C_TridentIntake(MantaRay incomingss_Trident){
         ss_Trident = incomingss_Trident;
         addRequirements(incomingss_Trident);
@@ -20,7 +27,7 @@ public class C_TridentIntake extends Command {
     public void initialize() {
         startupdebounceTimer.restart();
         boolean isloaded = false;
-        ss_Trident.setMotorRPM(constants.MantaRay.IntakeDutyCycle);
+        ss_Trident.setDutyCycle(dutycycleSpeed);
     }
     
     @Override

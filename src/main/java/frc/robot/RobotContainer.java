@@ -36,6 +36,7 @@ import frc.robot.commands.C_SourceAlign;
 import frc.robot.commands.C_TridentIntake;
 import frc.robot.constants.Climber;
 import frc.robot.AlphaBots.AprilTag;
+import frc.robot.AlphaBots.LimeLightPoseFilter;
 import frc.robot.AlphaBots.AprilTag.TagType;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
@@ -70,7 +71,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -119,23 +120,23 @@ public class RobotContainer {
     {
         return ss_Elevator.GotoPositonCommand(constants.Elevator.l4Position).alongWith(GotoTravelPostion());
     }
+    public double AlgaeCenterReef = 7.5;
     public Command gotoUpperAlgaeTravel()
     {
-        return ss_Elevator.GotoPositonCommand(constants.Elevator.l3Position).alongWith(GotoTravelPostion());
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l3Position+AlgaeCenterReef).alongWith(GotoTravelPostion());
     }
     public Command gotoLowerAlgaeTravel()
     {
-        return ss_Elevator.GotoPositonCommand(constants.Elevator.l2Position).alongWith(GotoTravelPostion());
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l2Position+AlgaeCenterReef).alongWith(GotoTravelPostion());
     }
     public Command AlgaeReefIntake()
     {
-        return 
-            
+        return
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition)
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
             .alongWith(new C_TridentIntake(ss_Trident).withTimeout(5))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition))
-            .alongWith(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition).alongWith(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
+            );
     }
     public Command GotoTravelPostion()
     {
@@ -155,10 +156,10 @@ public class RobotContainer {
     }
     public Command ParkElevatorAndHead()
     {
-        return elevator1StepPark()//new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
+        return elevator1StepPark().unless(ss_Elevator.elevatorisparked)//new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition))
         .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition)
-        //.unless(ss_Pivot.IsPivotinTravelPosition) Why is this here? it seems redundant?
+            .unless(ss_Pivot.IsPivotParked) //Why is this here? it seems redundant?
             ).andThen(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.ParkPosition));
     }
     public Command PivotIntoReef()
@@ -173,7 +174,7 @@ public class RobotContainer {
     }
     public Command CoralDropScoreL2()
     {
-        return new C_DropElevateToScore(ss_Elevator).alongWith(TridentCoralBumpOut());
+        return new C_DropElevateToScore(ss_Elevator).deadlineFor(TridentCoralBumpOut().finallyDo(()->{ss_Trident.setDutyCycle(0);}));
         //
         // return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
         //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
@@ -206,13 +207,17 @@ public class RobotContainer {
         return new ParallelCommandGroup(
             new C_TridentIntake(ss_Trident).withTimeout(groundintakeTimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
-            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight)
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension)
             );
+    }
+    public Runnable traveltopark()
+    {
+        return ()->{ParkElevatorAndHead().schedule();};
     }
     ///////////////
     private double testchoice = 0;
     DoubleSupplier gettestchoice = ()->{return testchoice;};
-    BooleanSupplier NearestTagIsUpperAlgae = ()->{AprilTag targetTag = AprilTagManager.getClosestTagofTypeToRobotCenterForAlliance(drivetrain.getState().Pose, TagType.Reef); return targetTag.algaeOnUpper;};
     private void configureBindings() {
 
         //TEST CONFIGURATIONS
@@ -227,39 +232,46 @@ public class RobotContainer {
         // joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
 
         
-        joystick.start().whileTrue(GroundIntake());
+        joystick.start().onTrue(new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();}));
         joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
 
-        joystick.a().onTrue(Intake());
-
+        joystick.a().and(joystick.x().negate()).whileTrue(Intake());
+        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().finallyDo(()->{ss_Trident.setDutyCycle(0);}));
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
-        joystick.x();
-        joystick.y().onTrue(gotoL4Travel()
+        joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
+        joystick.y().toggleOnTrue(gotoL4Travel()
             .andThen(new C_PivotToPosition(ss_Pivot, -0.2))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition)));
+            .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
+            .andThen(new WaitCommand(30))
+            .finallyDo(traveltopark()));
 
 
         joystick.rightTrigger().whileTrue(
-            new C_ReefAlign(drivetrain,()->{return 1;})
-            .andThen(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),NearestTagIsUpperAlgae))
+            new C_ReefAlign(drivetrain,()->{return 1;}).until(MantaState.getLimeLightBypassed)
+            .andThen(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))
             .andThen(AlgaeReefIntake()));
 
-        joystick.rightBumper().onTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).alongWith(Intake()));
+        joystick.rightBumper().whileTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).alongWith(Intake()));
         
 
-        joystick.leftTrigger();
+        joystick.leftTrigger().whileTrue(GroundIntake()).onFalse(GotoTravelPostion());
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(ParkElevatorAndHead());
     
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).andThen(gotoL4Travel(),PivotIntoReefL4()));
+            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .andThen(gotoL4Travel(),PivotIntoReefL4(),CoralDropScoreL2(),ParkElevatorAndHead()))
+            .onFalse(ParkElevatorAndHead());
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).andThen(gotoL3Travel(),PivotIntoReef()));
+            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .andThen(gotoL3Travel(),PivotIntoReef()));
         joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).andThen(gotoL2Travel(),PivotIntoReef()));
+            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .andThen(gotoL2Travel(),PivotIntoReef()));
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).andThen(gotoL1Travel(),PivotIntoReef()));
+            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .andThen(gotoL1Travel(),PivotIntoReef()));
 
 
  

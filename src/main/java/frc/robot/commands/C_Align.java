@@ -112,12 +112,19 @@ public class C_Align extends Command{
     @Override
     public boolean isFinished(){
         //near the final positon x
+        boolean Xok = IsXInTarget();
+        boolean Yok = IsYInTarget();
+        boolean Zok = isRotInTarget();
+        
+        MantaState.NT_Xok.set(Xok);
+        MantaState.NT_Yok.set(Yok);
+        MantaState.NT_Zok.set(Zok);
         //near the final positon y
         //near the final positon z (rotation)
         //stop driving
      
     
-        if(IsXInTarget() && IsYInTarget()  && isRotInTarget()){
+        if(Xok && Yok  && Zok){
             //timesgood = 0;
             //Stop movement if we are there.
             StopDriveTrain();

@@ -2,7 +2,9 @@
   "robotWidth": 0.84,
   "robotLength": 0.903,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "FloorPickups"
+  ],
   "autoFolders": [],
   "defaultMaxVel": 1.0,
   "defaultMaxAccel": 1.0,

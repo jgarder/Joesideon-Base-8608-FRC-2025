@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
 import frc.robot.constants;
@@ -43,6 +44,9 @@ public class C_SourceAlign extends Command{
             default:
                 break;
         }
+        System.out.println();
+        //locationToAlignTo = locationToAlignTo.rotateBy(Rotation2d.fromDegrees(180)); rotates around origin? 0,0? wtf?
+        locationToAlignTo = new Pose2d(locationToAlignTo.getX(), locationToAlignTo.getY(), Rotation2d.fromDegrees(locationToAlignTo.getRotation().getDegrees() +180));
         MantaState.NT_AlignSetpoint.set(locationToAlignTo);
         m_command =  new C_Align(locationToAlignTo);//align to pose2d provided above. 
  

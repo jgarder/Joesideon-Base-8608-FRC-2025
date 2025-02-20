@@ -6,6 +6,7 @@ public class constants {
 
     public static final double ReefWidthCenterOffset = Units.inchesToMeters(12.875)/2; //Reef Width CenteronCenter divided in half
     public static final double SourcePickupWidthCenterOffset = Units.inchesToMeters(24)/2; //Reef Width CenteronCenter divided in half
+    public static final double ExtraMetersoffsetForAlgaePickup = Units.inchesToMeters(6);
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -72,9 +73,9 @@ public class constants {
         public static final double intakeAmpLimittime = .10;
     }
     public class Elevator {
-        public static final double kP = 15.0; //MotionMagic
-        public static final double kI = 6.0;
-        public static final double kD = 0.0;
+        public static final double kP = 30.0; //15 //MotionMagic
+        public static final double kI = 15.0; //6
+        public static final double kD = 4.0; //0
 
         public static final double kS = 0.0;
         public static final double kG = 20;
@@ -90,10 +91,10 @@ public class constants {
         
         public static final double gearRatio = (60/11);//60T / 11T (driven/drive) = 5.45454545
 
-        public static final double maxElevatorheight = 26.5;
+        public static final double maxElevatorheight = 26.43;//26.43 measured actual
         public static final double minElevatorHeight = 0;
 
-        public static final double maxStatorCurrent = 60;
+        public static final double maxStatorCurrent = 70;
         
         public static final double ElevatorBrakeParkTolerance = 1.0;
         public static final double MoveTolerance = .5;
@@ -104,7 +105,7 @@ public class constants {
         public static final double ProcessorPos = 4.0;
         public static final double l1Position = 4.0;
         public static final double l2Position = 8.0;
-        public static final double l3Position = 12.0;
+        public static final double l3Position = 16.0;
         public static final double l4Position = maxElevatorheight;
         public static final double BargePosition = maxElevatorheight;
     }
@@ -123,8 +124,8 @@ public class constants {
         public static final double minposition = -0.240234375;
 
         public static final double ParkPosition = minposition;
-        public static final double TravelPosition = -.120;//.0319;//3.75;
-        public static final double GroundPickupPosition = -0.05;//0.102;//12.0;
+        public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
+        public static final double GroundPickupPosition = -0.00;//0.102;//12.0;
 
         public static final double l1ReadyPosition = -.107;//0.06388;
         public static final double l1ScorePosition = l1ReadyPosition + .04;
@@ -138,7 +139,7 @@ public class constants {
 
         public static final double kP = 150.0;
         public static final double kI = 50.00;
-        public static final double kD = 0.00;
+        public static final double kD = 20.00;
 
         public static final double kV = 0.0;
         public static final double kS = 3.0;
@@ -172,8 +173,9 @@ public class constants {
         public static final double l2ReadyPosition = l1ReadyPosition;
         public static final double l2ScorePosition = 0;
 
-        public static final double l4ScorePosition = maxposition-8;
+        public static final double l4ScorePosition = maxposition-12;
         public static final double ReefAlgaePickupExtension = maxposition-10;
+        public static final double GroundPickupExtension = 28;
     }
 
 

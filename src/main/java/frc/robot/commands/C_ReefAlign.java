@@ -31,7 +31,7 @@ public class C_ReefAlign extends Command{
     public void initialize() {
 
         AprilTag targetTag = AprilTagManager.getClosestTagofTypeToRobotCenterForAlliance(drivetrain.getState().Pose, TagType.Reef);
-        Pose2d locationToAlignTo = AprilTagManager.getPose2DStraightLocTranslation(targetTag,0.0);
+        Pose2d locationToAlignTo = AprilTagManager.getPose2DStraightLocTranslation(targetTag,constants.ExtraMetersoffsetForAlgaePickup);
         switch (AlignOnLeft.getAsInt()) {
             case 0://left
             locationToAlignTo = AprilTagManager.getOffSet90Loc(targetTag,0.0,constants.ReefWidthCenterOffset,true);
