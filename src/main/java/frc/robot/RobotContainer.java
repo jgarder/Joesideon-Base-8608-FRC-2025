@@ -120,14 +120,13 @@ public class RobotContainer {
     {
         return ss_Elevator.GotoPositonCommand(constants.Elevator.l4Position).alongWith(GotoTravelPostion());
     }
-    public double AlgaeCenterReef = 7.5;
     public Command gotoUpperAlgaeTravel()
     {
-        return ss_Elevator.GotoPositonCommand(constants.Elevator.l3Position+AlgaeCenterReef).alongWith(GotoTravelPostion());
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l3algae).alongWith(GotoTravelPostion());
     }
     public Command gotoLowerAlgaeTravel()
     {
-        return ss_Elevator.GotoPositonCommand(constants.Elevator.l2Position+AlgaeCenterReef).alongWith(GotoTravelPostion());
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l2Algae).alongWith(GotoTravelPostion());
     }
     public Command AlgaeReefIntake()
     {
@@ -172,9 +171,17 @@ public class RobotContainer {
         return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l1ReadyPosition)
                 .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l4ScorePosition));
     }
-    public Command CoralDropScoreL2()
+    public Command CoralDropScoreL4()
     {
         return new C_DropElevateToScore(ss_Elevator).deadlineFor(TridentCoralBumpOut().finallyDo(()->{ss_Trident.setDutyCycle(0);}));
+        //
+        // return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
+        //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
+        //         .alongWith(TridentCoralBumpOut());
+    }
+    public Command CoralDropScoreL2()
+    {
+        return new C_DropElevateToScore(ss_Elevator).alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.SideScore)).deadlineFor(TridentCoralBumpOut().finallyDo(()->{ss_Trident.setDutyCycle(0);}));
         //
         // return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
         //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
@@ -183,6 +190,12 @@ public class RobotContainer {
     public Command TridentCoralBumpOut()
     {
         return ss_Trident.LooseGrip()
+        .andThen(new WaitCommand(2))
+        .andThen(ss_Trident.Stop());
+    }
+    public Command TridentCoralShootOut()
+    {
+        return ss_Trident.LooseBump()
         .andThen(new WaitCommand(2))
         .andThen(ss_Trident.Stop());
     }
@@ -195,17 +208,24 @@ public class RobotContainer {
 
     //started working on this, not done yet
     double intaketimeout = 20;
-    public Command Intake(){
+    public Command RearIntake(){
         return new ParallelCommandGroup(
             new C_TridentIntake(ss_Trident).withTimeout(intaketimeout),
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition),
-            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight)
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.rearintakePos),
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition)
             );
     }
-    double groundintakeTimeout = 20; //auton this command will run until finished or this timeout. 
+    public Command DebugIntake(){
+        return new ParallelCommandGroup(
+            new C_TridentIntake(ss_Trident,.75).withTimeout(intaketimeout)
+            );
+    }
+    double groundintakeTimeout = 20; //auton this command will run until finished or this timeout.
+    double groundintakedutycycle = 1.0; 
     public Command GroundIntake(){
         return new ParallelCommandGroup(
-            new C_TridentIntake(ss_Trident).withTimeout(groundintakeTimeout),
+            new C_TridentIntake(ss_Trident,groundintakedutycycle).withTimeout(groundintakeTimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
             new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension)
@@ -226,7 +246,7 @@ public class RobotContainer {
         Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
         Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
         Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());
-        Testjoystick.leftTrigger().onTrue(CoralDropScoreL2().andThen(ParkElevatorAndHead()));
+        Testjoystick.leftTrigger().onTrue(CoralDropScoreL4().andThen(ParkElevatorAndHead()));
         //joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
         // joystick.x().onTrue(new InstantCommand(()->{testchoice= testchoice +1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
         // joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
@@ -235,8 +255,8 @@ public class RobotContainer {
         joystick.start().onTrue(new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();}));
         joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
 
-        joystick.a().and(joystick.x().negate()).whileTrue(Intake());
-        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().finallyDo(()->{ss_Trident.setDutyCycle(0);}));
+        joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
+        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().finallyDo(()->{ss_Trident.HoldPosition();}));
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
         joystick.y().toggleOnTrue(gotoL4Travel()
@@ -251,7 +271,7 @@ public class RobotContainer {
             .andThen(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))
             .andThen(AlgaeReefIntake()));
 
-        joystick.rightBumper().whileTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).alongWith(Intake()));
+        joystick.rightBumper().whileTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).alongWith(RearIntake()));
         
 
         joystick.leftTrigger().whileTrue(GroundIntake()).onFalse(GotoTravelPostion());
@@ -261,17 +281,17 @@ public class RobotContainer {
 
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .andThen(gotoL4Travel(),PivotIntoReefL4(),CoralDropScoreL2(),ParkElevatorAndHead()))
+            .andThen(gotoL4Travel(),PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()))
             .onFalse(ParkElevatorAndHead());
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .andThen(gotoL3Travel(),PivotIntoReef()));
+            .andThen(gotoL3Travel(),PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
         joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .andThen(gotoL2Travel(),PivotIntoReef()));
+            .andThen(gotoL2Travel(),PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .andThen(gotoL1Travel(),PivotIntoReef()));
+            .andThen(gotoL1Travel(),PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
 
 
  

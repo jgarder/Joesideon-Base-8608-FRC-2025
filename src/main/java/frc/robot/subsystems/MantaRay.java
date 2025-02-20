@@ -10,6 +10,8 @@ import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
@@ -41,16 +43,26 @@ public class MantaRay extends SubsystemBase {
   
   TalonFXConfiguration configuration;
 
-  DoubleTopic RpmTopic = NT.table.getDoubleTopic(className + " rpm");
-  DoublePublisher RpmPub =  RpmTopic.publish();
-  DoublePublisher MotorTemp =  NT.table.getDoubleTopic(className + "MotorTemp").publish();
+
+  DoubleEntry NT_Rpm =  NT.getDoubleEntry(className ,"RPM",0);
+  DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
+  DoubleEntry NT_position = NT.getDoubleEntry(className, "position",0);
+  DoubleEntry NT_StatorCurrent = NT.getDoubleEntry(className, "StatorCurrent", 0);
+  
+  DoubleEntry NT_PGain = NT.getDoubleEntry(className , "P Gain",0);
+  DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",0);
+  DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",0);
+
+  DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
+  BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
 
   public MantaRay() {
     System.out.println("Creating " + className + " object"); 
     setMotorConfig();
-    SmartDashboard.putNumber(className +" P Gain", kP);
-    SmartDashboard.putNumber(className +" I Gain", kI);
-    SmartDashboard.putNumber(className +" D Gain", kD);
+    NT_PGain.set(kP);
+    NT_IGain.set(kI);
+    NT_DGain.set(kD);
+    NT_SetpointPosition.set(0);
   }
 
 
@@ -81,22 +93,20 @@ public class MantaRay extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    RpmPub.set(m_TridentMotor.getVelocity().getValueAsDouble() * 60);
-    MotorTemp.set(m_TridentMotor.getDeviceTemp().getValueAsDouble());
-    //SmartDashboard.putNumber(className + " rpm", (m_TridentMotor.getVelocity().getValueAsDouble() * 60));
-    SmartDashboard.putNumber(className + " MotorTemp", m_TridentMotor.getDeviceTemp().getValueAsDouble());
-    SmartDashboard.putNumber(className + " StatorCurrent", m_TridentMotor.getStatorCurrent().getValueAsDouble());
-
-    double p = SmartDashboard.getNumber(className +" P Gain", kP);
-    double i = SmartDashboard.getNumber(className +" I Gain", kI);
-    double d = SmartDashboard.getNumber(className +" D Gain", kD);
+    NT_Rpm.set(m_TridentMotor.getVelocity().getValueAsDouble() * 60);
+    NT_MotorTemp.set(m_TridentMotor.getDeviceTemp().getValueAsDouble());
+    NT_position.set(m_TridentMotor.getPosition().getValueAsDouble());
+    NT_StatorCurrent.set(m_TridentMotor.getStatorCurrent().getValueAsDouble());
+    
+    double p = NT_PGain.getAsDouble();
+    double i = NT_IGain.getAsDouble();
+    double d = NT_DGain.getAsDouble();
           
     if((p != kP)) { configuration.Slot1.kP = p; kP = p; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
     if((i != kI)) { configuration.Slot1.kI = i; kI = i; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
     if((d != kD)) { configuration.Slot1.kD = d; kD = d; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
 
-    double currentRotorposition = m_TridentMotor.getPosition().getValueAsDouble();
-    SmartDashboard.putNumber(className + "CurrentPosition", currentRotorposition);
+    //double currentRotorposition = m_TridentMotor.getPosition().getValueAsDouble();
     // if (LastPosition != currentRotorposition) {
     //     LastPosition = currentRotorposition;
     // }
@@ -147,7 +157,7 @@ public class MantaRay extends SubsystemBase {
         //if its true then return true;
         return false;
     }
-    public double canBusUpdateFrequency = 50;
+    public double canBusUpdateFrequency = 45;
     public void setDutyCycle(double DutyPercent) {
       //m_TridentMotor.setControl(m_torqueVelocity.withVelocity(rpmgoal/60));
       m_TridentMotor.setControl(new DutyCycleOut(DutyPercent));
@@ -159,12 +169,13 @@ public class MantaRay extends SubsystemBase {
       });
     }
     public void HoldPosition(){ 
-        double currentRotorposition = m_TridentMotor.getPosition().getValueAsDouble();
+        double currentRotorposition = m_TridentMotor.getPosition(true).getValueAsDouble();
         LastPosition = currentRotorposition;
+        //BRAKE();
         GotoPosition(currentRotorposition-(m_TridentMotor.getVelocity().getValueAsDouble()/canBusUpdateFrequency));
     }
     public void GotoPosition(double wantedposition){ 
-        SmartDashboard.putNumber(className + "SetpointPosition", LastPosition);
+      NT_SetpointPosition.set(wantedposition);
         m_TridentMotor.setControl(
             new PositionDutyCycle(wantedposition)
             .withEnableFOC(true)
@@ -180,6 +191,11 @@ public class MantaRay extends SubsystemBase {
     public Command LooseGrip()
     {
         return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-.03));});
+        
+    }
+    public Command LooseBump()
+    {
+        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-.3));});
         
     }
 

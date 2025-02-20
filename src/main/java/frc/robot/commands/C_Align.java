@@ -17,11 +17,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.MantaState;
+import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
 import frc.robot.constants;
 //import frc.robot.AlphaBots.CommandSwerveDrivetrain;
 import frc.robot.AlphaBots.AprilTag;
 import frc.robot.AlphaBots.NT;
+import frc.robot.LimelightHelpers.PoseEstimate;
 
 public class C_Align extends Command{
     //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
@@ -100,7 +102,16 @@ public class C_Align extends Command{
 
     private void setposeoffsets() {
       //get position
-      CurrentPose = drivetrain.getState().Pose;
+      PoseEstimate LimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightFrontName);
+      double TagdistMaxMeters = 6;
+      boolean shoulduseLLMT1Pose = LimelightMt1!=null && LimelightMt1.tagCount > 0 & LimelightMt1.avgTagDist < TagdistMaxMeters;
+      if(shoulduseLLMT1Pose){
+        CurrentPose = LimelightMt1.pose;
+      }else
+      {
+        CurrentPose = drivetrain.getState().Pose;
+      }
+      
       //get offsets
       //SUBTRACT where we need to go, from where we are. this will give us the translations we need to make 
       double Xpose_Offset = CurrentPose.getX() - TargetPose.getX();
@@ -115,7 +126,7 @@ public class C_Align extends Command{
         boolean Xok = IsXInTarget();
         boolean Yok = IsYInTarget();
         boolean Zok = isRotInTarget();
-        
+
         MantaState.NT_Xok.set(Xok);
         MantaState.NT_Yok.set(Yok);
         MantaState.NT_Zok.set(Zok);

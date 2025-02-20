@@ -158,22 +158,25 @@ public class LimeLightPoseFilter {
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Thislimelight);
         double totalspeedvector = getTotalspeedvector();
         double rotationSpeed = Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble());// m_gyro.getrate();deprecated in 2026
-
-            if(mt2.tagCount == 0 ||
-            //mt2.avgTagDist > 3 ||
-            rotationSpeed > MT2maxrotationalVelocityForLLUpdate ||
-            totalspeedvector > MT2maxSpeedMeterPerSecondForLLUpdate ){ // if our angular velocity is greater than X degrees per second, ignore vision updates
-                doRejectUpdate = true;
-            }
-
-            if(!doRejectUpdate)
+            if(mt2!=null)
             {
-                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-                m_poseEstimator.addVisionMeasurement(
-                    mt2.pose,
-                    mt2.timestampSeconds);
+                if(
+                    mt2.tagCount == 0 ||
+                //mt2.avgTagDist > 3 ||
+                rotationSpeed > MT2maxrotationalVelocityForLLUpdate ||
+                totalspeedvector > MT2maxSpeedMeterPerSecondForLLUpdate ){ // if our angular velocity is greater than X degrees per second, ignore vision updates
+                    doRejectUpdate = true;
+                }
+
+                if(!doRejectUpdate)
+                {
+                    m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+                    m_poseEstimator.addVisionMeasurement(
+                        mt2.pose,
+                        mt2.timestampSeconds);
+                }
+                LimeLightPoseFilter.Mt2doRejectUpdate.set(doRejectUpdate);
             }
-            LimeLightPoseFilter.Mt2doRejectUpdate.set(doRejectUpdate);
         }
         else
         {
