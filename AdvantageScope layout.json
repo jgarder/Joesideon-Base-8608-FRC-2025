@@ -1,10 +1,10 @@
 {
   "hubs": [
     {
-      "x": 397,
-      "y": 92,
-      "width": 1415,
-      "height": 948,
+      "x": -8,
+      "y": -8,
+      "width": 1936,
+      "height": 1056,
       "state": {
         "sidebar": {
           "width": 300,
@@ -18,7 +18,7 @@
           ]
         },
         "tabs": {
-          "selected": 2,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,

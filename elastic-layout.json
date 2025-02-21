@@ -1517,7 +1517,7 @@
               "topic": "/AlphaBots/pidAlignment/XP Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           },
           {
@@ -1531,7 +1531,7 @@
               "topic": "/AlphaBots/pidAlignment/ZP Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           },
           {

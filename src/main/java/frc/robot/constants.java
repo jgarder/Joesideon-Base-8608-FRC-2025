@@ -66,7 +66,7 @@ public class constants {
     }
 
     public class MantaRay {
-        public static final double IntakeDutyCycle = .3;
+        public static final double IntakeDutyCycle = .4;
         public static final double intakeAmpLimit = 40;
 
         public static final double intakeAmpCutoffThreshold = 15; //20
@@ -185,7 +185,7 @@ public class constants {
         public static final double l2ReadyPosition = l1ReadyPosition;
         public static final double l2ScorePosition = 0;
 
-        public static final double l4ScorePosition = maxposition-17;
+        public static final double l4ScorePosition = 38;
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;
     }

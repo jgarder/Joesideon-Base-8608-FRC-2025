@@ -103,7 +103,7 @@ public class C_Align extends Command{
     private void setposeoffsets() {
       //get position
       PoseEstimate frontLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightFrontName);
-      PoseEstimate backLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightFrontName);
+      PoseEstimate backLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightBackName);
       PoseEstimate LimelightMt1 = frontLimelightMt1;
       if(backLimelightMt1 != null)//if we have a back shot
       {

@@ -313,25 +313,27 @@ public class RobotContainer {
 
         //Faster
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .whileTrue(new C_ReefAlign(drivetrain, OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .onTrue(new C_ReefAlign(drivetrain, OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL4Travel())
-            .andThen(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()))
-            .onFalse(ParkElevatorAndHead());
+            .andThen(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead())
+            .finallyDo(traveltopark()));
+            
+            //.onFalse(ParkElevatorAndHead());
 
         joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL3Travel())
-            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
+            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
             
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL2Travel())
-            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
+            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL1Travel())
-            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
+            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
 
  
