@@ -47,7 +47,7 @@ public class C_Align extends Command{
 
     double minXposeErrorToCorrect = constants.drivetrainThings.minXposeErrorMetersToCorrect; //.03175 Meters error is 1.25"
     double minYposeErrorToCorrect = constants.drivetrainThings.minYposeErrorMetersToCorrect;
-    double minRZErrorToCorrect = constants.drivetrainThings.minRZErrorToCorrect;
+    double minRZDegreesErrorToCorrect = constants.drivetrainThings.minRZErrorToCorrect;
 
     Pose2d CurrentPose;//this is our latest position according to our chassis odometry
     Pose2d TargetPose;//this is where we wnt to go in field space coords X,y,Rotation
@@ -102,7 +102,23 @@ public class C_Align extends Command{
 
     private void setposeoffsets() {
       //get position
-      PoseEstimate LimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightFrontName);
+      PoseEstimate frontLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightFrontName);
+      PoseEstimate backLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightFrontName);
+      PoseEstimate LimelightMt1 = frontLimelightMt1;
+      if(backLimelightMt1 != null)//if we have a back shot
+      {
+        if(frontLimelightMt1 !=null)//if we also have a front shot
+        {
+          if (frontLimelightMt1.avgTagDist > backLimelightMt1.avgTagDist) { //if our back shots are closer than the front just use the back instead of defautl front. 
+            LimelightMt1 = backLimelightMt1;
+          }
+        }
+        else//no front shot? just use back shot. 
+        {
+          LimelightMt1 = backLimelightMt1;
+        }
+      }
+
       double TagdistMaxMeters = 6;
       boolean shoulduseLLMT1Pose = LimelightMt1!=null && LimelightMt1.tagCount > 0 & LimelightMt1.avgTagDist < TagdistMaxMeters;
       if(shoulduseLLMT1Pose){
@@ -176,7 +192,7 @@ public class C_Align extends Command{
       }
     
       private boolean isRotInTarget() {
-        return Math.abs(PoseOffset.getRotation().getDegrees()) < minRZErrorToCorrect;
+        return Math.abs(PoseOffset.getRotation().getDegrees()) < minRZDegreesErrorToCorrect;
       }
 
       //This is used with the SmartDashboard to Tune the PID. Unneeded for competition.

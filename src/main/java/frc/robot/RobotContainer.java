@@ -81,6 +81,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    //private final CommandXboxController Testjoystick = new CommandXboxController(1);
 
     private final IntSupplier OptionalButtonSupplier = ()-> {
         if(joystick.x().getAsBoolean())
@@ -91,7 +92,7 @@ public class RobotContainer {
         else return 0;//0 is the left side option on reef
         
     };
-    private final CommandXboxController Testjoystick = new CommandXboxController(1);
+    
     
     
     /* Path follower */
@@ -105,6 +106,10 @@ public class RobotContainer {
     }
 
     ////////////// movement commands
+    public Command gotoMinTravel()
+    {
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.minElevatorHeight).alongWith(GotoTravelPostion());
+    }
     public Command gotoL1Travel()
     {
         return ss_Elevator.GotoPositonCommand(constants.Elevator.l1Position).alongWith(GotoTravelPostion());
@@ -242,14 +247,14 @@ public class RobotContainer {
         return new ParallelCommandGroup(
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
             new C_TridentIntake(ss_Trident,groundintakedutycycle).withTimeout(groundintakeTimeout),
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.maxposition),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
             new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension))
         .finallyDo(groundIntakeReset());
     }
 
     public Runnable groundIntakeReset(){
         return ()->{
-            GotoTravelPostion().schedule();
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition).andThen(GotoTravelPostion()).schedule();
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight).schedule();};
     }
 
@@ -263,12 +268,12 @@ public class RobotContainer {
     private void configureBindings() {
 
         //TEST CONFIGURATIONS
-        Testjoystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));// reset the field-centric heading on start button press
+        // Testjoystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));// reset the field-centric heading on start button press
         
-        Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
-        Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
-        Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());
-        Testjoystick.leftTrigger().onTrue(CoralDropScoreL4().andThen(ParkElevatorAndHead()));
+        // Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
+        // Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
+        // Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());
+        // Testjoystick.leftTrigger().onTrue(CoralDropScoreL4().andThen(ParkElevatorAndHead()));
         //joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
         // joystick.x().onTrue(new InstantCommand(()->{testchoice= testchoice +1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
         // joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
@@ -294,8 +299,9 @@ public class RobotContainer {
 
         joystick.rightTrigger().whileTrue(
             new C_ReefAlign(drivetrain,()->{return 1;}).until(MantaState.getLimeLightBypassed)
-            .andThen(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))
-            .andThen(AlgaeReefIntake()));
+            .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))
+            .andThen(AlgaeReefIntake(),gotoMinTravel()))
+            .onFalse(gotoMinTravel());
 
         joystick.rightBumper().whileTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).alongWith(RearIntake()));
         

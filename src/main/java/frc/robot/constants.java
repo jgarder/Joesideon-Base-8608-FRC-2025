@@ -10,11 +10,11 @@ public class constants {
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-        public static final double minXposeErrorMetersToCorrect = .01;//.06
-        public static final double minYposeErrorMetersToCorrect = .01;//.06
-        public static final double minRZErrorToCorrect = 2;//1.25;
+        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.5);//.01;//.06
+        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.5);//.01;//.06
+        public static final double minRZErrorToCorrect = .25;//0.5;//1;//2;//1.25;
 
-        public static  double k_PoseX_P = 4;//.5;//1.20;
+        public static  double k_PoseX_P = 4.5;//4//.5;//1.20;
         public static  double k_PoseX_I = .00005;//0.000001;//0.02;
         public static  double k_PoseX_D = .06;//0.15;//0.0020;
 
@@ -22,7 +22,7 @@ public class constants {
         public static  double k_PoseY_I = .0000005;//0.000001;//0.02;
         public static  double k_PoseY_D = .06;//0.15;//0.002; 
 
-        public static  double k_RZ_P = 0.09;//.05;
+        public static  double k_RZ_P = 0.10;//.05;
         public static  double k_RZ_I = 0.000000;//0.00;
         public static  double k_RZ_D = 0.000000;//0.00;
 
@@ -124,15 +124,15 @@ public class constants {
         public static final double maxPositionToBeSafeFromSmashingintoSelf = -.24;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
         
         public static final double MoveTolerance = .003;
-        public static final double maxposition = 0.0;
+        public static final double maxposition = 0.06;
         public static final double minposition = -0.240234375;
 
         public static final double ParkPosition = minposition;
-        public static final double rearintakePos = -0.2377;
+        public static final double rearintakePos = minposition;
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = 0.0;
-        public static final double GroundPickupPosition = 0.0;//12.0;
+        public static final double GroundPickupPosition = -0.02;//12.0;
 
         public static final double CoralGroundPickup = 0.06;
 
@@ -144,11 +144,11 @@ public class constants {
 
         public static final double l4ReadyPosition = l1ReadyPosition;
 
-        public static final double maxStatorCurrent = 40;
+        public static final double maxStatorCurrent = 60;
 
-        public static final double kP = 170.0;
+        public static final double kP = 250.0;
         public static final double kI = 50.00;
-        public static final double kD = 10.00;
+        public static final double kD = 30.00;
 
         public static final double kV = 0.0;
         public static final double kS = 3.0;
@@ -177,7 +177,9 @@ public class constants {
         public static final double kD = 0;
         public static final double MoveTolerance = 1.0;
 
-        public static final double l1ReadyPosition = 40.0;//the ready position in the reef is right before we swoop to score. 
+        public static final double positionAddIfCoralOffset = 6;
+        public static final double l1ReadyPosition = 40.0;//the ready position in the reef is right before we swoop to score.
+         
         public static final double l1ScorePosition = 20.0;
 
         public static final double l2ReadyPosition = l1ReadyPosition;
