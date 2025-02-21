@@ -102,6 +102,8 @@ public class constants {
         public static final double CannotPivotParkBelowElevatorPosition = 18;//when elevator is above this, pivot must be in travel position for elevator to go below this number
         public static final double CannotPivotParkAboveElevatorPosition = 3;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
         
+        public static final double groundPickup = 5.2;
+
         public static final double ProcessorPos = 4.0;
         public static final double l1Position = 4.0;
         public static final double l2Position = 10.0;
@@ -122,13 +124,17 @@ public class constants {
         public static final double maxPositionToBeSafeFromSmashingintoSelf = -.24;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
         
         public static final double MoveTolerance = .003;
-        public static final double maxposition = 0;
+        public static final double maxposition = 0.0;
         public static final double minposition = -0.240234375;
 
         public static final double ParkPosition = minposition;
         public static final double rearintakePos = -0.2377;
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
-        public static final double GroundPickupPosition = -0.00;//0.102;//12.0;
+
+        public static final double AlgaeReefPickup = 0.0;
+        public static final double GroundPickupPosition = 0.0;//12.0;
+
+        public static final double CoralGroundPickup = 0.06;
 
         public static final double l1ReadyPosition = -.107;//0.06388;
         public static final double l1ScorePosition = l1ReadyPosition + .04;
@@ -140,9 +146,9 @@ public class constants {
 
         public static final double maxStatorCurrent = 40;
 
-        public static final double kP = 150.0;
+        public static final double kP = 170.0;
         public static final double kI = 50.00;
-        public static final double kD = 20.00;
+        public static final double kD = 10.00;
 
         public static final double kV = 0.0;
         public static final double kS = 3.0;
@@ -179,7 +185,7 @@ public class constants {
 
         public static final double l4ScorePosition = maxposition-17;
         public static final double ReefAlgaePickupExtension = maxposition-10;
-        public static final double GroundPickupExtension = 28;
+        public static final double GroundPickupExtension = 38;
     }
 
 

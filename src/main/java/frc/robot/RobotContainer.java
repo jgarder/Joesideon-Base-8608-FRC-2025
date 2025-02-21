@@ -81,6 +81,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+
     private final IntSupplier OptionalButtonSupplier = ()-> {
         if(joystick.x().getAsBoolean())
         {
@@ -95,7 +96,7 @@ public class RobotContainer {
     
     /* Path follower */
     //edu.wpi.first.networktables.NetworkTableEntry NT_AutoChooser = NT.getStringArrayEntry("Auto" , "Auto Mode",new String[]{});
-    private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser; 
 
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
@@ -131,15 +132,17 @@ public class RobotContainer {
     public Command AlgaeReefIntake()
     {
         return
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition)
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AlgaeReefPickup)
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
             .alongWith(new C_TridentIntake(ss_Trident).withTimeout(5))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition).alongWith(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition)
+            .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
             );
     }
     public Command GotoTravelPostion()
     {
-        return new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition);//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
+        return new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition)
+            .alongWith(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
     }
     BooleanSupplier jake = ()->{return ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.l1Position;};
     BooleanSupplier jake2 = ()->{return ss_Elevator.m_ElevatorMotor1.getVelocity().getValueAsDouble() < 100;};
@@ -221,16 +224,35 @@ public class RobotContainer {
             new C_TridentIntake(ss_Trident,.75).withTimeout(intaketimeout)
             );
     }
+
     double groundintakeTimeout = 20; //auton this command will run until finished or this timeout.
     double groundintakedutycycle = 1.0; 
-    public Command GroundIntake(){
-        return new ParallelCommandGroup(
+
+    //For Autos, better for Coral, terrible for Algae
+    public Command coralOnlyGroundIntake(){
+        return new C_ElevateToPosition(ss_Elevator, constants.Elevator.groundPickup)
+        .alongWith(
             new C_TridentIntake(ss_Trident,groundintakedutycycle).withTimeout(groundintakeTimeout),
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
-            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
-            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension)
-            );
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.CoralGroundPickup),
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension))
+        .finallyDo(groundIntakeReset());
     }
+    //worse for coral, but usable, better for Algae
+    public Command bothGroundIntake(){
+        return new ParallelCommandGroup(
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
+            new C_TridentIntake(ss_Trident,groundintakedutycycle).withTimeout(groundintakeTimeout),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.maxposition),
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension))
+        .finallyDo(groundIntakeReset());
+    }
+
+    public Runnable groundIntakeReset(){
+        return ()->{
+            GotoTravelPostion().schedule();
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight).schedule();};
+    }
+
     public Runnable traveltopark()
     {
         return ()->{ParkElevatorAndHead().schedule();};
@@ -256,8 +278,12 @@ public class RobotContainer {
         joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
+        //Algae 
         joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().finallyDo(()->{ss_Trident.HoldPosition();}));
+
+        //limelight bypass
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
+        
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
         joystick.y().toggleOnTrue(gotoL4Travel()
             .andThen(new C_PivotToPosition(ss_Pivot, -0.2))
@@ -274,24 +300,32 @@ public class RobotContainer {
         joystick.rightBumper().whileTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).alongWith(RearIntake()));
         
 
-        joystick.leftTrigger().whileTrue(GroundIntake()).onFalse(GotoTravelPostion());
+        joystick.leftTrigger().whileTrue(bothGroundIntake());
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(ParkElevatorAndHead());
     
 
+        //Faster
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .andThen(gotoL4Travel(),PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()))
+            .whileTrue(new C_ReefAlign(drivetrain, OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .alongWith(gotoL4Travel())
+            .andThen(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()))
             .onFalse(ParkElevatorAndHead());
-        joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .andThen(gotoL3Travel(),PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
+
         joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .andThen(gotoL2Travel(),PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
+            .alongWith(gotoL3Travel())
+            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
+            
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .andThen(gotoL1Travel(),PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
+            .alongWith(gotoL2Travel())
+            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
+
+        joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+            .whileTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .alongWith(gotoL1Travel())
+            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()));
 
 
  

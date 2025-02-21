@@ -152,7 +152,7 @@ public class Pivot extends SubsystemBase {
     _configuration.MotionMagic.MotionMagicCruiseVelocity = constants.PlasmaPivot.Cruise;
 
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.PlasmaPivot.maxposition;
+    _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.PlasmaPivot.GroundPickupPosition;
 
     _configuration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     _configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = constants.PlasmaPivot.minposition;
