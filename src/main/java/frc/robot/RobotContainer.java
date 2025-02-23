@@ -221,7 +221,7 @@ public class RobotContainer {
             new C_TridentIntake(ss_Trident).withTimeout(intaketimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.rearintakePos),
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
-            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition)
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.rearintakePos)
             );
     }
     public Command DebugIntake(){

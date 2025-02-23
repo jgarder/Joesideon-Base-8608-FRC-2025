@@ -74,9 +74,9 @@ public class MantaRay extends SubsystemBase {
   private void setMotorConfig(){
     configuration = new TalonFXConfiguration();
 
-    configuration.Slot1.kP = kP;
-    configuration.Slot1.kI = kI;
-    configuration.Slot1.kD = kD;
+    configuration.Slot0.kP = kP;
+    configuration.Slot0.kI = kI;
+    configuration.Slot0.kD = kD;
 
     configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     configuration.CurrentLimits.StatorCurrentLimit = constants.MantaRay.intakeAmpLimit;
@@ -102,9 +102,9 @@ public class MantaRay extends SubsystemBase {
     double i = NT_IGain.getAsDouble();
     double d = NT_DGain.getAsDouble();
           
-    if((p != kP)) { configuration.Slot1.kP = p; kP = p; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
-    if((i != kI)) { configuration.Slot1.kI = i; kI = i; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
-    if((d != kD)) { configuration.Slot1.kD = d; kD = d; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
+    if((p != kP)) { configuration.Slot0.kP = p; kP = p; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
+    if((i != kI)) { configuration.Slot0.kI = i; kI = i; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
+    if((d != kD)) { configuration.Slot0.kD = d; kD = d; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
 
     //double currentRotorposition = m_TridentMotor.getPosition().getValueAsDouble();
     // if (LastPosition != currentRotorposition) {
@@ -179,7 +179,7 @@ public class MantaRay extends SubsystemBase {
         m_TridentMotor.setControl(
             new PositionDutyCycle(wantedposition)
             .withEnableFOC(true)
-            .withSlot(1)
+            .withSlot(0)
         );
     }
 

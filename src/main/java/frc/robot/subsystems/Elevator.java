@@ -193,25 +193,25 @@ public class Elevator extends SubsystemBase {
     
     if (motorNeedsConfig){Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className);}
 
-    doTravelIfInCorrectPosition();
+    doTravelIfInCorrectPosition(requestedPosition);
   }
 
-  public void doTravelIfInCorrectPosition()
+  public void doTravelIfInCorrectPosition(double _requestedPosition)
   {
-    if (setPointPosition != requestedPosition) {
+    if (setPointPosition != _requestedPosition) {
       
       //if we are above the CannotFoldBelow position
       if(currentPosition > constants.Elevator.CannotPivotParkBelowElevatorPosition)
       {
         //if we are going below the cannot fold position
-        if(requestedPosition <= constants.Elevator.CannotPivotParkBelowElevatorPosition)
+        if(_requestedPosition <= constants.Elevator.CannotPivotParkBelowElevatorPosition)
         {
           //check if pivot is in a safe travel position
           if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
           {
              //if/when we are folded out, set position to requested position
             //safe to goto requestion position
-            GotoPosition(requestedPosition);
+            GotoPosition(_requestedPosition);
           }
           else{
             //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
@@ -221,20 +221,20 @@ public class Elevator extends SubsystemBase {
         }
         else{
           //if we are above the safe zone and staying above the safe zone then request the new position. 
-          GotoPosition(requestedPosition);
+          GotoPosition(_requestedPosition);
         }
       }   //if we are below the CannotFoldabove position
       else if(currentPosition < constants.Elevator.CannotPivotParkAboveElevatorPosition)
       {
         //if we are going above the cannot fold position
-        if(requestedPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
+        if(_requestedPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
         {
           //check if pivot is in a safe travel position
           if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
           {
               //if/when we are folded out, set position to requested position
             //safe to goto requestion position
-            GotoPosition(requestedPosition);
+            GotoPosition(_requestedPosition);
           }
           else{
             //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
@@ -244,7 +244,7 @@ public class Elevator extends SubsystemBase {
         }
         else{
           //if we are below the safe zone and going below the safe zone then request the new position. 
-          GotoPosition(requestedPosition);
+          GotoPosition(_requestedPosition);
         }
       }//if we are not above the nogo and we are not below the nogo we are in the nogo. make sure we are in travel position and goto the called position
       else 
@@ -254,7 +254,7 @@ public class Elevator extends SubsystemBase {
         {
             //if/when we are folded out, set position to requested position
           //safe to goto requestion position
-          GotoPosition(requestedPosition);
+          GotoPosition(_requestedPosition);
         }
         else{
           //if not IsPivotinTravelPosition, dont move we are in the No-go zone already. 
@@ -262,7 +262,7 @@ public class Elevator extends SubsystemBase {
       }
     }// else if we are close to parked and we are requesting a park. then just brake mode. 
     else if ((setPointPosition < constants.Elevator.ElevatorBrakeParkTolerance) 
-          & (requestedPosition < constants.Elevator.ElevatorBrakeParkTolerance)
+          & (_requestedPosition < constants.Elevator.ElevatorBrakeParkTolerance)
           &  m_ElevatorMotor1.getVelocity().getValueAsDouble() < 100
           & Tools.isPosAtSetpoint(currentPosition, constants.Elevator.minElevatorHeight, constants.Elevator.ElevatorBrakeParkTolerance))
     {

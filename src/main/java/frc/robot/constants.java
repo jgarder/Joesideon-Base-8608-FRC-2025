@@ -125,7 +125,7 @@ public class constants {
         
         public static final double MoveTolerance = .003;
         public static final double maxposition = 0.06;
-        public static final double minposition = -0.240234375;
+        public static final double minposition = -0.245234375;
 
         public static final double ParkPosition = minposition;
         public static final double rearintakePos = minposition;
@@ -167,6 +167,7 @@ public class constants {
     }
 
     public class PlasmaExtension {
+        //CURRENTLY EACH "1" POSITION is .25" approx. 
         public static final double gearRatio = 3*3*3; //27:1 gear reduction (was60)
         public static final double maxPositionToBeSafeFromStage1Crossbar = 0;
         public static final double maxStatorCurrent = 40;
@@ -188,7 +189,9 @@ public class constants {
         public static final double l4ScorePosition = 38;
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;
+        public static final double rearintakePos = .5; 
     }
+        
 
 
 
