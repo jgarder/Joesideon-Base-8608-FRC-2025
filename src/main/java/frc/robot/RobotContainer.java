@@ -169,10 +169,13 @@ public class RobotContainer {
             .unless(ss_Pivot.IsPivotParked) //Why is this here? it seems redundant?
             ).andThen(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.ParkPosition));
     }
-    public Command PivotIntoReef()
-    {
+    public Command PivotIntoReef(){
         return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l1ReadyPosition)
                 .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l1ReadyPosition));
+    }
+    public Command PivotIntoReefL2(){
+        return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ReadyPosition)
+                .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ReadyPosition));
     }
     public Command PivotIntoReefL4()
     {
@@ -187,14 +190,27 @@ public class RobotContainer {
         //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
         //         .alongWith(TridentCoralBumpOut());
     }
+
     public Command CoralDropScoreL2()
     {
-        return new C_DropElevateToScore(ss_Elevator).alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.SideScore)).deadlineFor(TridentCoralBumpOut().finallyDo(()->{ss_Trident.setDutyCycle(0);}));
-        //
-        // return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
-        //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
-        //         .alongWith(TridentCoralBumpOut());
+        return new C_DropElevateToScore(ss_Elevator)
+            .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.SideScore))
+            .deadlineFor(TridentCoralBumpOut()
+            .finallyDo(()->{ss_Trident.setDutyCycle(0);}));
+                                    //.setDutyCycle(0)
+    
     }
+
+    // public Command coralScoreL2(){
+    //     return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ReadyPosition)
+    //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ReadyPosition))
+    //     .andThen(new C_DropElevateToScore(ss_Elevator))
+    //         .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.SideScore))
+    //         .deadlineFor(TridentCoralBumpOut()
+    //         .finallyDo(()->{ss_Trident.BRAKE();}));
+    //                             //.setDutyCycle(0));
+    // }
+
     public Command TridentCoralBumpOut()
     {
         return ss_Trident.LooseGrip()
@@ -303,7 +319,8 @@ public class RobotContainer {
             .andThen(AlgaeReefIntake(),gotoMinTravel()))
             .onFalse(gotoMinTravel());
 
-        joystick.rightBumper().whileTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed).alongWith(RearIntake()));
+        joystick.rightBumper().whileTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .alongWith(RearIntake()));
         
 
         joystick.leftTrigger().whileTrue(bothGroundIntake());
@@ -328,7 +345,7 @@ public class RobotContainer {
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL2Travel())
-            .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
+            .andThen(PivotIntoReefL2(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)

@@ -14,9 +14,9 @@ public class constants {
         public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.5);//.01;//.06
         public static final double minRZErrorToCorrect = .25;//0.5;//1;//2;//1.25;
 
-        public static  double k_PoseX_P = 4.5;//4//.5;//1.20;
-        public static  double k_PoseX_I = .00005;//0.000001;//0.02;
-        public static  double k_PoseX_D = .06;//0.15;//0.0020;
+        public static  double k_PoseX_P = 2.1;//4;
+        public static  double k_PoseX_I = 0.0;//0.000001;//0.02;
+        public static  double k_PoseX_D = .0;//0.06;
 
         public static  double k_PoseY_P = .5;//.5;//1.20;
         public static  double k_PoseY_I = .0000005;//0.000001;//0.02;
@@ -106,7 +106,7 @@ public class constants {
 
         public static final double ProcessorPos = 4.0;
         public static final double l1Position = 4.0;
-        public static final double l2Position = 10.0;
+        public static final double l2Position = 9.0;
         public static final double l2Algae = 15.5;
         public static final double l3Position = 18.0;
         public static final double l3algae = 23.5;
@@ -128,7 +128,7 @@ public class constants {
         public static final double minposition = -0.245234375;
 
         public static final double ParkPosition = minposition;
-        public static final double rearintakePos = minposition;
+        public static final double rearintakePos = -0.242;//minposition;
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = 0.0;
@@ -183,10 +183,10 @@ public class constants {
          
         public static final double l1ScorePosition = 20.0;
 
-        public static final double l2ReadyPosition = l1ReadyPosition;
+        public static final double l2ReadyPosition = 35;
         public static final double l2ScorePosition = 0;
 
-        public static final double l4ScorePosition = 38;
+        public static final double l4ScorePosition = 36;
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;
         public static final double rearintakePos = .5; 
