@@ -21,12 +21,15 @@ public class C_SourceAlign extends Command{
     //AprilTagManager ATMan;
     CommandSwerveDrivetrain drivetrain;
     IntSupplier AlignOnLeft = ()->{return 1;}; //0 left, 1 center, 2 right
-    public C_SourceAlign C_SourceAlign(CommandSwerveDrivetrain _drivetrain){IntSupplier jake = ()->{return 1;}; return new C_SourceAlign(_drivetrain,jake);}//this is for auton alignment. always lines up middle. 
+    public C_SourceAlign(CommandSwerveDrivetrain _drivetrain){
+        IntSupplier jake = ()->{return 1;};  
+        drivetrain =_drivetrain;
+        AlignOnLeft = jake;}//this is for auton alignment. always lines up middle. 
     public C_SourceAlign(CommandSwerveDrivetrain _drivetrain,IntSupplier _AlignOnLeft ){
         drivetrain =_drivetrain;
         AlignOnLeft = _AlignOnLeft;
     }
-    Command m_command;
+    C_Align m_command;
     @Override
     public void initialize() {
 
@@ -44,10 +47,10 @@ public class C_SourceAlign extends Command{
             default:
                 break;
         }
-        System.out.println();
         //locationToAlignTo = locationToAlignTo.rotateBy(Rotation2d.fromDegrees(180)); rotates around origin? 0,0? wtf?
         locationToAlignTo = new Pose2d(locationToAlignTo.getX(), locationToAlignTo.getY(), Rotation2d.fromDegrees(locationToAlignTo.getRotation().getDegrees() +180));
         MantaState.NT_AlignSetpoint.set(locationToAlignTo);
+        if(locationToAlignTo == null){System.out.println("NO LOCATION TO ALIGN TO!"); return;}
         m_command =  new C_Align(locationToAlignTo);//align to pose2d provided above. 
  
         if (m_command != null) {
@@ -63,9 +66,11 @@ public class C_SourceAlign extends Command{
         }
         
     }
+    public int PoseOffsetErrors = 0;
     @Override
     public boolean isFinished() {
         if (m_command != null) {
+            if (m_command.PoseOffset == null){PoseOffsetErrors++; System.err.println("No pose OFFSET! Broken CODE? ERRRCOUNT: " + PoseOffsetErrors); return false;}
             if(m_command.isFinished()){
             return true;
             }

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Meter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,8 +14,11 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.StructEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AlphaBots.Tools;
+import frc.robot.commands.C_Align;
 import frc.robot.constants;
 import frc.robot.AlphaBots.AprilTag;
 import frc.robot.AlphaBots.AprilTag.TagType;
@@ -23,9 +27,9 @@ import frc.robot.AlphaBots.NT;
 public class AprilTagManager extends SubsystemBase
   {
     //public static ArrayList<AprilTag> tagList = new ArrayList<AprilTag>(22);
-    public static double RobotDefaultOffset = 0.0;//adds a 1/4 inch extra space at locations. 
-    public static double bumperthickness = 3.00*2; //real 3.35"
-    public static double robotsize = 31.625/2;
+    public static double RobotDefaultOffset = -1.5;//adds a 1/4 inch extra space at locations. 
+    public static double bumperthickness = 3.00*2; //real 3.75"
+    public static double robotsize = 30.25/2;//size no bumpers divided by 2
     public static double robotmetersdistToCenter = Units.inchesToMeters(RobotDefaultOffset+robotsize+bumperthickness);
     public static AprilTag getTagbyID(int _ID)
     {
@@ -35,6 +39,7 @@ public class AprilTagManager extends SubsystemBase
           return aprilTag;
         }
       }
+      System.err.println("No Tag found for ID :" + _ID);
         return new AprilTag(0, "NotFound", new Pose2d(), 0,Alliance.Blue);
     }
     public static AprilTag getClosestTagToRobotCenter(Pose2d RobotLoc)
@@ -105,11 +110,21 @@ public class AprilTagManager extends SubsystemBase
 
     //public static int GetProcessorID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 16:3;}//first num blue second red.
     //public static int GetBargeID(){return (DriverStation.getAlliance().isPresent() & DriverStation.getAlliance().get().equals(Alliance.Blue))? 14:5;}//first num blue second red.
-    
+
     public static Pose2d getStraightOutLoc(int TagID,double MetersFromAprilTag)
     {
         AprilTag Thistag = getTagbyID(TagID);
         return getPose2DStraightLocTranslation(Thistag,MetersFromAprilTag);
+    }
+    public static Pose2d getReverseStraightOutLoc(int TagID,double MetersFromAprilTag)
+    {
+        AprilTag Thistag = getTagbyID(TagID);
+        return getReversePose2DStraightLocTranslation(Thistag,MetersFromAprilTag);
+    }
+    public static Pose2d getReversePose2DStraightLocTranslation(AprilTag Thistag,double MetersFromAprilTag)
+    {
+      Pose2d results = getPose2DStraightLocTranslation(Thistag,MetersFromAprilTag);
+      return new Pose2d(results.getX(),results.getY(),Rotation2d.fromDegrees(results.getRotation().getDegrees() +180));
     }
     public static Pose2d getOffSet90Loc(int TagID,double MetersFromAprilTag,double offcenter90distMeters,boolean positive)
     {
@@ -208,4 +223,151 @@ public class AprilTagManager extends SubsystemBase
     }
 
   }
+  private int selectSource() {
+
+    return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Source).ID;
+
+}
+private int selectReef() {
+
+return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Reef).ID;
+
+}
+
+public final SelectCommand C_SourceSelectCommand(){
+     return new SelectCommand<>(
+          // Maps selector values to commands
+          Map.ofEntries(
+              Map.entry(1, new PrintCommand("Command 1 was selected!")
+              .alongWith(new C_Align(AprilTagManager.getReverseStraightOutLoc(1,0.0)))),
+
+              Map.entry(2, new PrintCommand("Command 2 was selected!")
+              .alongWith(new C_Align(AprilTagManager.getReverseStraightOutLoc(2,0)))),
+              
+              Map.entry(12, new PrintCommand("Command 12 was selected!")
+              .alongWith(new C_Align(AprilTagManager.getReverseStraightOutLoc(12,0)))),
+
+              Map.entry(13, new PrintCommand("Command 13 was selected!")
+              .alongWith(new C_Align(AprilTagManager.getReverseStraightOutLoc(13,0))))),
+
+          ()->{return selectSource();});
+
+    }
+    public final SelectCommand C_ReefLeftSelectCommand()
+        { return
+          new SelectCommand<>(
+              // Maps selector values to commands
+              Map.ofEntries(
+                  Map.entry(6, new PrintCommand("Command 6 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(6,0.0,constants.ReefWidthCenterOffset,true)))),
+    
+                  Map.entry(7, new PrintCommand("Command 7 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(7,0,constants.ReefWidthCenterOffset,true)))),
+                  
+                  Map.entry(8, new PrintCommand("Command 8 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(8,0,constants.ReefWidthCenterOffset,true)))),
+    
+                  Map.entry(9, new PrintCommand("Command 9 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(9,0,constants.ReefWidthCenterOffset,true)))),
+                  Map.entry(10, new PrintCommand("Command 10 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(10,0,constants.ReefWidthCenterOffset,true)))),
+                  Map.entry(11, new PrintCommand("Command 11 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(11,0,constants.ReefWidthCenterOffset,true)))),
+
+                  Map.entry(17, new PrintCommand("Command 17 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(17,0,constants.ReefWidthCenterOffset,true)))),
+                  Map.entry(18, new PrintCommand("Command 18 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(18,0,constants.ReefWidthCenterOffset,true)))),
+                  Map.entry(19, new PrintCommand("Command 19 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(19,0,constants.ReefWidthCenterOffset,true)))),
+                  Map.entry(20, new PrintCommand("Command 20 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(20,0,constants.ReefWidthCenterOffset,true)))),
+                  Map.entry(21, new PrintCommand("Command 21 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(21,0,constants.ReefWidthCenterOffset,true)))),
+                  Map.entry(22, new PrintCommand("Command 22 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(11,0,constants.ReefWidthCenterOffset,true))))
+                  
+                  ),
+                  
+
+              ()->{return selectReef();});
+        }
+        public final SelectCommand C_ReefRightSelectCommand()
+        { return
+          new SelectCommand<>(
+              // Maps selector values to commands
+              Map.ofEntries(
+                  Map.entry(6, new PrintCommand("Command 6 Right was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(6,0.0,constants.ReefWidthCenterOffset,false)))),
+    
+                  Map.entry(7, new PrintCommand("Command 7 Right was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(7,0,constants.ReefWidthCenterOffset,false)))),
+                  
+                  Map.entry(8, new PrintCommand("Command 8 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(8,0,constants.ReefWidthCenterOffset,false)))),
+    
+                  Map.entry(9, new PrintCommand("Command 9 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(9,0,constants.ReefWidthCenterOffset,false)))),
+                  Map.entry(10, new PrintCommand("Command 10 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(10,0,constants.ReefWidthCenterOffset,false)))),
+                  Map.entry(11, new PrintCommand("Command 11 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(11,0,constants.ReefWidthCenterOffset,false)))),
+
+                  Map.entry(17, new PrintCommand("Command 17 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(17,0,constants.ReefWidthCenterOffset,false)))),
+                  Map.entry(18, new PrintCommand("Command 18 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(18,0,constants.ReefWidthCenterOffset,false)))),
+                  Map.entry(19, new PrintCommand("Command 19 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(19,0,constants.ReefWidthCenterOffset,false)))),
+                  Map.entry(20, new PrintCommand("Command 20 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(20,0,constants.ReefWidthCenterOffset,false)))),
+                  Map.entry(21, new PrintCommand("Command 21 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(21,0,constants.ReefWidthCenterOffset,false)))),
+                  Map.entry(22, new PrintCommand("Command 22 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(11,0,constants.ReefWidthCenterOffset,false))))
+                  
+                  ),
+                  
+
+              ()->{return selectReef();});
+        }
+        public  final SelectCommand C_ReefCenterSelectCommand()
+        { return
+          new SelectCommand<>(
+              // Maps selector values to commands
+              Map.ofEntries(
+                  Map.entry(6, new PrintCommand("Command 6 Center was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(6,constants.ExtraMetersoffsetForAlgaePickup)))),
+    
+                  Map.entry(7, new PrintCommand("Command 7  Center was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(7,constants.ExtraMetersoffsetForAlgaePickup)))),
+                  
+                  Map.entry(8, new PrintCommand("Command 8 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(8,constants.ExtraMetersoffsetForAlgaePickup)))),
+    
+                  Map.entry(9, new PrintCommand("Command 9 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(9,constants.ExtraMetersoffsetForAlgaePickup)))),
+                  Map.entry(10, new PrintCommand("Command 10 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(10,constants.ExtraMetersoffsetForAlgaePickup)))),
+                  Map.entry(11, new PrintCommand("Command 11 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(11,constants.ExtraMetersoffsetForAlgaePickup)))),
+
+                  Map.entry(17, new PrintCommand("Command 17 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(17,constants.ExtraMetersoffsetForAlgaePickup)))),
+                  Map.entry(18, new PrintCommand("Command 18 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(18,constants.ExtraMetersoffsetForAlgaePickup)))),
+                  Map.entry(19, new PrintCommand("Command 19 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(19,constants.ExtraMetersoffsetForAlgaePickup)))),
+                  Map.entry(20, new PrintCommand("Command 20 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(20,constants.ExtraMetersoffsetForAlgaePickup)))),
+                  Map.entry(21, new PrintCommand("Command 21 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(21,constants.ExtraMetersoffsetForAlgaePickup)))),
+                  Map.entry(22, new PrintCommand("Command 22 was selected!")
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(11,constants.ExtraMetersoffsetForAlgaePickup))))
+                  
+                  ),
+                  
+
+              ()->{return selectReef();});
+        }
   }

@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "START TO SERight"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestRightScoreL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Se To Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestSourceIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source To SW"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestLeftScoreL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SW To Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestSourceIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source To SW"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestRightScoreL4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

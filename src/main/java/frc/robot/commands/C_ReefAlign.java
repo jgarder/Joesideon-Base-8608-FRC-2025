@@ -20,13 +20,16 @@ public class C_ReefAlign extends Command{
     //AprilTagManager ATMan;
     CommandSwerveDrivetrain drivetrain;
     IntSupplier AlignOnLeft = ()->{return 1;}; //0 left, 1 center, 2 right
-    public C_ReefAlign C_ReefAlign(CommandSwerveDrivetrain _drivetrain){IntSupplier jake = ()->{return 1;}; return new C_ReefAlign(_drivetrain,jake);}//this is for algae alignment. always lines up middle. 
+    public C_ReefAlign(CommandSwerveDrivetrain _drivetrain){
+        IntSupplier jake = ()->{return 1;};
+        drivetrain =_drivetrain;
+        AlignOnLeft = jake; }//this is for algae alignment. always lines up middle. 
     public C_ReefAlign(CommandSwerveDrivetrain _drivetrain,IntSupplier _AlignOnLeft ){
         //ATMan = _ATMan;
         drivetrain =_drivetrain;
         AlignOnLeft = _AlignOnLeft;
     }
-    Command m_command;
+    C_Align m_command;
     @Override
     public void initialize() {
 
@@ -60,9 +63,11 @@ public class C_ReefAlign extends Command{
         }
         
     }
+    public int PoseOffsetErrors = 0;
     @Override
     public boolean isFinished() {
         if (m_command != null) {
+            if (m_command.PoseOffset == null){PoseOffsetErrors++; System.err.println("No pose OFFSET! Broken CODE? ERRRCOUNT: " + PoseOffsetErrors); return false;}
             if(m_command.isFinished()){
             return true;
             }

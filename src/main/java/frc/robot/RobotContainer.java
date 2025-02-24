@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
@@ -14,19 +15,26 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.C_Align;
 import frc.robot.commands.C_DropElevateToScore;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
@@ -100,9 +108,11 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser; 
 
     public RobotContainer() {
+        bindNamedCommands();
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();
+        
     }
 
     ////////////// movement commands
@@ -232,7 +242,7 @@ public class RobotContainer {
 
     //started working on this, not done yet
     double intaketimeout = 20;
-    public Command RearIntake(){
+    public ParallelCommandGroup RearIntake(){
         return new ParallelCommandGroup(
             new C_TridentIntake(ss_Trident).withTimeout(intaketimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.rearintakePos),
@@ -278,10 +288,13 @@ public class RobotContainer {
     {
         return ()->{ParkElevatorAndHead().schedule();};
     }
+
+
     ///////////////
     private double testchoice = 0;
     DoubleSupplier gettestchoice = ()->{return testchoice;};
     private void configureBindings() {
+
 
         //TEST CONFIGURATIONS
         // Testjoystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));// reset the field-centric heading on start button press
@@ -314,13 +327,12 @@ public class RobotContainer {
 
 
         joystick.rightTrigger().whileTrue(
-            new C_ReefAlign(drivetrain,()->{return 1;}).until(MantaState.getLimeLightBypassed)
+            ATMan.C_ReefCenterSelectCommand().until(MantaState.getLimeLightBypassed)
             .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))
             .andThen(AlgaeReefIntake(),gotoMinTravel()))
             .onFalse(gotoMinTravel());
 
-        joystick.rightBumper().whileTrue(new C_SourceAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .alongWith(RearIntake()));
+        joystick.rightBumper().whileTrue(Control_RearIntake());
         
 
         joystick.leftTrigger().whileTrue(bothGroundIntake());
@@ -330,25 +342,22 @@ public class RobotContainer {
 
         //Faster
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(new C_ReefAlign(drivetrain, OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
-            .alongWith(gotoL4Travel())
-            .andThen(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead())
-            .finallyDo(traveltopark()));
+            .onTrue(Control_AlignClosestScoreL4().finallyDo(traveltopark()));
             
             //.onFalse(ParkElevatorAndHead());
 
         joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .onTrue(alignReefForCoral()
             .alongWith(gotoL3Travel())
             .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
             
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .onTrue(alignReefForCoral()
             .alongWith(gotoL2Travel())
             .andThen(PivotIntoReefL2(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(new C_ReefAlign(drivetrain,OptionalButtonSupplier).until(MantaState.getLimeLightBypassed)
+            .onTrue(alignReefForCoral()
             .alongWith(gotoL1Travel())
             .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
@@ -376,6 +385,8 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
         configAltCommands();
     }
+
+
     public void configAltCommands()
     {
         
@@ -400,4 +411,53 @@ public class RobotContainer {
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
+    public Command alignReefForCoral()
+    {
+        return new ConditionalCommand( ATMan.C_ReefLeftSelectCommand(), ATMan.C_ReefRightSelectCommand(),()->{return OptionalButtonSupplier.getAsInt() == 0;}).until(MantaState.getLimeLightBypassed);
+    }
+    public Command Control_AlignClosestScoreL4() {
+        return alignReefForCoral().until(MantaState.getLimeLightBypassed)
+        .alongWith(ScoreL4());
+    }
+    public Command Control_AlignClosestLeftScoreL4() {
+        return ATMan.C_ReefLeftSelectCommand().until(MantaState.getLimeLightBypassed)
+        .alongWith(ScoreL4());
+    }
+    public Command Control_AlignClosestRightScoreL4() {
+        return ATMan.C_ReefRightSelectCommand().until(MantaState.getLimeLightBypassed)
+        .alongWith(ScoreL4());
+    }
+    public Command ScoreL4()
+    {
+        return gotoL4Travel()
+        .andThen(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead());
+    }
+    public Command Control_RearIntake()
+    {
+        return ATMan.C_SourceSelectCommand().until(MantaState.getLimeLightBypassed)
+            .alongWith(RearIntake());
+    }
+    public void bindNamedCommands()
+    {
+        // Register Named Commands
+        NamedCommands.registerCommand("DoclosestSourceIntake", Control_RearIntake());
+        NamedCommands.registerCommand("DoclosestScoreL4", Control_AlignClosestScoreL4());
+        NamedCommands.registerCommand("DoclosestLeftScoreL4", Control_AlignClosestLeftScoreL4());
+        NamedCommands.registerCommand("DoclosestRightScoreL4", Control_AlignClosestRightScoreL4());
+        
+        //unused below lol
+        NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));
+        NamedCommands.registerCommand("AlignprocSource",  ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded));
+        NamedCommands.registerCommand("RearIntake", RearIntake());
+        NamedCommands.registerCommand("Spinintake", new C_TridentIntake(ss_Trident).withTimeout(intaketimeout));
+        NamedCommands.registerCommand("AlignReefLeft",  ATMan.C_ReefLeftSelectCommand().withTimeout(5));
+        NamedCommands.registerCommand("AlignReefRight",  ATMan.C_ReefRightSelectCommand().withTimeout(5));
+        NamedCommands.registerCommand("gotoL4Travel", gotoL4Travel());
+        NamedCommands.registerCommand("PivotIntoReefL4", PivotIntoReefL4());
+        NamedCommands.registerCommand("ScoreL4", new SequentialCommandGroup(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()));
+    }
+
+    
+
+    
 }

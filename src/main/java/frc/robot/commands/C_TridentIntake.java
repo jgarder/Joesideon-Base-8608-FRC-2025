@@ -26,7 +26,7 @@ public class C_TridentIntake extends Command {
     @Override
     public void initialize() {
         startupdebounceTimer.restart();
-        boolean isloaded = false;
+        ss_Trident.setUnloaded();
         ss_Trident.setDutyCycle(dutycycleSpeed);
     }
     

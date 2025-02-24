@@ -5,33 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "MoveInCenter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SpinOutCenter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SpinInCenter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SpinOutLower"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SpinInLower"
+            "commands": []
           }
         }
       ]

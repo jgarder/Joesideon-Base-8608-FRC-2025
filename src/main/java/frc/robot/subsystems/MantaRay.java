@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -122,7 +124,12 @@ public class MantaRay extends SubsystemBase {
         });
 
     }
-
+    public void setUnloaded()
+    {
+      _isloaded = false;
+    }
+    private boolean _isloaded = false;
+    public BooleanSupplier getisloaded = ()->{return _isloaded;};
     public final Timer intakedebounceTimer = new Timer();
     Alert alert = new Alert("IsLoaded", AlertType.kInfo);
     public boolean isLoaded()
@@ -135,6 +142,7 @@ public class MantaRay extends SubsystemBase {
             if(!intakedebounceTimer.isRunning())
             {
                 intakedebounceTimer.restart();
+                _isloaded = true;
                 SmartDashboard.putBoolean(className + " IsLoaded", false);
                 return false;
             }
@@ -145,6 +153,7 @@ public class MantaRay extends SubsystemBase {
                 alert.set(true);
                 intakedebounceTimer.stop();
                 intakedebounceTimer.reset();
+                _isloaded = false;
                 SmartDashboard.putBoolean(className + " IsLoaded", true);
                 return true;
             }
@@ -153,6 +162,7 @@ public class MantaRay extends SubsystemBase {
         }
         alert.set(false);
         intakedebounceTimer.reset();
+        _isloaded = false;
         SmartDashboard.putBoolean(className + " IsLoaded", false);
         //if its true then return true;
         return false;

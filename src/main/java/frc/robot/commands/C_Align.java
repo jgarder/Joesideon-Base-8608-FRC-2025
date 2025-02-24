@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -53,7 +54,7 @@ public class C_Align extends Command{
     Pose2d TargetPose;//this is where we wnt to go in field space coords X,y,Rotation
     Pose2d PoseOffset;//This is how far we are from where we want to be. this is CurrentPose minus TargetPose.
 
-    public C_Align(AprilTag PosePositionGoal){new C_Align(PosePositionGoal.Pose);}
+
     public C_Align(Pose2d PosePositionGoal){
         TargetPose = PosePositionGoal;
         AlignXPid.setSetpoint(TargetPose.getX());
@@ -68,16 +69,20 @@ public class C_Align extends Command{
         MantaState.NT_ZPGain.set(MantaState.NT_ZPGain.getAsDouble());
         MantaState.NT_ZIGain.set(MantaState.NT_ZIGain.getAsDouble());
         MantaState.NT_ZDGain.set(MantaState.NT_ZDGain.getAsDouble());
+        addRequirements(drivetrain);
     }
     Alliance allianceOnInit;//DriverStation.getAlliance().get();
     @Override
     public void initialize() {
-        allianceOnInit = DriverStation.getAlliance().get();     
-        setposeoffsets();
+        allianceOnInit = DriverStation.getAlliance().get();
+        CurrentPose = drivetrain.getState().Pose;     
+        //setposeoffsets();
         AlignXPid.reset();
         AlignYPid.reset();
         AlignRZPid.reset();
     }
+
+    
 
     @Override
     public void execute() {
@@ -101,6 +106,9 @@ public class C_Align extends Command{
     }
 
     private void setposeoffsets() {
+      if(CurrentPose == null){System.err.println("CurrentPose missing"); return;}
+      if(CurrentPose == null){System.err.println("TargetPose missing");  return;}
+      //System.out.println("Running setposeoffsets");
       //get position
       PoseEstimate frontLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightFrontName);
       PoseEstimate backLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightBackName);
@@ -133,11 +141,20 @@ public class C_Align extends Command{
       double Xpose_Offset = CurrentPose.getX() - TargetPose.getX();
       double Ypose_Offset = CurrentPose.getY() - TargetPose.getY();             
       Rotation2d RZ_Offset2 = CurrentPose.getRotation().minus(TargetPose.getRotation());
+     
       PoseOffset = new Pose2d(Xpose_Offset, Ypose_Offset, RZ_Offset2);
+      if(PoseOffset == null){System.err.println("No pose OFFSET created");}
+    }
+        // If "isfinished" end true OR if we cancel this command for some reason. 
+    // we need some actions to happen no matter what. 
+    @Override
+    public void end(boolean interrupted) {
+      StopDriveTrain();
     }
 
     @Override
     public boolean isFinished(){
+      if(PoseOffset == null){System.err.println("No pose OFFSET! Broken CODE?"); return false;}
         //near the final positon x
         boolean Xok = IsXInTarget();
         boolean Yok = IsYInTarget();

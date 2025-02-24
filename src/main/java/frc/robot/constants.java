@@ -6,7 +6,7 @@ public class constants {
 
     public static final double ReefWidthCenterOffset = Units.inchesToMeters(12.875)/2; //Reef Width CenteronCenter divided in half
     public static final double SourcePickupWidthCenterOffset = Units.inchesToMeters(24)/2; //Reef Width CenteronCenter divided in half
-    public static final double ExtraMetersoffsetForAlgaePickup = Units.inchesToMeters(6);
+    public static final double ExtraMetersoffsetForAlgaePickup = Units.inchesToMeters(7.25);
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -14,13 +14,13 @@ public class constants {
         public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.5);//.01;//.06
         public static final double minRZErrorToCorrect = .25;//0.5;//1;//2;//1.25;
 
-        public static  double k_PoseX_P = 2.1;//4;
-        public static  double k_PoseX_I = 0.0;//0.000001;//0.02;
-        public static  double k_PoseX_D = .0;//0.06;
+        public static  double k_PoseX_P = 4.0;//2.1;//4;
+        public static  double k_PoseX_I = .1;//0.0;//0.000001;//0.02;
+        public static  double k_PoseX_D = .5;//.0;//0.06;
 
-        public static  double k_PoseY_P = .5;//.5;//1.20;
-        public static  double k_PoseY_I = .0000005;//0.000001;//0.02;
-        public static  double k_PoseY_D = .06;//0.15;//0.002; 
+        public static  double k_PoseY_P = k_PoseX_P;//.5;//1.20;
+        public static  double k_PoseY_I = k_PoseX_I;//0.000001;//0.02;
+        public static  double k_PoseY_D = k_PoseX_D;//0.15;//0.002; 
 
         public static  double k_RZ_P = 0.10;//.05;
         public static  double k_RZ_I = 0.000000;//0.00;
@@ -203,7 +203,7 @@ public class constants {
 
         public static class CatchSide {
             public static final double gearRatio = 45; //9:1 on a 5:1
-            public static final double maxPostion = 10;//4.12; //max pos will be hook position
+            public static final double maxPostion = 5.25;//4.12; //max pos will be hook position
             public static final double minPostion = -9; //min position will be negative and will be prolly be full climb position
             public static final double startPos = 0; // we start at flat across with tips almost touching. this is out start pos
             public static final double LoadPostion = maxPostion; //the position this motor is in when we are in load mode catch side is at max hook height slide is folder back over to allow cage in
@@ -212,7 +212,7 @@ public class constants {
 
         public static class SlideSide {
             public static final double gearRatio = 45; //9:1 on a 5:1
-            public static final double maxPostion = 22;
+            public static final double maxPostion = 21.0;
             public static final double minPostion = -9;
             public static final double startPos = 0;
             public static final double LoadPostion = maxPostion;
