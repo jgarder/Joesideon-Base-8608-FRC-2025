@@ -223,7 +223,36 @@ public class Elevator extends SubsystemBase {
           //if we are above the safe zone and staying above the safe zone then request the new position. 
           GotoPosition(_requestedPosition);
         }
-      }   //if we are below the CannotFoldabove position
+      }
+      //else if we are in the void zone only allow travel mode
+      else if(currentPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition && currentPosition < constants.Elevator.CannotPivotParkBelowElevatorPosition)
+      {
+        //if we are above the CannotFoldBelow position
+      if(currentPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
+      {
+        //if we are going below the cannot fold position
+        if(_requestedPosition <= constants.Elevator.CannotPivotParkAboveElevatorPosition)
+        {
+          //check if pivot is in a safe travel position
+          if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
+          {
+             //if/when we are folded out, set position to requested position
+            //safe to goto requestion position
+            GotoPosition(_requestedPosition);
+          }
+          else{
+            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
+            //ONLY safe to goto CannotFoldBelowPosition
+            GotoPosition(constants.Elevator.CannotPivotParkBelowElevatorPosition);
+          }
+        }
+        else{
+          //if we are above the safe zone and staying above the safe zone then request the new position. 
+          GotoPosition(_requestedPosition);
+        }
+      }
+      }   
+      //if we are below the CannotFoldabove position
       else if(currentPosition < constants.Elevator.CannotPivotParkAboveElevatorPosition)
       {
         //if we are going above the cannot fold position

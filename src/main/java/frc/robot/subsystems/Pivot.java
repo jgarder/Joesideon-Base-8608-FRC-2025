@@ -80,8 +80,9 @@ public class Pivot extends SubsystemBase {
   DoubleEntry NT_Cruise = NT.getDoubleEntry(className , "Cruise",0);
 
 
-  DoubleEntry NT_position = NT.getDoubleEntry(className, "position",0);
+  DoubleEntry NT_CurrentPosition = NT.getDoubleEntry(className, "position",0);
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
+  DoubleEntry NT_RequestedPosition = NT.getDoubleEntry(className , "RequestedPosition",0.0);
  
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
   BooleanEntry NT_FoldedOut = NT.getBooleanEntry(className , "FoldedOut",false); //this refers to being folded out enough to NOT stage 1 Xbar.
@@ -113,6 +114,8 @@ public class Pivot extends SubsystemBase {
     NT_Acceleration.set(constants.PlasmaPivot.Accel);
     NT_Jerk.set(constants.PlasmaPivot.Jerk);
     NT_Cruise.set(constants.PlasmaPivot.Cruise);
+
+    NT_RequestedPosition.set(requestedPosition);
 
     elevatorposition = _elevatorPosition;
     configuration = buildMotorConfig();
@@ -189,12 +192,15 @@ public class Pivot extends SubsystemBase {
   public void periodic() {
     currentPosition = m_PivotMotor.getPosition().getValueAsDouble();
 
+    NT_CurrentPosition.set(currentPosition);
+    NT_SetpointPosition.set(setPointPosition);
+    NT_RequestedPosition.set(requestedPosition);
+
     // This method will be called once per scheduler run
     NT_Rpm.set(m_PivotMotor.getVelocity().getValueAsDouble() * 60);
     NT_MotorTemp.set(m_PivotMotor.getDeviceTemp().getValueAsDouble());
     NT_StatorCurrent.set(m_PivotMotor.getStatorCurrent().getValueAsDouble());
 
-    NT_position.set(currentPosition);
 
     NT_FoldedOut.set(IsPivotFoldedOut.getAsBoolean());
     NT_FoldedUpEnough.set(IsPivotFoldedFarOut.getAsBoolean());

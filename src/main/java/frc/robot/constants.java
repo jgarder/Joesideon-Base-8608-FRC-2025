@@ -12,10 +12,10 @@ public class constants {
 
         public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.6);//.01;//.06
         public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.6);//.01;//.06
-        public static final double minRZErrorToCorrect = .5;//0.5;//1;//2;//1.25;
+        public static final double minRZErrorToCorrect = 1;//.45;//0.5;//1;//2;//1.25;
 
         public static  double k_PoseX_P = 2.5;//3.0;//2.1;//4;
-        public static  double k_PoseX_I = .1;//0.0;//0.000001;//0.02;
+        public static  double k_PoseX_I = .5;//0.0;//0.000001;//0.02;
         public static  double k_PoseX_D = 0.0;//.0;//0.06;
 
         public static  double k_PoseY_P = k_PoseX_P;//.5;//1.20;
@@ -124,7 +124,7 @@ public class constants {
         public static final double maxPositionToBeSafeFromSmashingintoReef = -.107;//0.060;//7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
         public static final double maxPositionToBeSafeFromSmashingintoSelf = -.24;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
         
-        public static final double MoveTolerance = .003;
+        public static final double MoveTolerance = .015;//.003;
         public static final double maxposition = 0.06;
         public static final double minposition = -0.247;
 
@@ -148,16 +148,16 @@ public class constants {
         public static final double maxStatorCurrent = 60;
 
         public static final double kP = 270.0;
-        public static final double kI = 50.00;
-        public static final double kD = 65.00;
+        public static final double kI = 60.0;//50.00;
+        public static final double kD = 80.0;//65.00;
 
         public static final double kV = 0.0;
         public static final double kS = 3.0;
         public static final double kG = -20.0;
 
-        public static final double Accel = 10.0;
-        public static final double Jerk = 400.0;
-        public static final double Cruise = 100.0;
+        public static final double Accel = 9.0;//10.0;
+        public static final double Jerk = 0;//400.0;
+        public static final double Cruise = 120;//100.0;
         public static final double SideScore = -0.05;
         
 
@@ -168,7 +168,9 @@ public class constants {
     }
 
     public class PlasmaExtension {
-        //CURRENTLY EACH "1" POSITION is .25" approx. 
+        //CURRENTLY EACH "1" POSITION is .25" approx.
+        public static double LiveOffset = 0.0; 
+
         public static final double gearRatio = 3*3*3; //27:1 gear reduction (was60)
         public static final double maxPositionToBeSafeFromStage1Crossbar = 0;
         public static final double maxStatorCurrent = 40;
@@ -179,15 +181,15 @@ public class constants {
         public static final double kD = 0;
         public static final double MoveTolerance = .5;
 
-        public static final double positionAddIfCoralOffset = 6;
-        public static final double l1ReadyPosition = 40.0;//the ready position in the reef is right before we swoop to score.
+        //public static final double positionAddIfCoralOffset = 6;
+        public static final double l1ReadyPosition = LiveOffset + 41.0;//the ready position in the reef is right before we swoop to score.
          
-        public static final double l1ScorePosition = 20.0;
+        public static final double l1ScorePosition = LiveOffset + 21.0;
 
-        public static final double l2ReadyPosition = 35;
-        public static final double l2ScorePosition = 0;
+        public static final double l2ReadyPosition = LiveOffset + 36;
+        public static final double l2ScorePosition = LiveOffset + 0;
 
-        public static final double l4ScorePosition = 36;
+        public static final double l4ScorePosition = LiveOffset + 39;
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;
         public static final double rearintakePos = .5; 

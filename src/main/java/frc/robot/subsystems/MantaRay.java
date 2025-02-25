@@ -58,7 +58,7 @@ public class MantaRay extends SubsystemBase {
 
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
-
+  BooleanEntry NT_IsLoaded = NT.getBooleanEntry(className , "IsLoaded",false);
   public MantaRay() {
     System.out.println("Creating " + className + " object"); 
     setMotorConfig();
@@ -143,8 +143,8 @@ public class MantaRay extends SubsystemBase {
             if(!intakedebounceTimer.isRunning())
             {
                 intakedebounceTimer.restart();
-                _isloaded = true;
-                SmartDashboard.putBoolean(className + " IsLoaded", false);
+                _isloaded = false;
+                NT_IsLoaded.set(_isloaded);
                 return false;
             }
 
@@ -154,8 +154,8 @@ public class MantaRay extends SubsystemBase {
                 alert.set(true);
                 intakedebounceTimer.stop();
                 intakedebounceTimer.reset();
-                _isloaded = false;
-                SmartDashboard.putBoolean(className + " IsLoaded", true);
+                _isloaded = true;
+                NT_IsLoaded.set(_isloaded);
                 return true;
             }
             return false;
@@ -164,7 +164,7 @@ public class MantaRay extends SubsystemBase {
         alert.set(false);
         intakedebounceTimer.reset();
         _isloaded = false;
-        SmartDashboard.putBoolean(className + " IsLoaded", false);
+        NT_IsLoaded.set(_isloaded);
         //if its true then return true;
         return false;
     }

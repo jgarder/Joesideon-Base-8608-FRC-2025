@@ -27,7 +27,7 @@ import frc.robot.AlphaBots.NT;
 public class AprilTagManager extends SubsystemBase
   {
     //public static ArrayList<AprilTag> tagList = new ArrayList<AprilTag>(22);
-    public static double RobotDefaultOffset = -1.5;//adds a 1/4 inch extra space at locations. 
+    public static double RobotDefaultOffset = -1.25;//adds a 1/4 inch extra space at locations. 
     public static double bumperthickness = 3.00*2; //real 3.75"
     public static double robotsize = 30.25/2;//size no bumpers divided by 2
     public static double robotmetersdistToCenter = Units.inchesToMeters(RobotDefaultOffset+robotsize+bumperthickness);

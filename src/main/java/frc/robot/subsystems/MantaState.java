@@ -43,9 +43,15 @@ public class MantaState extends SubsystemBase {
     public static BooleanEntry NT_AltControls = NT.getBooleanEntry(className, "AltControlsEnable", false);
     public static BooleanEntry NT_UpperAlgae = NT.getBooleanEntry(className, "ClosestIsUpperAlgae", false);
 
+    public static BooleanEntry NT_PivotPosOk = NT.getBooleanEntry(className, "PivotPosOk", false);
+    public static BooleanEntry NT_ElevatorPosOk = NT.getBooleanEntry(className, "ElevatorPosOk", false);
+    public static BooleanEntry NT_ExtensionPosOk = NT.getBooleanEntry(className, "ExtensionPosOk", false);
+
+    DoubleEntry NT_ExtensionLiveOffset = NT.getDoubleEntry(className , "ExtensionLiveOffset",0.0);
     @Override
     public void periodic() {
-
+      double Liveoffset = NT_ExtensionLiveOffset.getAsDouble();
+      if(Liveoffset != constants.PlasmaExtension.LiveOffset){constants.PlasmaExtension.LiveOffset = Liveoffset;}
       NT_UpperAlgae.set(NearestTagIsUpperAlgae.getAsBoolean());
       //hoping this works, stolen from Elastic Documentation
       // SmartDashboard.putData("Swerve Drive", new Sendable() {

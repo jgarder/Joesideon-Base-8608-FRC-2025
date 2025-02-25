@@ -197,7 +197,7 @@ public class RobotContainer {
     }
     public Command CoralDropScoreL4()
     {
-        return new C_DropElevateToScore(ss_Elevator).deadlineFor(TridentCoralBumpOut().finallyDo(()->{ss_Trident.setDutyCycle(0);}));
+        return new C_DropElevateToScore(ss_Elevator).deadlineFor(TridentCoralBumpOut().alongWith(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l1ReadyPosition +.04)).finallyDo(()->{ss_Trident.setDutyCycle(0);}));
         //
         // return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
         //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
@@ -207,8 +207,8 @@ public class RobotContainer {
     public Command CoralDropScoreL2()
     {
         return new C_DropElevateToScore(ss_Elevator)
-            .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.SideScore))
-            .deadlineFor(TridentCoralBumpOut()
+            .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.SideScore))//.withTimeout(1)
+            .deadlineFor(TridentCoralBumpOut()//.withTimeout(2)
             .finallyDo(()->{ss_Trident.setDutyCycle(0);}));
                                     //.setDutyCycle(0)
     
@@ -316,7 +316,7 @@ public class RobotContainer {
         
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
         joystick.y().toggleOnTrue(gotoL4Travel()
-            .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))//-0.2
+            //.andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))//-0.2
             .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
             .andThen(new WaitCommand(30))
             .finallyDo(traveltopark()));

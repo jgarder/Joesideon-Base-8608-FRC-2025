@@ -5,12 +5,13 @@ import frc.robot.constants;
 import frc.robot.constants.PlasmaExtension;
 import frc.robot.subsystems.ArmExtension;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.MantaState;
 
 public class C_ExtendToPosition extends Command{
     ArmExtension SubSystem;
     double wantedPosition;
     double Tolerance = constants.PlasmaExtension.MoveTolerance;
-    
+    double Liveoffset = 0;
     public C_ExtendToPosition(ArmExtension subSys, double wantedposition){
         SubSystem = subSys;
         wantedPosition = wantedposition;
@@ -19,12 +20,17 @@ public class C_ExtendToPosition extends Command{
 
     @Override
     public void initialize() {
-        SubSystem.GotoPosition(wantedPosition);
+        Liveoffset = constants.PlasmaExtension.LiveOffset;
+        SubSystem.GotoPosition(wantedPosition + Liveoffset);
+        MantaState.NT_ExtensionPosOk.set(false);
     }
 
     @Override
     public boolean isFinished() {
-        return frc.robot.AlphaBots.Tools.isPosAtSetpoint(SubSystem.getPosition(), wantedPosition, Tolerance);
+        
+        boolean isatPosition = frc.robot.AlphaBots.Tools.isPosAtSetpoint(SubSystem.getPosition(), wantedPosition + Liveoffset, Tolerance);
+        MantaState.NT_ExtensionPosOk.set(isatPosition);
+        return isatPosition;
     }
 
     @Override

@@ -12,7 +12,7 @@ public class Tools {
     
 
   public static boolean isPosAtSetpoint(double currentPos,double setpointPos,double tolerance) {
-      var difference = currentPos - setpointPos;
+      double difference = currentPos - setpointPos;
       if(tolerance > Math.abs(difference)){
       return true;
       }else {return false;}
