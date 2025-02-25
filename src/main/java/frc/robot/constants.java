@@ -62,6 +62,7 @@ public class constants {
 
         public static final int CANdleID = 2;
         
+    
 
     }
 
@@ -69,7 +70,7 @@ public class constants {
         public static final double IntakeDutyCycle = .4;
         public static final double intakeAmpLimit = 40;
 
-        public static final double intakeAmpCutoffThreshold = 15; //20
+        public static final double intakeAmpCutoffThreshold = 20; //20
         public static final double intakeAmpLimittime = .175;
     }
     public class Elevator {

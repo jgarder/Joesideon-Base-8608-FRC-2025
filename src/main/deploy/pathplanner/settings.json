@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "BlueOpenSide",
-    "ProcSide",
     "FloorPickups",
+    "FloorCoral 4 coral Pickups",
+    "ProcSide",
     "TestPaths"
   ],
   "autoFolders": [],

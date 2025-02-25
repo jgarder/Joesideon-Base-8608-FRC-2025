@@ -12,6 +12,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.fasterxml.jackson.databind.util.Named;
 import com.google.flatbuffers.Constants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -43,6 +44,7 @@ import frc.robot.commands.C_PivotToPosition;
 import frc.robot.commands.C_ReefAlign;
 import frc.robot.commands.C_SourceAlign;
 import frc.robot.commands.C_TridentIntake;
+import frc.robot.commands.C_TridentIntakeNeutral;
 import frc.robot.constants.Climber;
 import frc.robot.AlphaBots.AprilTag;
 import frc.robot.AlphaBots.LimeLightPoseFilter;
@@ -260,17 +262,9 @@ public class RobotContainer {
     double groundintakeTimeout = 20; //auton this command will run until finished or this timeout.
     double groundintakedutycycle = 1.0; 
 
-    //For Autos, better for Coral, terrible for Algae
-    public Command coralOnlyGroundIntake(){
-        return new C_ElevateToPosition(ss_Elevator, constants.Elevator.groundPickup)
-        .alongWith(
-            new C_TridentIntake(ss_Trident,groundintakedutycycle).withTimeout(groundintakeTimeout),
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.CoralGroundPickup),
-            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension))
-        .finallyDo(groundIntakeReset());
-    }
-    //worse for coral, but usable, better for Algae
-    public Command bothGroundIntake(){
+    
+    //fixed the robot spitting out coral, ground intake should work well for both now
+    public Command GroundIntake(){
         return new ParallelCommandGroup(
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
             new C_TridentIntake(ss_Trident,groundintakedutycycle).withTimeout(groundintakeTimeout),
@@ -337,7 +331,7 @@ public class RobotContainer {
         joystick.rightBumper().whileTrue(Control_RearIntake());
         
 
-        joystick.leftTrigger().whileTrue(bothGroundIntake());
+        joystick.leftTrigger().whileTrue(GroundIntake());
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(ParkElevatorAndHead());
     
@@ -457,6 +451,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("gotoL4Travel", gotoL4Travel());
         NamedCommands.registerCommand("PivotIntoReefL4", PivotIntoReefL4());
         NamedCommands.registerCommand("ScoreL4", new SequentialCommandGroup(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()));
+        NamedCommands.registerCommand("GroundIntakeCoral", GroundIntake());
     }
 
     

@@ -42,6 +42,7 @@ public class MantaRay extends SubsystemBase {
   // private final com.ctre.phoenix6.controls.DutyCycleOut m_DutyCycle = new DutyCycleOut(constants.MantaRay.IntakeDutyCycle);
 
   private final StaticBrake m_s_Brake = new StaticBrake();
+  private final NeutralOut m_s_Neutral = new NeutralOut();
   
   TalonFXConfiguration configuration;
 
@@ -69,8 +70,8 @@ public class MantaRay extends SubsystemBase {
 
 
   public double LastPosition = 0;
-  public double kP = 0.013;
-  public double kI = 0.0;
+  public double kP = 6.0;
+  public double kI = 10.0;
   public double kD = 0.0;
 
   private void setMotorConfig(){
@@ -182,13 +183,20 @@ public class MantaRay extends SubsystemBase {
         double currentRotorposition = m_TridentMotor.getPosition(true).getValueAsDouble();
         LastPosition = currentRotorposition;
         //BRAKE();
-        GotoPosition(currentRotorposition-(m_TridentMotor.getVelocity().getValueAsDouble()/canBusUpdateFrequency));
+        //GotoPosition(currentRotorposition-(m_TridentMotor.getVelocity().getValueAsDouble()/canBusUpdateFrequency));
+        holdPositionThroughVelocity();
     }
     public void GotoPosition(double wantedposition){ 
       NT_SetpointPosition.set(wantedposition);
         m_TridentMotor.setControl(
             new PositionDutyCycle(wantedposition)
             .withEnableFOC(true)
+            .withSlot(0)
+        );
+    }
+    public void holdPositionThroughVelocity(){
+      m_TridentMotor.setControl(
+            new VelocityTorqueCurrentFOC(0)
             .withSlot(0)
         );
     }
@@ -211,6 +219,9 @@ public class MantaRay extends SubsystemBase {
 
     public void BRAKE(){
       m_TridentMotor.setControl(m_s_Brake);
+    }
+    public void Neutral(){
+      m_TridentMotor.setControl(m_s_Neutral);
     }
     
 }

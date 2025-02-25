@@ -9,6 +9,56 @@
           "data": {
             "pathName": "AutoStartDash"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestLeftScoreL4"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "first pickup Lower"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.2
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GroundIntakeCoral"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "First pickup lower Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestRightScoreL4"
+          }
         }
       ]
     }
