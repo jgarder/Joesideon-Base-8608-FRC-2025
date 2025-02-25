@@ -60,6 +60,7 @@ public class C_Align extends Command{
         AlignXPid.setSetpoint(TargetPose.getX());
         AlignYPid.setSetpoint(TargetPose.getY());
         AlignRZPid.setSetpoint(0);
+       
 
 
         //when we startup an alignment pull the latest numbers to try from the user.
@@ -75,7 +76,8 @@ public class C_Align extends Command{
     @Override
     public void initialize() {
         allianceOnInit = DriverStation.getAlliance().get();
-        CurrentPose = drivetrain.getState().Pose;     
+        CurrentPose = drivetrain.getState().Pose;    
+        MantaState.NT_AlignSetpoint.set(TargetPose); 
         //setposeoffsets();
         AlignXPid.reset();
         AlignYPid.reset();

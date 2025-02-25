@@ -1489,7 +1489,7 @@
               "topic": "/AlphaBots/pidAlignment/XD Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           },
           {
@@ -1503,7 +1503,7 @@
               "topic": "/AlphaBots/pidAlignment/XI Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           },
           {
@@ -1545,7 +1545,7 @@
               "topic": "/AlphaBots/pidAlignment/ZI Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           },
           {
@@ -1559,7 +1559,7 @@
               "topic": "/AlphaBots/pidAlignment/ZD Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           },
           {

@@ -10,19 +10,19 @@ public class constants {
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.5);//.01;//.06
-        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.5);//.01;//.06
-        public static final double minRZErrorToCorrect = .25;//0.5;//1;//2;//1.25;
+        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.6);//.01;//.06
+        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.6);//.01;//.06
+        public static final double minRZErrorToCorrect = .5;//0.5;//1;//2;//1.25;
 
-        public static  double k_PoseX_P = 4.0;//2.1;//4;
+        public static  double k_PoseX_P = 2.5;//3.0;//2.1;//4;
         public static  double k_PoseX_I = .1;//0.0;//0.000001;//0.02;
-        public static  double k_PoseX_D = .5;//.0;//0.06;
+        public static  double k_PoseX_D = 0.0;//.0;//0.06;
 
         public static  double k_PoseY_P = k_PoseX_P;//.5;//1.20;
         public static  double k_PoseY_I = k_PoseX_I;//0.000001;//0.02;
         public static  double k_PoseY_D = k_PoseX_D;//0.15;//0.002; 
 
-        public static  double k_RZ_P = 0.10;//.05;
+        public static  double k_RZ_P = 0.11;//.05;
         public static  double k_RZ_I = 0.000000;//0.00;
         public static  double k_RZ_D = 0.000000;//0.00;
 
@@ -70,7 +70,7 @@ public class constants {
         public static final double intakeAmpLimit = 40;
 
         public static final double intakeAmpCutoffThreshold = 15; //20
-        public static final double intakeAmpLimittime = .10;
+        public static final double intakeAmpLimittime = .175;
     }
     public class Elevator {
         public static final double kP = 30.0; //15 //MotionMagic
@@ -125,14 +125,14 @@ public class constants {
         
         public static final double MoveTolerance = .003;
         public static final double maxposition = 0.06;
-        public static final double minposition = -0.245234375;
+        public static final double minposition = -0.247;
 
         public static final double ParkPosition = minposition;
         public static final double rearintakePos = -0.242;//minposition;
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = 0.0;
-        public static final double GroundPickupPosition = -0.02;//12.0;
+        public static final double GroundPickupPosition = -0.00;//12.0;
 
         public static final double CoralGroundPickup = 0.06;
 
@@ -146,16 +146,16 @@ public class constants {
 
         public static final double maxStatorCurrent = 60;
 
-        public static final double kP = 250.0;
+        public static final double kP = 270.0;
         public static final double kI = 50.00;
-        public static final double kD = 30.00;
+        public static final double kD = 65.00;
 
         public static final double kV = 0.0;
         public static final double kS = 3.0;
         public static final double kG = -20.0;
 
-        public static final double Accel = 250.0;
-        public static final double Jerk = 480.0;
+        public static final double Accel = 10.0;
+        public static final double Jerk = 400.0;
         public static final double Cruise = 100.0;
         public static final double SideScore = -0.05;
         
@@ -176,7 +176,7 @@ public class constants {
         public static final double kP = 1;
         public static final double kI = 0.0;
         public static final double kD = 0;
-        public static final double MoveTolerance = 1.0;
+        public static final double MoveTolerance = .5;
 
         public static final double positionAddIfCoralOffset = 6;
         public static final double l1ReadyPosition = 40.0;//the ready position in the reef is right before we swoop to score.

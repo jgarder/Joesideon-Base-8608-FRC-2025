@@ -17,7 +17,7 @@ public class C_PivotToPosition extends Command{
 
     @Override
     public void initialize() {
-        SubSystem.GotoPosition(wantedPosition);
+        SubSystem.RequestPosition(wantedPosition);
     }
 
     @Override

@@ -315,6 +315,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void BRAKE(){
+      currentState = POSITION.parked;
       m_ElevatorMotor1.setControl(m_s_Brake);
     }
     

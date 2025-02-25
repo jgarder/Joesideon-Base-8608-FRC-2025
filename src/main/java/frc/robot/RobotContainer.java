@@ -12,6 +12,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.google.flatbuffers.Constants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -176,7 +177,7 @@ public class RobotContainer {
         return elevator1StepPark().unless(ss_Elevator.elevatorisparked)//new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition))
         .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition)
-            .unless(ss_Pivot.IsPivotParked) //Why is this here? it seems redundant?
+            .unless(()->{return ss_Pivot.IsPivotParked.getAsBoolean() && ss_Elevator.elevatorisparked.getAsBoolean();}) //Why is this here? it seems redundant?
             ).andThen(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.ParkPosition));
     }
     public Command PivotIntoReef(){
@@ -309,7 +310,8 @@ public class RobotContainer {
 
         
         joystick.start().onTrue(new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();}));
-        joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());}));
+        joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());})
+        .alongWith(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition),new C_ExtendToPosition(ss_ArmExtension,8)));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
@@ -320,14 +322,14 @@ public class RobotContainer {
         
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
         joystick.y().toggleOnTrue(gotoL4Travel()
-            .andThen(new C_PivotToPosition(ss_Pivot, -0.2))
+            .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))//-0.2
             .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
             .andThen(new WaitCommand(30))
             .finallyDo(traveltopark()));
 
 
         joystick.rightTrigger().whileTrue(
-            ATMan.C_ReefCenterSelectCommand().until(MantaState.getLimeLightBypassed)
+            ATMan.C_ReefCenterSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))
             .andThen(AlgaeReefIntake(),gotoMinTravel()))
             .onFalse(gotoMinTravel());
@@ -400,7 +402,7 @@ public class RobotContainer {
         ));
         joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion).alongWith(
-            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion)
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion).andThen(ss_Climber.C_Stop())
         ));
         joystick.povLeft().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_Stop()
@@ -413,7 +415,7 @@ public class RobotContainer {
     }
     public Command alignReefForCoral()
     {
-        return new ConditionalCommand( ATMan.C_ReefLeftSelectCommand(), ATMan.C_ReefRightSelectCommand(),()->{return OptionalButtonSupplier.getAsInt() == 0;}).until(MantaState.getLimeLightBypassed);
+        return new ConditionalCommand( ATMan.C_ReefLeftSelectCommand(), ATMan.C_ReefRightSelectCommand(),()->{return OptionalButtonSupplier.getAsInt() == 0;}).asProxy().until(MantaState.getLimeLightBypassed);
     }
     public Command Control_AlignClosestScoreL4() {
         return alignReefForCoral().until(MantaState.getLimeLightBypassed)
@@ -434,7 +436,7 @@ public class RobotContainer {
     }
     public Command Control_RearIntake()
     {
-        return ATMan.C_SourceSelectCommand().until(MantaState.getLimeLightBypassed)
+        return ATMan.C_SourceSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(RearIntake());
     }
     public void bindNamedCommands()
