@@ -159,9 +159,9 @@ public class AprilTagManager extends SubsystemBase
     public static List<AprilTag> tagList = Arrays.asList(
         //Blue Side
         new AprilTag(13,"LeftSource",new Pose2d(Units.inchesToMeters(33.51),Units.inchesToMeters(291.20),Rotation2d.fromDegrees(306)),0,Alliance.Blue).WithType(TagType.Source)
-        .Withdepthoffset(Units.inchesToMeters(60)),
+        .Withdepthoffset(Units.inchesToMeters(-.50)),
         new AprilTag(12,"RightSource",new Pose2d(Units.inchesToMeters(33.51),Units.inchesToMeters(25.80),Rotation2d.fromDegrees(54)),0,Alliance.Blue).WithType(TagType.Source)
-        .Withdepthoffset(Units.inchesToMeters(60)),
+        .Withdepthoffset(Units.inchesToMeters(-.50)),
         new AprilTag(16,"Processor",new Pose2d(Units.inchesToMeters(235.73),Units.inchesToMeters(-0.15),Rotation2d.fromDegrees(90)),0,Alliance.Blue).WithType(TagType.Processor),
         new AprilTag(14,"blueBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.BlueBarge),
         new AprilTag(15,"redBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(75.39),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.RedBarge),
@@ -173,9 +173,9 @@ public class AprilTagManager extends SubsystemBase
         new AprilTag(17,"reefSW",new Pose2d(Units.inchesToMeters(160.39),Units.inchesToMeters(130.17),Rotation2d.fromDegrees(240)),0,Alliance.Blue).WithType(TagType.Reef),
         //Red Side
         new AprilTag(1,"LeftSource",new Pose2d(Units.inchesToMeters(657.37),Units.inchesToMeters(25.80),Rotation2d.fromDegrees(126)),0,Alliance.Red).WithType(TagType.Source)
-        .Withdepthoffset(Units.inchesToMeters(48)),
+        .Withdepthoffset(Units.inchesToMeters(-.50)),
         new AprilTag(2,"RightSource",new Pose2d(Units.inchesToMeters(657.37),Units.inchesToMeters(291.20),Rotation2d.fromDegrees(234)),0,Alliance.Red).WithType(TagType.Source)
-        .Withdepthoffset(Units.inchesToMeters(48)),
+        .Withdepthoffset(Units.inchesToMeters(-.50)),
         new AprilTag(3,"Processor",new Pose2d(Units.inchesToMeters(455.15),Units.inchesToMeters(317.15),Rotation2d.fromDegrees(270)),0,Alliance.Red).WithType(TagType.Processor),
         new AprilTag(4,"blueBarge",new Pose2d(Units.inchesToMeters(365.2),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.BlueBarge),
         new AprilTag(5,"redBarge",new Pose2d(Units.inchesToMeters(365.20),Units.inchesToMeters(75.39),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.RedBarge),

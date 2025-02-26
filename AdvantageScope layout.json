@@ -9,12 +9,14 @@
         "sidebar": {
           "width": 300,
           "expanded": [
-            "/AlphaBots",
             "/DriverStation",
             "/AlphaBots/Poses/ChassisLoc/translation",
             "/AlphaBots/Poses/ChassisLoc/rotation",
-            "/AlphaBots/Pivot",
-            "/AlphaBots/MantaRay"
+            "/PathPlanner",
+            "/AlphaBots",
+            "/SmartDashboard",
+            "/AlphaBots/ArmExtension",
+            "/AlphaBots/MantaState"
           ]
         },
         "tabs": {
@@ -68,6 +70,28 @@
                     "options": {
                       "color": "#ff00ff"
                     }
+                  },
+                  {
+                    "type": "ghostLegacy",
+                    "logKey": "NT:/SmartDashboard/Field/target pose",
+                    "logType": "NumberArray",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ffff",
+                      "format": "Pose2d",
+                      "units": "degrees"
+                    }
+                  },
+                  {
+                    "type": "ghostLegacy",
+                    "logKey": "NT:/SmartDashboard/Field/Robot",
+                    "logType": "NumberArray",
+                    "visible": true,
+                    "options": {
+                      "color": "#ffff00",
+                      "format": "Pose2d",
+                      "units": "degrees"
+                    }
                   }
                 ],
                 "game": "2025 Field (Welded)",
@@ -77,6 +101,118 @@
                 "size": 30
               },
               "controllerUUID": "fp6o1qpqxm82p4ar3tqxake5lnrrxhzy",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AlphaBots/ArmExtension/SetpointPosition",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AlphaBots/ArmExtension/position",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "04qhbrfe6i24q0tdhl8l9f8cimkcmlxc",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "klspgzr1nrybdbe7pcen5b37999wm6uz",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 2,
+              "title": "PplanOdometry",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/PathPlanner/currentPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/PathPlanner/targetPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/PathPlanner/activePath",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff"
+                    }
+                  }
+                ],
+                "game": "2025 Field (Welded)",
+                "bumpers": "auto",
+                "origin": "blue",
+                "orientation": 0,
+                "size": 30
+              },
+              "controllerUUID": "ok02lrtb3c8ff4bnaj572q1ks4cdgc48",
               "renderer": null,
               "controlsHeight": 200
             },
@@ -152,7 +288,17 @@
                   }
                 ],
                 "rightSources": [],
-                "discreteSources": [],
+                "discreteSources": [
+                  {
+                    "type": "graph",
+                    "logKey": "NT:/AlphaBots/MantaState/ElevatorPosOk",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -197,7 +343,17 @@
                   }
                 ],
                 "rightSources": [],
-                "discreteSources": [],
+                "discreteSources": [
+                  {
+                    "type": "graph",
+                    "logKey": "NT:/AlphaBots/MantaState/PivotPosOk",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -287,7 +443,35 @@
                   }
                 ],
                 "rightSources": [],
-                "discreteSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AlphaBots/pidAlignment/Xok",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AlphaBots/pidAlignment/Yok",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AlphaBots/pidAlignment/Zok",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -303,91 +487,6 @@
               },
               "controllerUUID": "t7gsgeu6hl9b520fkc7wf3nuisa1guat",
               "renderer": null,
-              "controlsHeight": 200
-            },
-            {
-              "type": 3,
-              "title": "3D Field",
-              "controller": {
-                "sources": [
-                  {
-                    "type": "robot",
-                    "logKey": "NT:/AlphaBots/Poses/SimChassisLoc",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "2025 KitBot"
-                    }
-                  },
-                  {
-                    "type": "vision",
-                    "logKey": "NT:/AlphaBots/Poses/ClosestTag",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ff00",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "vision",
-                    "logKey": "NT:/AlphaBots/Poses/ClosestSource",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#ff0000",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "vision",
-                    "logKey": "NT:/AlphaBots/Poses/ClosestReef",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#0000ff",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "vision",
-                    "logKey": "NT:/AlphaBots/Poses/ClosestProcessor",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#ff8c00",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "vision",
-                    "logKey": "NT:/AlphaBots/Poses/ClosestBarge",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ffff",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "game": "2025 Field (Welded)",
-                "origin": "blue"
-              },
-              "controllerUUID": "8n5ev7re7hfi3j1y2f5omj607tpog0ts",
-              "renderer": {
-                "cameraIndex": -1,
-                "orbitFov": 50,
-                "cameraPosition": [
-                  0.8048501093038163,
-                  7.385861494747732,
-                  -8.370356443209648
-                ],
-                "cameraTarget": [
-                  -0.40567912693193753,
-                  -0.43692703901089114,
-                  -0.552280803490785
-                ]
-              },
               "controlsHeight": 200
             }
           ]
