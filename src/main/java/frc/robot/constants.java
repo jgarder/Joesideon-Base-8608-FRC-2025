@@ -10,8 +10,8 @@ public class constants {
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.6);//.01;//.06
-        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.6);//.01;//.06
+        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(1.0);//.6;
+        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(1.0);//.6;
         public static final double minRZErrorToCorrect = 1;//.45;//0.5;//1;//2;//1.25;
 
         public static  double k_PoseX_P = 2.5;//3.0;//2.1;//4;
@@ -74,7 +74,7 @@ public class constants {
         public static final double intakeAmpLimittime = .175;
     }
     public class Elevator {
-        public static final double kP = 30.0; //15 //MotionMagic
+        public static final double kP = 35.0; //15 //MotionMagic
         public static final double kI = 15.0; //6
         public static final double kD = 4.0; //0
 
@@ -83,9 +83,9 @@ public class constants {
         public static final double kV = 0.0;
         
 
-        public static final double Accel = 50.0;
-        public static final double Jerk = 160.0;
-        public static final double Cruise = 100.0;
+        public static final double Accel = 100.0;
+        public static final double Jerk = 0;//480.0;
+        public static final double Cruise = 200;//180.0;
 
 
 
@@ -193,6 +193,8 @@ public class constants {
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;
         public static final double rearintakePos = .5; 
+
+        public static final double climbExtension = 14;
     }
         
 

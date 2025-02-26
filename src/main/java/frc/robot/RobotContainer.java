@@ -22,6 +22,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -304,8 +305,13 @@ public class RobotContainer {
 
         
         joystick.start().onTrue(new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();}));
-        joystick.back().onTrue(new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());})
-        .alongWith(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition),new C_ExtendToPosition(ss_ArmExtension,8)));
+        
+        joystick.back().onTrue(
+            new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());})
+        .alongWith(
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition),
+            new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.climbExtension)
+            ));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
@@ -330,8 +336,12 @@ public class RobotContainer {
 
         joystick.rightBumper().whileTrue(Control_RearIntake());
         
+        //pick up algae (and technically coral too)
+        joystick.leftTrigger().and(joystick.x().negate()).whileTrue(GroundIntake());
 
-        joystick.leftTrigger().whileTrue(GroundIntake());
+        //score algae in amp
+        joystick.leftTrigger().and(joystick.x()).whileTrue(new InstantCommand(()->{}));
+
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(ParkElevatorAndHead());
     
