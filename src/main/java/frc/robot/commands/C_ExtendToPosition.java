@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
 import frc.robot.constants.PlasmaExtension;
@@ -12,6 +13,7 @@ public class C_ExtendToPosition extends Command{
     double wantedPosition;
     double Tolerance = constants.PlasmaExtension.MoveTolerance;
     double Liveoffset = 0;
+    double wantedPositionWithOffset = 0;
     public C_ExtendToPosition(ArmExtension subSys, double wantedposition){
         SubSystem = subSys;
         wantedPosition = wantedposition;
@@ -21,14 +23,16 @@ public class C_ExtendToPosition extends Command{
     @Override
     public void initialize() {
         Liveoffset = constants.PlasmaExtension.LiveOffset;
-        SubSystem.GotoPosition(wantedPosition + Liveoffset);
+        double tempnewwantedPosition =  wantedPosition + Liveoffset;
+        wantedPositionWithOffset = MathUtil.clamp(tempnewwantedPosition,constants.PlasmaExtension.minposition,constants.PlasmaExtension.maxposition);
+        SubSystem.GotoPosition(wantedPositionWithOffset);
         MantaState.NT_ExtensionPosOk.set(false);
     }
 
     @Override
     public boolean isFinished() {
         
-        boolean isatPosition = frc.robot.AlphaBots.Tools.isPosAtSetpoint(SubSystem.getPosition(), wantedPosition + Liveoffset, Tolerance);
+        boolean isatPosition = frc.robot.AlphaBots.Tools.isPosAtSetpoint(SubSystem.getPosition(), wantedPositionWithOffset, Tolerance);
         MantaState.NT_ExtensionPosOk.set(isatPosition);
         return isatPosition;
     }

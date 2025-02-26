@@ -304,7 +304,14 @@ public class RobotContainer {
         // joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
 
         
-        joystick.start().onTrue(new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();}));
+        joystick.start().onTrue(
+            new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
+        .andThen(
+            new WaitCommand(.01),
+            new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();}),
+            new WaitCommand(.01),
+            new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
+            ));
         
         joystick.back().onTrue(
             new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());})

@@ -21,8 +21,8 @@ public class LimeLightPoseFilter {
 
     private static final boolean UseLimelight = true;
     
-    private static final double MT1maxrotationalVelocityForLLUpdate = 100;//80;
-    private static final double MT1maxSpeedMeterPerSecondForLLUpdate = 1.0;
+    private static final double MT1maxrotationalVelocityForLLUpdate = 200;//100;//80;
+    private static final double MT1maxSpeedMeterPerSecondForLLUpdate = 2.0;//1.0;
     private static final double MT2maxrotationalVelocityForLLUpdate = 400;//150;//80;
     private static final double MT2maxSpeedMeterPerSecondForLLUpdate = 5.0;//4.0;
     private static final String FrontLLName = constants.CanBus.limelightFrontName;
@@ -40,7 +40,7 @@ public class LimeLightPoseFilter {
     public static LoggedNetworkBoolean Mt1doRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt1doRejectUpdate",false);
     public static LoggedNetworkBoolean Mt2doRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt2doRejectUpdate",false);
     
-    public static void limelightupdateDrivetrain(String thislimelight) {
+    public static boolean limelightupdateDrivetrain(String thislimelight) {
         boolean doRejectUpdate = false;
         if (UseLimelight) {
         double totalspeedvector = getTotalspeedvector();
@@ -97,7 +97,7 @@ public class LimeLightPoseFilter {
             MantaState.DriveTrain.addVisionMeasurement(
                 mt1.pose,
                 mt1.timestampSeconds);
-                return;//only 1 sample per robot periodic
+                return doRejectUpdate;//only 1 sample per robot periodic
         }
         else{
             if(DriverStation.isDisabled() & !BootupRobotOrientationSet)
@@ -116,8 +116,10 @@ public class LimeLightPoseFilter {
   
             }
             
-        }    
         }
+        
+        }
+        return doRejectUpdate;  
     }
     public static Elastic.Notification notification = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR, FrontLLName +"NoTag", FrontLLName +"NoTag");
     public static Alert NoTagSeenOnBoot = new Alert(FrontLLName +"NoTag", AlertType.kWarning);
@@ -125,7 +127,7 @@ public class LimeLightPoseFilter {
     {
         BootupRobotOrientationSet = false;
         bootupAprilTagError = false;
-        limelightupdateDrivetrain(FrontLLName);
+        MantaState.NT_Mt1FrontdoRejectUpdate.set(limelightupdateDrivetrain(FrontLLName));
     }
 
     public static void resetVision(PoseEstimate mt1)
@@ -142,12 +144,12 @@ public class LimeLightPoseFilter {
         BootupRobotOrientationSet = true;
     }
     public static void updateOdometry() {
-        updateOdometryCamera(constants.CanBus.limelightFrontName);
-        updateOdometryCamera(constants.CanBus.limelightBackName);
+        MantaState.NT_Mt2FrontdoRejectUpdate.set(updateOdometryCamera(constants.CanBus.limelightFrontName));
+        MantaState.NT_Mt2BackdoRejectUpdate.set(updateOdometryCamera(constants.CanBus.limelightBackName));
         //FOR CALIBRATING SECOND CAMERA (also comment line below) : LimelightHelpers.SetRobotOrientation(constants.motorCurrentsAndCanID.frontlimelightName,TunerConstants.DriveTrain.getState().Pose.getRotation().getDegrees() ,0 , 0, 0, 0, 0);//m_gyro.getRate()
         //if(!DriverStation.isAutonomousEnabled()){updateOdometryCamera(constants.motorCurrentsAndCanID.frontlimelightName);}
     }
-    public static void updateOdometryCamera(String Thislimelight) {
+    public static boolean updateOdometryCamera(String Thislimelight) {
          var m_poseEstimator = MantaState.DriveTrain;
          var m_gyro = MantaState.DriveTrain.getPigeon2();
          boolean doRejectUpdate = false;
@@ -155,9 +157,9 @@ public class LimeLightPoseFilter {
         if (BootupRobotOrientationSet == true)
         {
             LimelightHelpers.SetRobotOrientation(Thislimelight,m_poseEstimator.getState().Pose.getRotation().getDegrees() ,0 , 0, 0, 0, 0);//m_gyro.getRate()
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Thislimelight);
-        double totalspeedvector = getTotalspeedvector();
-        double rotationSpeed = Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble());// m_gyro.getrate();deprecated in 2026
+            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Thislimelight);
+            double totalspeedvector = getTotalspeedvector();
+            double rotationSpeed = Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble());// m_gyro.getrate();deprecated in 2026
             if(mt2!=null)
             {
                 if(
@@ -180,8 +182,9 @@ public class LimeLightPoseFilter {
         }
         else
         {
-            limelightupdateDrivetrain(FrontLLName);
+            MantaState.NT_Mt1FrontdoRejectUpdate.set(limelightupdateDrivetrain(FrontLLName));
         }
+        return doRejectUpdate;
   }
 
 }

@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringArrayEntry;
+import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StructEntry;
 
 public class NT {
@@ -25,6 +26,10 @@ public class NT {
     public static StringArrayEntry getStringArrayEntry(String SubTableName,String key, String[] defaultvalue)
     {
         return NT.table.getStringArrayTopic(SubTableName + "/" + key).getEntry(defaultvalue);
+    }
+    public static StringEntry getStringEntry(String SubTableName,String key, String defaultvalue)
+    {
+        return NT.table.getStringTopic(SubTableName + "/" + key).getEntry(defaultvalue);
     }
     // public static NetworkTableEntry getNetworkTableEntry(String SubTableName,String key, String[] defaultvalue)
     // {

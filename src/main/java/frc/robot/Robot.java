@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.AlphaBots.LimeLightPoseFilter;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.advantageKitBootstrap;
+import frc.robot.subsystems.MantaState;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
@@ -57,8 +58,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    LimeLightPoseFilter.limelightupdateDrivetrain(constants.CanBus.limelightFrontName);
-    LimeLightPoseFilter.limelightupdateDrivetrain(constants.CanBus.limelightBackName);
+     MantaState.NT_Mt1FrontdoRejectUpdate.set(LimeLightPoseFilter.limelightupdateDrivetrain(constants.CanBus.limelightFrontName));
+     MantaState.NT_Mt1BackdoRejectUpdate.set(LimeLightPoseFilter.limelightupdateDrivetrain(constants.CanBus.limelightBackName));
   }
 
   @Override

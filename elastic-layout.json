@@ -239,6 +239,20 @@
               "true_icon": "None",
               "false_icon": "None"
             }
+          },
+          {
+            "title": "ExtensionLiveOffset",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/MantaState/ExtensionLiveOffset",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
           }
         ]
       }
@@ -1423,8 +1437,8 @@
           },
           {
             "title": "position",
-            "x": 1408.0,
-            "y": 0.0,
+            "x": 1152.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -1496,7 +1510,7 @@
           {
             "title": "SetpointPosition",
             "x": 1024.0,
-            "y": 128.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -1642,6 +1656,88 @@
             "type": "Boolean Box",
             "properties": {
               "topic": "/AlphaBots/pidAlignment/Yok",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "AlignedUsing",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/MantaState/AlignedUsing",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Mt1BackdoRejectUpdate",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AlphaBots/Mt1BackdoRejectUpdate",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Mt1FrontdoRejectUpdate",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AlphaBots/Mt1FrontdoRejectUpdate",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Mt2BackdoRejectUpdate",
+            "x": 896.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AlphaBots/Mt2BackdoRejectUpdate",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Mt2FrontdoRejectUpdate",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AlphaBots/Mt2FrontdoRejectUpdate",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,

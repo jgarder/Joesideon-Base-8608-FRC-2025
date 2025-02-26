@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.TunerConstants;
@@ -114,28 +115,37 @@ public class C_Align extends Command{
       //get position
       PoseEstimate frontLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightFrontName);
       PoseEstimate backLimelightMt1 =  LimelightHelpers.getBotPoseEstimate_wpiBlue(constants.CanBus.limelightBackName);
-      PoseEstimate LimelightMt1 = frontLimelightMt1;
-      if(backLimelightMt1 != null)//if we have a back shot
+      PoseEstimate LimelightMt1 = null;
+      if(backLimelightMt1 != null && backLimelightMt1.tagCount > 0)//if we have a back shot
       {
-        if(frontLimelightMt1 !=null)//if we also have a front shot
+        if(frontLimelightMt1 !=null && frontLimelightMt1.tagCount > 0)//if we also have a front shot
         {
           if (frontLimelightMt1.avgTagDist > backLimelightMt1.avgTagDist) { //if our back shots are closer than the front just use the back instead of defautl front. 
             LimelightMt1 = backLimelightMt1;
+            MantaState.NT_AlignedUsing.set("BackLimelightCloser");
           }
         }
         else//no front shot? just use back shot. 
         {
           LimelightMt1 = backLimelightMt1;
+          MantaState.NT_AlignedUsing.set("BackLimelightNoFront");
         }
+      }
+      else{
+        MantaState.NT_AlignedUsing.set("FrontLimelightNoBack");
+        LimelightMt1 = frontLimelightMt1;
       }
 
       double TagdistMaxMeters = 6;
-      boolean shoulduseLLMT1Pose = LimelightMt1!=null && LimelightMt1.tagCount > 0 & LimelightMt1.avgTagDist < TagdistMaxMeters;
+      boolean shoulduseLLMT1Pose = LimelightMt1 !=null && LimelightMt1.tagCount > 0;// & LimelightMt1.avgTagDist < TagdistMaxMeters;
       if(shoulduseLLMT1Pose){
         CurrentPose = LimelightMt1.pose;
-      }else
+        
+      }
+      else
       {
         CurrentPose = drivetrain.getState().Pose;
+        MantaState.NT_AlignedUsing.set("chassisPose");
       }
       
       //get offsets
@@ -154,6 +164,28 @@ public class C_Align extends Command{
       StopDriveTrain();
     }
 
+    // @Override
+    // public boolean isFinished() {
+    //     boolean isatSetpos = frc.robot.AlphaBots.Tools.isPosAtSetpoint(SubSystem.getPosition(), wantedPosition, Tolerance);
+    //     if(isatSetpos)
+    //     {
+    //         if(SettleDebounceTimer.get() > debounceSecondsNeeded)
+    //         {
+    //             MantaState.NT_PivotPosOk.set(true);
+    //             return true;
+                
+    //         } 
+    //     }
+    //     else
+    //     {
+    //         SettleDebounceTimer.restart();
+    //     }
+    //     MantaState.NT_PivotPosOk.set(false);
+    //     return false;
+    // }
+    public final Timer SettleDebounceTimer = new Timer();
+    private double debounceSecondsNeeded = .02;
+
     @Override
     public boolean isFinished(){
       if(PoseOffset == null){System.err.println("No pose OFFSET! Broken CODE?"); return false;}
@@ -168,20 +200,23 @@ public class C_Align extends Command{
         //near the final positon y
         //near the final positon z (rotation)
         //stop driving
-     
+        boolean isatSetpos = Xok && Yok  && Zok;
     
-        if(Xok && Yok  && Zok){
-            //timesgood = 0;
+        if(isatSetpos){
+          if(SettleDebounceTimer.get() > debounceSecondsNeeded)
+            {
             //Stop movement if we are there.
             StopDriveTrain();
             //
             return true;
-
+            }             
         }
         else{
-            return false;
+            SettleDebounceTimer.restart();
+            
 
         }
+        return false;
         
     }
 

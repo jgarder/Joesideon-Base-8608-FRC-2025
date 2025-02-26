@@ -10,12 +10,12 @@ public class constants {
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(1.0);//.6;
-        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(1.0);//.6;
+        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.7);//.6;
+        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.7);//.6;
         public static final double minRZErrorToCorrect = 1;//.45;//0.5;//1;//2;//1.25;
 
         public static  double k_PoseX_P = 2.5;//3.0;//2.1;//4;
-        public static  double k_PoseX_I = .5;//0.0;//0.000001;//0.02;
+        public static  double k_PoseX_I = .6;//0.0;//0.000001;//0.02;
         public static  double k_PoseX_D = 0.0;//.0;//0.06;
 
         public static  double k_PoseY_P = k_PoseX_P;//.5;//1.20;
@@ -23,7 +23,7 @@ public class constants {
         public static  double k_PoseY_D = k_PoseX_D;//0.15;//0.002; 
 
         public static  double k_RZ_P = 0.11;//.05;
-        public static  double k_RZ_I = 0.000000;//0.00;
+        public static  double k_RZ_I = 0.01;//0.00;
         public static  double k_RZ_D = 0.000000;//0.00;
 
         //if we are really far away lets keep pid from going insane.
@@ -108,9 +108,9 @@ public class constants {
         public static final double ProcessorPos = 4.0;
         public static final double l1Position = 4.0;
         public static final double l2Position = 9.0;
-        public static final double l2Algae = 15.5;
+        public static final double l2Algae = 14.0;//15.5;
         public static final double l3Position = 18.0;
-        public static final double l3algae = 23.5;
+        public static final double l3algae = 23.0;
         public static final double l4Position = maxElevatorheight;
         public static final double BargePosition = maxElevatorheight;
     }
@@ -155,7 +155,7 @@ public class constants {
         public static final double kS = 3.0;
         public static final double kG = -20.0;
 
-        public static final double Accel = 9.0;//10.0;
+        public static final double Accel = 30.0;//9.0;//10.0;
         public static final double Jerk = 0;//400.0;
         public static final double Cruise = 120;//100.0;
         public static final double SideScore = -0.05;
@@ -182,14 +182,14 @@ public class constants {
         public static final double MoveTolerance = .5;
 
         //public static final double positionAddIfCoralOffset = 6;
-        public static final double l1ReadyPosition = LiveOffset + 41.0;//the ready position in the reef is right before we swoop to score.
+        public static final double l1ReadyPosition =  41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
          
-        public static final double l1ScorePosition = LiveOffset + 21.0;
+        public static final double l1ScorePosition = 21.0;//uses LiveOffset
 
-        public static final double l2ReadyPosition = LiveOffset + 36;
-        public static final double l2ScorePosition = LiveOffset + 0;
+        public static final double l2ReadyPosition = 38;//uses LiveOffset
+        public static final double l2ScorePosition = 0;//uses LiveOffset
 
-        public static final double l4ScorePosition = LiveOffset + 39;
+        public static final double l4ScorePosition = 39;//uses LiveOffset
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;
         public static final double rearintakePos = .5; 

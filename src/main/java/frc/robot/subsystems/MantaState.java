@@ -6,9 +6,12 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StructEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -47,7 +50,18 @@ public class MantaState extends SubsystemBase {
     public static BooleanEntry NT_ElevatorPosOk = NT.getBooleanEntry(className, "ElevatorPosOk", false);
     public static BooleanEntry NT_ExtensionPosOk = NT.getBooleanEntry(className, "ExtensionPosOk", false);
 
+
     DoubleEntry NT_ExtensionLiveOffset = NT.getDoubleEntry(className , "ExtensionLiveOffset",0.0);
+
+    public static StringEntry NT_AlignedUsing = NT.getStringEntry(className, "AlignedUsing", "none");
+    public static LoggedNetworkBoolean NT_Mt1FrontdoRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt1FrontdoRejectUpdate",false);
+    public static LoggedNetworkBoolean NT_Mt1BackdoRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt1BackdoRejectUpdate",false);
+
+    public static LoggedNetworkBoolean NT_Mt2FrontdoRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt2FrontdoRejectUpdate",false);
+    public static LoggedNetworkBoolean NT_Mt2BackdoRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt2BackdoRejectUpdate",false);
+
+
+
     @Override
     public void periodic() {
       double Liveoffset = NT_ExtensionLiveOffset.getAsDouble();
@@ -104,6 +118,8 @@ public class MantaState extends SubsystemBase {
       NT_AlignSetpoint.set(new Pose2d());//send out a default;
       setLimeLightBypassed(false);
       setAltControlModeEnabled(false);
+      NT_ExtensionLiveOffset.set(constants.PlasmaExtension.LiveOffset);
+      NT_AlignedUsing.set("none");
     }
 
 
@@ -121,7 +137,6 @@ public class MantaState extends SubsystemBase {
     public BooleanSupplier IsPivotFoldedFarOut;
     public BooleanSupplier IsPivotinTravelPosition;
     public static BooleanSupplier NearestTagIsUpperAlgae = ()->{AprilTag targetTag = AprilTagManager.getClosestTagofTypeToRobotCenterForAlliance(DriveTrain.getState().Pose, TagType.Reef); return targetTag.algaeOnUpper;};
-
 
     //setters
     public static boolean setLimeLightBypassed(boolean setTo)
