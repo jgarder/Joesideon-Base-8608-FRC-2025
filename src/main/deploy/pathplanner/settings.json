@@ -4,14 +4,15 @@
   "holonomicMode": true,
   "pathFolders": [
     "BlueOpenSide",
-    "FloorPickups",
     "FloorCoral 4 coral Pickups",
+    "FloorPickups",
+    "OtherSide",
     "ProcSide",
     "TestPaths"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 5.0,
-  "defaultMaxAccel": 4.0,
+  "defaultMaxVel": 5.25,
+  "defaultMaxAccel": 3.9,
   "defaultMaxAngVel": 240.0,
   "defaultMaxAngAccel": 240.0,
   "defaultNominalVoltage": 12.0,

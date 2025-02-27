@@ -1,0 +1,124 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "START TO NE "
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestRightScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "NE To Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ParkElevatorAndHead"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestSourceIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "O - Source To W"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestLeftScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "O - W To Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ParkElevatorAndHead"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestSourceIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source To NW"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestRightScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "NW To Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ParkElevatorAndHead"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestSourceIntake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}
