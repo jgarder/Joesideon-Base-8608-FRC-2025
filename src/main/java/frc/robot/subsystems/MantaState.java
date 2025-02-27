@@ -31,6 +31,8 @@ public class MantaState extends SubsystemBase {
 
     public static StructEntry<Pose2d> NT_AlignSetpoint = NT.getStructEntry_Pose2D("Poses","AlignSetpoint",new Pose2d());
     
+    public static BooleanEntry NT_IsLoaded = NT.getBooleanEntry(className , "IsLoaded",false);
+    
     public static DoubleEntry NT_XPGain = NT.getDoubleEntry(PidAlignmentClassname, "XP Gain",constants.drivetrainThings.k_PoseX_P);
     public static DoubleEntry NT_XIGain = NT.getDoubleEntry(PidAlignmentClassname, "XI Gain",constants.drivetrainThings.k_PoseX_I);
     public static DoubleEntry NT_XDGain = NT.getDoubleEntry(PidAlignmentClassname, "XD Gain",constants.drivetrainThings.k_PoseX_D);
@@ -54,6 +56,7 @@ public class MantaState extends SubsystemBase {
     DoubleEntry NT_ExtensionLiveOffset = NT.getDoubleEntry(className , "ExtensionLiveOffset",0.0);
 
     public static StringEntry NT_AlignedUsing = NT.getStringEntry(className, "AlignedUsing", "none");
+    public static DoubleEntry NT_TimeToAlign = NT.getDoubleEntry(PidAlignmentClassname, "TimeToAlign",0.0);
     public static LoggedNetworkBoolean NT_Mt1FrontdoRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt1FrontdoRejectUpdate",false);
     public static LoggedNetworkBoolean NT_Mt1BackdoRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt1BackdoRejectUpdate",false);
 

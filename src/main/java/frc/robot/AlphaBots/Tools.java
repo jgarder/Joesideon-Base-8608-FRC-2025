@@ -24,7 +24,7 @@ public class Tools {
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
       //PUT MOTORS TO BE CONFIGED HERE
-      status = TalonFX.getConfigurator().apply(Config,10);
+      status = TalonFX.getConfigurator().apply(Config,2);
       //
       if (status.isOK()) return status;
     }

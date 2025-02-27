@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -11,23 +10,12 @@ import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.DoubleTopic;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructEntry;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 
@@ -58,7 +46,7 @@ public class MantaRay extends SubsystemBase {
 
   DoubleEntry NT_SetpointPosition = NT.getDoubleEntry(className , "SetpointPosition",0.0);
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
-  BooleanEntry NT_IsLoaded = NT.getBooleanEntry(className , "IsLoaded",false);
+  
   public MantaRay() {
     System.out.println("Creating " + className + " object"); 
     setMotorConfig();
@@ -66,6 +54,7 @@ public class MantaRay extends SubsystemBase {
     NT_IGain.set(kI);
     NT_DGain.set(kD);
     NT_SetpointPosition.set(0);
+    MantaState.NT_IsLoaded.set(_isloaded);
   }
 
 
@@ -128,13 +117,17 @@ public class MantaRay extends SubsystemBase {
     public void setUnloaded()
     {
       _isloaded = false;
+      MantaState.NT_IsLoaded.set(_isloaded);
     }
+
     private boolean _isloaded = false;
     public BooleanSupplier getisloaded = ()->{return _isloaded;};
     public final Timer intakedebounceTimer = new Timer();
-    Alert alert = new Alert("IsLoaded", AlertType.kInfo);
+    //Alert alert = new Alert("IsLoaded", AlertType.kInfo);
+    
     public boolean isLoaded()
     {
+      if(getisloaded.getAsBoolean()){return getisloaded.getAsBoolean();}
         //check if amps are high
         //check is rotor is locked
         if(m_TridentMotor.getStatorCurrent().getValueAsDouble() > constants.MantaRay.intakeAmpCutoffThreshold)
@@ -144,27 +137,28 @@ public class MantaRay extends SubsystemBase {
             {
                 intakedebounceTimer.restart();
                 _isloaded = false;
-                NT_IsLoaded.set(_isloaded);
+                MantaState.NT_IsLoaded.set(getisloaded.getAsBoolean());
                 return false;
             }
 
             //if timer running and the 
             if(intakedebounceTimer.isRunning() && intakedebounceTimer.get() >= constants.MantaRay.intakeAmpLimittime)
             {
-                alert.set(true);
+                System.out.println("ISLOADED NOW");
+                //alert.set(true);
                 intakedebounceTimer.stop();
                 intakedebounceTimer.reset();
                 _isloaded = true;
-                NT_IsLoaded.set(_isloaded);
+                MantaState.NT_IsLoaded.set(_isloaded);
                 return true;
             }
             return false;
            
         }
-        alert.set(false);
-        intakedebounceTimer.reset();
+        //alert.set(false);
+        intakedebounceTimer.restart();
         _isloaded = false;
-        NT_IsLoaded.set(_isloaded);
+        MantaState.NT_IsLoaded.set(_isloaded);
         //if its true then return true;
         return false;
     }

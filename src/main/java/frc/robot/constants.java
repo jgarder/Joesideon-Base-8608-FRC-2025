@@ -10,12 +10,12 @@ public class constants {
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.7);//.6;
-        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.7);//.6;
+        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(1);//.6;
+        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(1);//.6;
         public static final double minRZErrorToCorrect = 1;//.45;//0.5;//1;//2;//1.25;
 
         public static  double k_PoseX_P = 2.5;//3.0;//2.1;//4;
-        public static  double k_PoseX_I = .6;//0.0;//0.000001;//0.02;
+        public static  double k_PoseX_I = 0.1;//.6;//0.0;//0.000001;//0.02;
         public static  double k_PoseX_D = 0.0;//.0;//0.06;
 
         public static  double k_PoseY_P = k_PoseX_P;//.5;//1.20;
@@ -71,7 +71,7 @@ public class constants {
         public static final double intakeAmpLimit = 40;
 
         public static final double intakeAmpCutoffThreshold = 20; //20
-        public static final double intakeAmpLimittime = .175;
+        public static final double intakeAmpLimittime = .125;
     }
     public class Elevator {
         public static final double kP = 35.0; //15 //MotionMagic

@@ -13,13 +13,63 @@
         {
           "type": "named",
           "data": {
-            "name": "DoclosestRightScoreL4"
+            "name": "DoclosestLeftScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Se To Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ParkElevatorAndHead"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestSourceIntake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Se To Source"
+            "pathName": "Source To W"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestRightScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "W To Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ParkElevatorAndHead"
+                }
+              }
+            ]
           }
         },
         {
@@ -37,13 +87,26 @@
         {
           "type": "named",
           "data": {
-            "name": "DoclosestLeftScoreL4"
+            "name": "DoclosestRightScoreL4"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "SW To Source"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SW To Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ParkElevatorAndHead"
+                }
+              }
+            ]
           }
         },
         {

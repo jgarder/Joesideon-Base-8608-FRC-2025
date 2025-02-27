@@ -30,7 +30,7 @@ import frc.robot.LimelightHelpers.PoseEstimate;
 public class C_Align extends Command{
     //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
     String className = this.getClass().getSimpleName();
-
+    public final Timer TimeToAlignTimer = new Timer();
     public final frc.robot.subsystems.CommandSwerveDrivetrain drivetrain = MantaState.DriveTrain;
     public final SwerveRequest.FieldCentric FCdriveAuton = new SwerveRequest.FieldCentric();
 
@@ -83,6 +83,7 @@ public class C_Align extends Command{
         AlignXPid.reset();
         AlignYPid.reset();
         AlignRZPid.reset();
+        TimeToAlignTimer.restart();
     }
 
     
@@ -162,6 +163,9 @@ public class C_Align extends Command{
     @Override
     public void end(boolean interrupted) {
       StopDriveTrain();
+      MantaState.NT_AlignedUsing.set("chassisPose");
+      MantaState.NT_TimeToAlign.set(TimeToAlignTimer.get());
+      
     }
 
     // @Override

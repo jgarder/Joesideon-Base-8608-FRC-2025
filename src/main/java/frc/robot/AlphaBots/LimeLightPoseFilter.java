@@ -129,13 +129,13 @@ public class LimeLightPoseFilter {
         bootupAprilTagError = false;
         MantaState.NT_Mt1FrontdoRejectUpdate.set(limelightupdateDrivetrain(FrontLLName));
     }
-
+    public static double resetvisionTimeout = .5;
     public static void resetVision(PoseEstimate mt1)
     {
         if(mt1 == null){return;}
         //MantaState.DriveTrain.seedFieldCentric();
         var m_gyro = MantaState.DriveTrain.getPigeon2();
-        m_gyro.setYaw(mt1.pose.getRotation().getDegrees(),5);
+        m_gyro.setYaw(mt1.pose.getRotation().getDegrees(),resetvisionTimeout);
         MantaState.DriveTrain.resetPose(new Pose2d(mt1.pose.getX(),mt1.pose.getY(),mt1.pose.getRotation()));//MantaState.DriveTrain.seedFieldRelative(new Pose2d(mt1.pose.getX(),mt1.pose.getY(),mt1.pose.getRotation()));
         //LimelightHelpers.SetRobotOrientation("limelight",mt1.pose.getRotation().getDegrees() ,0 , 0, 0, 0, 0);//m_gyro.getRate()
         LimelightHelpers.SetRobotOrientation(constants.CanBus.limelightFrontName,mt1.pose.getRotation().getDegrees() ,0 , 0, 0, 0, 0);//m_gyro.getRate()
@@ -186,5 +186,4 @@ public class LimeLightPoseFilter {
         }
         return doRejectUpdate;
   }
-
 }

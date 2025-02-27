@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.7607730263157892,
-        "y": 1.465625
+        "x": 1.90826198630137,
+        "y": 1.951455479452055
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9864881560217718,
-        "y": 1.5731083950980873
+        "x": 2.1339771160073524,
+        "y": 2.058938874550143
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.858305921052631,
-        "y": 2.610608552631579
+        "x": 3.8766267123287674,
+        "y": 2.6576626712328766
       },
       "prevControl": {
-        "x": 3.6370065789473682,
-        "y": 2.456661184210526
+        "x": 3.6553273702235045,
+        "y": 2.5037153028118233
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,22 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "gotoL4Travel",
+      "waypointRelativePos": 0.03095238095238076,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "gotoL4Travel"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 240.0,
     "maxAngularAcceleration": 240.0,
     "nominalVoltage": 12.0,
@@ -42,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 57.80426606528669
   },
   "reversed": false,
   "folder": "ProcSide",

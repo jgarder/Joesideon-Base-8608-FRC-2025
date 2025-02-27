@@ -6,51 +6,31 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.fasterxml.jackson.databind.util.Named;
-import com.google.flatbuffers.Constants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.C_Align;
 import frc.robot.commands.C_DropElevateToScore;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
 import frc.robot.commands.C_PivotToPosition;
-import frc.robot.commands.C_ReefAlign;
-import frc.robot.commands.C_SourceAlign;
 import frc.robot.commands.C_TridentIntake;
-import frc.robot.commands.C_TridentIntakeNeutral;
-import frc.robot.constants.Climber;
-import frc.robot.AlphaBots.AprilTag;
 import frc.robot.AlphaBots.LimeLightPoseFilter;
-import frc.robot.AlphaBots.AprilTag.TagType;
-import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AprilTagManager;
@@ -61,7 +41,6 @@ import frc.robot.subsystems.MantaRay;
 import frc.robot.subsystems.MantaState;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.josiahClimber;
-import frc.robot.subsystems.Elevator.POSITION;
 
 public class RobotContainer {
     //fields
@@ -355,7 +334,7 @@ public class RobotContainer {
 
         //Faster
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(Control_AlignClosestScoreL4().finallyDo(traveltopark()));
+            .onTrue(Control_AlignClosestScoreL4().andThen(ParkElevatorAndHead()).finallyDo(traveltopark()));
             
             //.onFalse(ParkElevatorAndHead());
 
@@ -437,17 +416,17 @@ public class RobotContainer {
         .alongWith(ScoreL4());
     }
     public Command Control_AlignClosestRightScoreL4() {
-        return ATMan.C_ReefRightSelectCommand().until(MantaState.getLimeLightBypassed)
+        return ATMan.C_ReefRightSelectCommand()
         .alongWith(ScoreL4());
     }
     public Command ScoreL4()
     {
         return gotoL4Travel()
-        .andThen(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead());
+        .andThen(PivotIntoReefL4(),CoralDropScoreL4());
     }
     public Command Control_RearIntake()
     {
-        return ATMan.C_SourceSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
+        return ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(5)
             .alongWith(RearIntake());
     }
     public void bindNamedCommands()
@@ -468,6 +447,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("gotoL4Travel", gotoL4Travel());
         NamedCommands.registerCommand("PivotIntoReefL4", PivotIntoReefL4());
         NamedCommands.registerCommand("ScoreL4", new SequentialCommandGroup(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()));
+        NamedCommands.registerCommand("ParkElevatorAndHead", ParkElevatorAndHead());
+
         NamedCommands.registerCommand("GroundIntakeCoral", GroundIntake());
     }
 

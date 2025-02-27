@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Se To Source"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "DoclosestSourceIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": null
           }
         }
       ]

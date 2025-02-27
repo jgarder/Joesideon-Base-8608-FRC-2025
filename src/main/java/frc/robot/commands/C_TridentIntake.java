@@ -4,13 +4,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
 import frc.robot.subsystems.MantaRay;
+import frc.robot.subsystems.MantaState;
 
 public class C_TridentIntake extends Command {
     
     MantaRay ss_Trident;
     boolean isloaded = false;
     public final Timer startupdebounceTimer = new Timer();
-    private double debounceSecondsNeeded = .30;
+    private double debounceSecondsNeeded = .40;
     private double dutycycleSpeed = constants.MantaRay.IntakeDutyCycle;
     public C_TridentIntake(MantaRay incomingss_Trident,double _dutycycleSpeed)
     {
@@ -39,10 +40,11 @@ public class C_TridentIntake extends Command {
         if(startupdebounceTimer.get()<debounceSecondsNeeded){return false;}
 
         boolean isloaded = ss_Trident.isLoaded();
-        if(isloaded)
-        {
-            ss_Trident.HoldPosition();
-        }
+        // if(isloaded)
+        // {
+        //     ss_Trident.HoldPosition();     
+        // }
+        MantaState.NT_IsLoaded.set(isloaded);
         return isloaded;
     }
 

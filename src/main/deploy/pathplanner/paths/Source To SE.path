@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8548801369863015,
-        "y": 3.9949486301369865
+        "x": 1.7607730263157892,
+        "y": 1.465625
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7196489726027395,
-        "y": 2.777868150684932
+        "x": 2.7947773972602734,
+        "y": 2.552482876712329
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.8181078767123287,
-        "y": 2.5675085616438356
+        "x": 5.108732876712329,
+        "y": 2.5975599315068494
       },
       "prevControl": {
-        "x": 2.1636986301369863,
-        "y": 2.807919520547945
+        "x": 5.003553082191781,
+        "y": 2.0716609589041095
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -147.51867941165878
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -47,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -149.74356283647072
+    "rotation": 116.56505117707805
   },
   "reversed": false,
-  "folder": "FloorPickups",
+  "folder": "ProcSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 1.548157698977906
+    "rotation": 47.792702365713325
   },
   "useDefaultConstraints": true
 }

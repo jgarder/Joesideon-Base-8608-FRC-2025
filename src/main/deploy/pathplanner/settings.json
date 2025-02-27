@@ -10,8 +10,8 @@
     "TestPaths"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 1.5,
-  "defaultMaxAccel": 1.5,
+  "defaultMaxVel": 5.0,
+  "defaultMaxAccel": 4.0,
   "defaultMaxAngVel": 240.0,
   "defaultMaxAngAccel": 240.0,
   "defaultNominalVoltage": 12.0,
