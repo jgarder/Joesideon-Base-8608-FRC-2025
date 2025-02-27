@@ -8,6 +8,8 @@ import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
+import com.ctre.phoenix.led.CANdle;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleEntry;
@@ -16,7 +18,9 @@ import edu.wpi.first.networktables.StructEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants;
 import frc.robot.AlphaBots.AprilTag;
 import frc.robot.AlphaBots.AprilTag.TagType;
@@ -126,7 +130,11 @@ public class MantaState extends SubsystemBase {
     }
 
 
-    
+    //changes lights when the limelight is bypassed
+    Trigger LEDTest = new Trigger(getLimeLightBypassed)
+      .onTrue(new InstantCommand(()->{CANdleSubsystem.limelightBypassLights();}))
+      .onFalse(new InstantCommand(()->{CANdleSubsystem.clearAnimations();}));
+
     
     public static  CommandSwerveDrivetrain DriveTrain;  
     //fields

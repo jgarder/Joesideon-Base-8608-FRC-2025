@@ -35,6 +35,7 @@ import frc.robot.AlphaBots.Tools;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AprilTagManager;
 import frc.robot.subsystems.ArmExtension;
+import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MantaRay;
@@ -56,6 +57,7 @@ public class RobotContainer {
     public final ArmExtension ss_ArmExtension = new ArmExtension(ss_Elevator.currentHeight);
     public final josiahClimber ss_Climber = new josiahClimber();
     public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot);
+    public final CANdleSubsystem Candle = new CANdleSubsystem();
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
