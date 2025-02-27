@@ -9,11 +9,12 @@ import frc.robot.subsystems.MantaState;
 import frc.robot.subsystems.Pivot;
 
 public class C_PivotToPosition extends Command{
+    
     Pivot SubSystem;
     double wantedPosition;
     double Tolerance = constants.PlasmaPivot.MoveTolerance;
     public final Timer SettleDebounceTimer = new Timer();
-    private double debounceSecondsNeeded = .1;
+    private double debounceSecondsNeeded = constants.PlasmaPivot.MovementDebounceTime;
     public C_PivotToPosition(Pivot subSys, double wantedposition){
         SubSystem = subSys;
         wantedPosition = wantedposition;

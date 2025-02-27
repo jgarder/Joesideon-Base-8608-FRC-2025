@@ -321,6 +321,18 @@ public class RobotContainer {
             .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))
             .andThen(AlgaeReefIntake(),gotoMinTravel()))
             .onFalse(gotoMinTravel());
+        
+        //processor score
+        joystick.rightTrigger().and(joystick.x()).onTrue(
+            ATMan.C_ProcessorSelectCommand().until(MantaState.getLimeLightBypassed)
+            .alongWith(
+                new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
+                new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.processorPivot),
+                new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.processorExtension)
+                )
+            .andThen(TridentAlgaeBumpOut().withTimeout(.5).finallyDo(()->{ss_Trident.HoldPosition(); traveltopark();}))
+            
+        );
 
         joystick.rightBumper().whileTrue(Control_RearIntake());
         
@@ -351,7 +363,7 @@ public class RobotContainer {
             .andThen(PivotIntoReefL2(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(alignReefForCoral()
+            .onTrue(ATMan.C_ReefCenterSelectCommand().until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL1Travel())
             .andThen(PivotIntoReef(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
@@ -413,12 +425,12 @@ public class RobotContainer {
         return alignReefForCoral().until(MantaState.getLimeLightBypassed)
         .alongWith(ScoreL4());
     }
-    public Command Control_AlignClosestLeftScoreL4() {
-        return ATMan.C_ReefLeftSelectCommand().until(MantaState.getLimeLightBypassed)
+    public Command Control_AutonAlignClosestLeftScoreL4() {
+        return ATMan.C_ReefLeftSelectCommand().withTimeout(4)
         .alongWith(ScoreL4());
     }
-    public Command Control_AlignClosestRightScoreL4() {
-        return ATMan.C_ReefRightSelectCommand()
+    public Command Control_AutonAlignClosestRightScoreL4() {
+        return ATMan.C_ReefRightSelectCommand().withTimeout(4)
         .alongWith(ScoreL4());
     }
     public Command ScoreL4()
@@ -436,8 +448,8 @@ public class RobotContainer {
         // Register Named Commands
         NamedCommands.registerCommand("DoclosestSourceIntake", Control_RearIntake());
         NamedCommands.registerCommand("DoclosestScoreL4", Control_AlignClosestScoreL4());
-        NamedCommands.registerCommand("DoclosestLeftScoreL4", Control_AlignClosestLeftScoreL4());
-        NamedCommands.registerCommand("DoclosestRightScoreL4", Control_AlignClosestRightScoreL4());
+        NamedCommands.registerCommand("DoclosestLeftScoreL4", Control_AutonAlignClosestLeftScoreL4());
+        NamedCommands.registerCommand("DoclosestRightScoreL4", Control_AutonAlignClosestRightScoreL4());
         
         //unused below lol
         NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));

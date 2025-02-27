@@ -1,10 +1,10 @@
 {
   "hubs": [
     {
-      "x": -8,
-      "y": -8,
-      "width": 1936,
-      "height": 1056,
+      "x": 173,
+      "y": 94,
+      "width": 1685,
+      "height": 783,
       "state": {
         "sidebar": {
           "width": 300,
@@ -12,10 +12,13 @@
             "/DriverStation",
             "/AlphaBots/Poses/ChassisLoc/translation",
             "/AlphaBots/Poses/ChassisLoc/rotation",
-            "/PathPlanner",
             "/AlphaBots",
-            "/SmartDashboard",
-            "/AlphaBots/ArmExtension",
+            "/DriveState",
+            "/DriveState/ModulePositions",
+            "/DriveState/ModulePositions/0/angle",
+            "/DriveState/ModuleStates",
+            "/DriveState/ModuleStates/0",
+            "/DriveState/ModuleStates/0/angle",
             "/AlphaBots/MantaState"
           ]
         },
@@ -153,9 +156,30 @@
               "type": 1,
               "title": "Line Graph",
               "controller": {
-                "leftSources": [],
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AlphaBots/MantaRay/StatorCurrent",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
                 "rightSources": [],
-                "discreteSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AlphaBots/MantaState/IsLoaded",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -418,6 +442,51 @@
             },
             {
               "type": 1,
+              "title": "drivetrain",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/DriveState/ModulePositions/0/angle/value",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/DriveState/ModuleStates/0/angle/value",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "rzhtr9tmkbnhlj69x9whfzjuw0f3t3yx",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
               "title": "PidAlign X",
               "controller": {
                 "leftSources": [
@@ -450,7 +519,7 @@
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
-                      "color": "#af2437"
+                      "color": "#3b875a"
                     }
                   },
                   {
@@ -469,6 +538,15 @@
                     "visible": true,
                     "options": {
                       "color": "#e48b32"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AlphaBots/MantaState/AlignedUsing",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#c0b487"
                     }
                   }
                 ],

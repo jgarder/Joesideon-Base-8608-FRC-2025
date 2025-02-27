@@ -108,9 +108,9 @@ public class constants {
         public static final double ProcessorPos = 4.0;
         public static final double l1Position = 4.0;
         public static final double l2Position = 9.0;
-        public static final double l2Algae = 14.0;//15.5;
+        public static final double l2Algae = 13.0;//15.5;
         public static final double l3Position = 18.0;
-        public static final double l3algae = 23.0;
+        public static final double l3algae = 22.0;
         public static final double l4Position = maxElevatorheight;
         public static final double BargePosition = maxElevatorheight;
     }
@@ -125,6 +125,7 @@ public class constants {
         public static final double maxPositionToBeSafeFromSmashingintoSelf = -.24;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
         
         public static final double MoveTolerance = .015;//.003;
+        public static final double MovementDebounceTime = .02;//.1;
         public static final double maxposition = 0.06;
         public static final double minposition = -0.247;
 
@@ -133,7 +134,9 @@ public class constants {
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = 0.0;
+        public static final double processorPivot = -.055;
         public static final double GroundPickupPosition = -0.00;//12.0;
+
 
         public static final double CoralGroundPickup = 0.06;
 
@@ -159,6 +162,7 @@ public class constants {
         public static final double Jerk = 0;//400.0;
         public static final double Cruise = 120;//100.0;
         public static final double SideScore = -0.05;
+        
         
 
 
@@ -195,6 +199,8 @@ public class constants {
         public static final double rearintakePos = .5; 
 
         public static final double climbExtension = 14;
+
+        public static final double processorExtension = 10;
     }
         
 

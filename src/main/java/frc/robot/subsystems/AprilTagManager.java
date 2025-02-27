@@ -159,12 +159,13 @@ public class AprilTagManager extends SubsystemBase
     public static List<AprilTag> tagList = Arrays.asList(
         //Blue Side
         new AprilTag(13,"LeftSource",new Pose2d(Units.inchesToMeters(33.51),Units.inchesToMeters(291.20),Rotation2d.fromDegrees(306)),0,Alliance.Blue).WithType(TagType.Source)
-        .Withdepthoffset(Units.inchesToMeters(60)),//test
-        //.Withdepthoffset(Units.inchesToMeters(-.35)),  //LIVE
+        //.Withdepthoffset(Units.inchesToMeters(60)),//SOURCE test
+        .Withdepthoffset(Units.inchesToMeters(-.35)),  //SOURCE LIVE
         new AprilTag(12,"RightSource",new Pose2d(Units.inchesToMeters(33.51),Units.inchesToMeters(25.80),Rotation2d.fromDegrees(54)),0,Alliance.Blue).WithType(TagType.Source)
-        .Withdepthoffset(Units.inchesToMeters(60)),//test
-        //.Withdepthoffset(Units.inchesToMeters(-.35)),  //LIVE
-        new AprilTag(16,"Processor",new Pose2d(Units.inchesToMeters(235.73),Units.inchesToMeters(-0.15),Rotation2d.fromDegrees(90)),0,Alliance.Blue).WithType(TagType.Processor),
+        //.Withdepthoffset(Units.inchesToMeters(60)),//SOURCE test
+        .Withdepthoffset(Units.inchesToMeters(-.35)),  //SOURCE LIVE
+        new AprilTag(16,"Processor",new Pose2d(Units.inchesToMeters(235.73),Units.inchesToMeters(-0.15),Rotation2d.fromDegrees(90)),0,Alliance.Blue).WithType(TagType.Processor)
+        .Withdepthoffset(Units.inchesToMeters(2)),
         new AprilTag(14,"blueBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.BlueBarge),
         new AprilTag(15,"redBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(75.39),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.RedBarge),
         new AprilTag(22,"reefSE",new Pose2d(Units.inchesToMeters(193.10),Units.inchesToMeters(130.17),Rotation2d.fromDegrees(300)),0,Alliance.Blue).WithAlgaeOnUpper().WithType(TagType.Reef),
@@ -175,12 +176,13 @@ public class AprilTagManager extends SubsystemBase
         new AprilTag(17,"reefSW",new Pose2d(Units.inchesToMeters(160.39),Units.inchesToMeters(130.17),Rotation2d.fromDegrees(240)),0,Alliance.Blue).WithType(TagType.Reef),
         //Red Side
         new AprilTag(1,"LeftSource",new Pose2d(Units.inchesToMeters(657.37),Units.inchesToMeters(25.80),Rotation2d.fromDegrees(126)),0,Alliance.Red).WithType(TagType.Source)
-        .Withdepthoffset(Units.inchesToMeters(60)),//test
-        //.Withdepthoffset(Units.inchesToMeters(-.35)),  //LIVE
+        //.Withdepthoffset(Units.inchesToMeters(60)),  //SOURCE test
+        .Withdepthoffset(Units.inchesToMeters(-.35)),  //SOURCE LIVE
         new AprilTag(2,"RightSource",new Pose2d(Units.inchesToMeters(657.37),Units.inchesToMeters(291.20),Rotation2d.fromDegrees(234)),0,Alliance.Red).WithType(TagType.Source)
-        .Withdepthoffset(Units.inchesToMeters(60)),//test
-        //.Withdepthoffset(Units.inchesToMeters(-.35)), //LIVE
-        new AprilTag(3,"Processor",new Pose2d(Units.inchesToMeters(455.15),Units.inchesToMeters(317.15),Rotation2d.fromDegrees(270)),0,Alliance.Red).WithType(TagType.Processor),
+        //.Withdepthoffset(Units.inchesToMeters(60)),// SOURCE test
+        .Withdepthoffset(Units.inchesToMeters(-.35)), //SOURCE LIVE
+        new AprilTag(3,"Processor",new Pose2d(Units.inchesToMeters(455.15),Units.inchesToMeters(317.15),Rotation2d.fromDegrees(270)),0,Alliance.Red).WithType(TagType.Processor)
+        .Withdepthoffset(Units.inchesToMeters(2)),
         new AprilTag(4,"blueBarge",new Pose2d(Units.inchesToMeters(365.2),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.BlueBarge),
         new AprilTag(5,"redBarge",new Pose2d(Units.inchesToMeters(365.20),Units.inchesToMeters(75.39),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.RedBarge),
         new AprilTag(6,"reefSE",new Pose2d(Units.inchesToMeters(530.49),Units.inchesToMeters(130.17),Rotation2d.fromDegrees(300)),0,Alliance.Red).WithType(TagType.Reef),
@@ -230,13 +232,16 @@ public class AprilTagManager extends SubsystemBase
   private int selectSource() {
 
     return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Source).ID;
+  }
+  private int selectProcessor() {
 
-}
-private int selectReef() {
+    return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Processor).ID;
+  }
+  private int selectReef() {
 
-return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Reef).ID;
+  return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Reef).ID;
 
-}
+  }
 
 public final SelectCommand C_SourceSelectCommand(){
      return new SelectCommand<>(
@@ -252,11 +257,25 @@ public final SelectCommand C_SourceSelectCommand(){
               .alongWith(new C_Align(AprilTagManager.getReverseStraightOutLoc(12,0)))),
 
               Map.entry(13, new PrintCommand("Command 13 was selected!")
-              .alongWith(new C_Align(AprilTagManager.getReverseStraightOutLoc(13,0))))),
+              .alongWith(new C_Align(AprilTagManager.getReverseStraightOutLoc(13,0))))
+              ),
 
           ()->{return selectSource();});
 
     }
+    public final SelectCommand C_ProcessorSelectCommand(){
+      return new SelectCommand<>(
+           // Maps selector values to commands
+           Map.ofEntries(
+               Map.entry(3, new PrintCommand("Processor red 3 was selected!")
+               .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(3,0.0)))),
+ 
+               Map.entry(16, new PrintCommand("Processor blue 16 was selected!")
+               .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(16,0.0))))
+           ),
+           ()->{return selectProcessor();});
+ 
+     }
     public final SelectCommand C_ReefLeftSelectCommand()
         { return
           new SelectCommand<>(
