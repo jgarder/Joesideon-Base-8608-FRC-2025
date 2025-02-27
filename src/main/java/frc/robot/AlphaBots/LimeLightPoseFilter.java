@@ -24,7 +24,7 @@ public class LimeLightPoseFilter {
     private static final double MT1maxrotationalVelocityForLLUpdate = 200;//100;//80;
     private static final double MT1maxSpeedMeterPerSecondForLLUpdate = 2.0;//1.0;
     private static final double MT2maxrotationalVelocityForLLUpdate = 400;//150;//80;
-    private static final double MT2maxSpeedMeterPerSecondForLLUpdate = 5.0;//4.0;
+    private static final double MT2maxSpeedMeterPerSecondForLLUpdate = 6.0;//4.0;
     private static final String FrontLLName = constants.CanBus.limelightFrontName;
     public static boolean BootupRobotOrientationSet = false;
     public static boolean bootupAprilTagError = false;

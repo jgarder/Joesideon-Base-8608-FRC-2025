@@ -121,7 +121,7 @@ public class C_Align extends Command{
       {
         if(frontLimelightMt1 !=null && frontLimelightMt1.tagCount > 0)//if we also have a front shot
         {
-          if (frontLimelightMt1.avgTagDist > backLimelightMt1.avgTagDist) { //if our back shots are closer than the front just use the back instead of defautl front. 
+          if (Math.abs(frontLimelightMt1.avgTagDist) > Math.abs(backLimelightMt1.avgTagDist)) { //if our back shots are closer than the front just use the back instead of defautl front. 
             LimelightMt1 = backLimelightMt1;
             MantaState.NT_AlignedUsing.set("BackLimelightCloser");
           }
@@ -163,7 +163,7 @@ public class C_Align extends Command{
     @Override
     public void end(boolean interrupted) {
       StopDriveTrain();
-      MantaState.NT_AlignedUsing.set("chassisPose");
+      MantaState.NT_AlignedUsing.set("End Align");
       MantaState.NT_TimeToAlign.set(TimeToAlignTimer.get());
       
     }

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.90826198630137,
-        "y": 1.9364297945205475
+        "x": 1.17,
+        "y": 1.1
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1442833072105283,
-        "y": 2.4824428884300307
+        "x": 2.0264640410958905,
+        "y": 1.445590753424657
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 3.7395119863013697
       },
       "prevControl": {
-        "x": 2.5693921232876713,
-        "y": 3.5892551369863006
+        "x": 2.6595462328767123,
+        "y": 3.514126712328767
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,26 +29,12 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5023809523809523,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 5.0,
-        "maxAcceleration": 4.0,
-        "maxAngularVelocity": 240.0,
-        "maxAngularAcceleration": 240.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "gotoL4Travel",
-      "waypointRelativePos": 0.049999999999999996,
+      "waypointRelativePos": 0.32619047619047614,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -74,7 +60,7 @@
   "folder": "ProcSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 47.792702365713325
+    "rotation": 52.765166018425404
   },
   "useDefaultConstraints": true
 }

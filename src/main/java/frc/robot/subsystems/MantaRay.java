@@ -207,7 +207,7 @@ public class MantaRay extends SubsystemBase {
     }
     public Command LooseBump()
     {
-        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-.3));});
+        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(-0.5));});
         
     }
 

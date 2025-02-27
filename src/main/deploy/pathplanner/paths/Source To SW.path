@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.90826198630137,
-        "y": 1.951455479452055
+        "x": 1.17,
+        "y": 1.1
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1339771160073524,
-        "y": 2.058938874550143
+        "x": 1.3957151297059822,
+        "y": 1.2074833950980879
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 2.6576626712328766
       },
       "prevControl": {
-        "x": 3.6553273702235045,
-        "y": 2.5037153028118233
+        "x": 3.7263698630136988,
+        "y": 2.4322773972602736
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "gotoL4Travel",
-      "waypointRelativePos": 0.03095238095238076,
+      "waypointRelativePos": 0.3238095238095241,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -54,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 57.80426606528669
+    "rotation": 54.0
   },
   "reversed": false,
   "folder": "ProcSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 47.792702365713325
+    "rotation": 53.471144633014816
   },
   "useDefaultConstraints": true
 }

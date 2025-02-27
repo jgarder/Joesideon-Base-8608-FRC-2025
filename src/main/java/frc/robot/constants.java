@@ -106,9 +106,9 @@ public class constants {
         public static final double groundPickup = 5.2;
 
         public static final double ProcessorPos = 4.0;
-        public static final double l1Position = 4.0;
+        public static final double l1Position = 5.5;
         public static final double l2Position = 9.0;
-        public static final double l2Algae = 13.0;//15.5;
+        public static final double l2Algae = 13.6;//15.5;
         public static final double l3Position = 18.0;
         public static final double l3algae = 22.0;
         public static final double l4Position = maxElevatorheight;
@@ -134,19 +134,22 @@ public class constants {
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = 0.0;
-        public static final double processorPivot = -.055;
+        public static final double processorPivot = -.07;
         public static final double GroundPickupPosition = -0.00;//12.0;
 
 
         public static final double CoralGroundPickup = 0.06;
 
-        public static final double l1ReadyPosition = -.107;//0.06388;
-        public static final double l1ScorePosition = l1ReadyPosition + .04;
+        public static final double l1ReadyPosition = -.03;
+        public static final double l2ReadyPosition = -.117;
+        public static final double l3ReadyPosition = -.107;
 
-        public static final double l2ReadyPosition = -.117;//0.06388;
+        public static final double l1ScorePosition = l3ReadyPosition + .04;
+
+       
         public static final double l2ScorePosition = l2ReadyPosition + .04;
 
-        public static final double l4ReadyPosition = l1ReadyPosition;
+        public static final double l4ReadyPosition = l3ReadyPosition;
 
         public static final double maxStatorCurrent = 60;
 
@@ -186,13 +189,12 @@ public class constants {
         public static final double MoveTolerance = .5;
 
         //public static final double positionAddIfCoralOffset = 6;
-        public static final double l1ReadyPosition =  41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
-         
-        public static final double l1ScorePosition = 21.0;//uses LiveOffset
-
+        public static final double l1ReadyPosition =  34.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
         public static final double l2ReadyPosition = 38;//uses LiveOffset
-        public static final double l2ScorePosition = 0;//uses LiveOffset
+        public static final double l3ReadyPosition =  41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
 
+        public static final double l1ScorePosition = 21.0;//uses LiveOffset
+        public static final double l2ScorePosition = 0;//uses LiveOffset
         public static final double l4ScorePosition = 39;//uses LiveOffset
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;

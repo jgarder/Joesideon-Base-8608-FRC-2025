@@ -67,6 +67,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
+    LimeLightPoseFilter.res
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
@@ -75,7 +76,7 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {LimeLightPoseFilter.updateOdometry();}
 
   @Override
   public void autonomousExit() {}

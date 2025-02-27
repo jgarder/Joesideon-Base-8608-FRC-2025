@@ -20,8 +20,8 @@
         "y": 2.667862022196564
       },
       "prevControl": {
-        "x": 5.331068714636842,
-        "y": 2.582426256424889
+        "x": 5.349143835616438,
+        "y": 2.492380136986301
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "gotoL4Travel",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.1476190476190477,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

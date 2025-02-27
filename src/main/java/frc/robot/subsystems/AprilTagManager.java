@@ -160,10 +160,10 @@ public class AprilTagManager extends SubsystemBase
         //Blue Side
         new AprilTag(13,"LeftSource",new Pose2d(Units.inchesToMeters(33.51),Units.inchesToMeters(291.20),Rotation2d.fromDegrees(306)),0,Alliance.Blue).WithType(TagType.Source)
         //.Withdepthoffset(Units.inchesToMeters(60)),//SOURCE test
-        .Withdepthoffset(Units.inchesToMeters(-.35)),  //SOURCE LIVE
+        .Withdepthoffset(Units.inchesToMeters(-.45)),  //SOURCE LIVE
         new AprilTag(12,"RightSource",new Pose2d(Units.inchesToMeters(33.51),Units.inchesToMeters(25.80),Rotation2d.fromDegrees(54)),0,Alliance.Blue).WithType(TagType.Source)
         //.Withdepthoffset(Units.inchesToMeters(60)),//SOURCE test
-        .Withdepthoffset(Units.inchesToMeters(-.35)),  //SOURCE LIVE
+        .Withdepthoffset(Units.inchesToMeters(-.45)),  //SOURCE LIVE
         new AprilTag(16,"Processor",new Pose2d(Units.inchesToMeters(235.73),Units.inchesToMeters(-0.15),Rotation2d.fromDegrees(90)),0,Alliance.Blue).WithType(TagType.Processor)
         .Withdepthoffset(Units.inchesToMeters(2)),
         new AprilTag(14,"blueBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.BlueBarge),
@@ -177,10 +177,10 @@ public class AprilTagManager extends SubsystemBase
         //Red Side
         new AprilTag(1,"LeftSource",new Pose2d(Units.inchesToMeters(657.37),Units.inchesToMeters(25.80),Rotation2d.fromDegrees(126)),0,Alliance.Red).WithType(TagType.Source)
         //.Withdepthoffset(Units.inchesToMeters(60)),  //SOURCE test
-        .Withdepthoffset(Units.inchesToMeters(-.35)),  //SOURCE LIVE
+        .Withdepthoffset(Units.inchesToMeters(-.45)),  //SOURCE LIVE
         new AprilTag(2,"RightSource",new Pose2d(Units.inchesToMeters(657.37),Units.inchesToMeters(291.20),Rotation2d.fromDegrees(234)),0,Alliance.Red).WithType(TagType.Source)
         //.Withdepthoffset(Units.inchesToMeters(60)),// SOURCE test
-        .Withdepthoffset(Units.inchesToMeters(-.35)), //SOURCE LIVE
+        .Withdepthoffset(Units.inchesToMeters(-.45)), //SOURCE LIVE
         new AprilTag(3,"Processor",new Pose2d(Units.inchesToMeters(455.15),Units.inchesToMeters(317.15),Rotation2d.fromDegrees(270)),0,Alliance.Red).WithType(TagType.Processor)
         .Withdepthoffset(Units.inchesToMeters(2)),
         new AprilTag(4,"blueBarge",new Pose2d(Units.inchesToMeters(365.2),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.BlueBarge),
@@ -308,7 +308,7 @@ public final SelectCommand C_SourceSelectCommand(){
                   Map.entry(21, new PrintCommand("Command 21 was selected!")
                   .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(21,0,constants.ReefWidthCenterOffset,true)))),
                   Map.entry(22, new PrintCommand("Command 22 was selected!")
-                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(11,0,constants.ReefWidthCenterOffset,true))))
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(22,0,constants.ReefWidthCenterOffset,true))))
                   
                   ),
                   
@@ -347,14 +347,14 @@ public final SelectCommand C_SourceSelectCommand(){
                   Map.entry(21, new PrintCommand("Command 21 was selected!")
                   .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(21,0,constants.ReefWidthCenterOffset,false)))),
                   Map.entry(22, new PrintCommand("Command 22 was selected!")
-                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(11,0,constants.ReefWidthCenterOffset,false))))
+                  .alongWith(new C_Align(AprilTagManager.getOffSet90Loc(22,0,constants.ReefWidthCenterOffset,false))))
                   
                   ),
                   
 
               ()->{return selectReef();});
         }
-        public  final SelectCommand C_ReefCenterSelectCommand()
+        public  final SelectCommand C_ReefCenterAlgaeSelectCommand()
         { return
           new SelectCommand<>(
               // Maps selector values to commands
@@ -386,8 +386,118 @@ public final SelectCommand C_SourceSelectCommand(){
                   Map.entry(21, new PrintCommand("Command 21 was selected!")
                   .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(21,constants.ExtraMetersoffsetForAlgaePickup)))),
                   Map.entry(22, new PrintCommand("Command 22 was selected!")
-                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(11,constants.ExtraMetersoffsetForAlgaePickup))))
+                  .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(22,constants.ExtraMetersoffsetForAlgaePickup))))
                   
+                  ),
+                  
+
+              ()->{return selectReef();});
+        }
+        public static double L1AlignmentOffsetMeters = Units.inchesToMeters(24);
+        public static double L1TwistOffsetDegrees = 15;
+        public  final SelectCommand C_ReefL1CenterSelectCommand()
+        { return
+          new SelectCommand<>(
+              // Maps selector values to commands
+              Map.ofEntries(
+                  Map.entry(6, new PrintCommand("L1Alignment 6 Center was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(6,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(6,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(6,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),
+    
+                  Map.entry(7, new PrintCommand("L1Alignment 7  Center was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(7,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(7,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(7,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),
+                  
+                  Map.entry(8, new PrintCommand("L1Alignment 8 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(8,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(8,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(8,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),    
+                  Map.entry(9, new PrintCommand("L1Alignment 9 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(9,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(9,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(9,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),                  
+                  Map.entry(10, new PrintCommand("L1Alignment 10 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(10,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(10,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(10,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),                  
+                  Map.entry(11, new PrintCommand("L1Alignment 11 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(11,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(11,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(11,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),
+                  Map.entry(17, new PrintCommand("L1Alignment 17 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(17,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(17,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(17,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),                  
+                  Map.entry(18, new PrintCommand("L1Alignment 18 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(18,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(18,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(18,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),                  
+                  Map.entry(19, new PrintCommand("L1Alignment 19 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(19,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(19,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(19,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),                  
+                  Map.entry(20, new PrintCommand("L1Alignment 20 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(20,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(20,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(20,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),                  
+                  Map.entry(21, new PrintCommand("L1Alignment 21 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(21,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(21,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(21,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  ))),                  
+                  Map.entry(22, new PrintCommand("L1Alignment 22 was selected!")
+                  .alongWith(new C_Align(
+                    new Pose2d(
+                      AprilTagManager.getOffSet90Loc(22,0,L1AlignmentOffsetMeters,false).getX(),
+                      AprilTagManager.getOffSet90Loc(22,0,L1AlignmentOffsetMeters,false).getY(),
+                      Rotation2d.fromDegrees(AprilTagManager.getOffSet90Loc(22,0,L1AlignmentOffsetMeters,false).getRotation().getDegrees() + L1TwistOffsetDegrees)
+                      )
+                  )))                  
                   ),
                   
 
