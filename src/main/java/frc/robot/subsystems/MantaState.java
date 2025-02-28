@@ -17,6 +17,7 @@ import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StructEntry;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -130,16 +131,26 @@ public class MantaState extends SubsystemBase {
     }
 
 
-    //changes lights when the limelight is bypassed
-    Trigger LEDTest = new Trigger(getLimeLightBypassed)
-      .onTrue(new InstantCommand(()->{CANdleSubsystem.limelightBypassLights();}))
+    //Robot State Triggers (really only used for lights because why not)
+    Trigger LimelightBypass = new Trigger(getLimeLightBypassed)
+      .whileTrue(new InstantCommand(()->{CANdleSubsystem.limelightBypassLights();}))
       .onFalse(new InstantCommand(()->{CANdleSubsystem.clearAnimations();}));
 
-    
+    Trigger climbTimeLEDs = new Trigger(isClimbTime)
+      .whileTrue(new InstantCommand(()->{CANdleSubsystem.timeToClimbLights();}))
+      .whileFalse(new InstantCommand(()->{CANdleSubsystem.clearAnimations();}));
+
+    Trigger climbingLED = new Trigger(getAltControlModeEnabled)
+      .whileTrue(new InstantCommand(()->{CANdleSubsystem.climbLights();}))
+      .onFalse(new InstantCommand(()->{CANdleSubsystem.clearAnimations();}));
+
     public static  CommandSwerveDrivetrain DriveTrain;  
+    
     //fields
     private static boolean AltControlModeEnabled = false;
     private static boolean LimeLightBypassed = false;
+
+    private static boolean climbTime = false;
 
     //getters
     public static BooleanSupplier getAltControlModeEnabled = ()->{return AltControlModeEnabled;};
@@ -149,12 +160,17 @@ public class MantaState extends SubsystemBase {
     public BooleanSupplier IsPivotinTravelPosition;
     public static BooleanSupplier NearestTagIsUpperAlgae = ()->{AprilTag targetTag = AprilTagManager.getClosestTagofTypeToRobotCenterForAlliance(DriveTrain.getState().Pose, TagType.Reef); return targetTag.algaeOnUpper;};
 
+    public static BooleanSupplier isClimbTime = ()->{return climbTime;};
     //setters
     public static boolean setLimeLightBypassed(boolean setTo)
     {
         LimeLightBypassed = setTo;
         NT_LLDisable.set(LimeLightBypassed);
       return LimeLightBypassed;
+    }
+    public static boolean setToClimbTime(){
+        climbTime = true;
+        return climbTime;
     }
     public static boolean setAltControlModeEnabled(boolean setTo)
     {

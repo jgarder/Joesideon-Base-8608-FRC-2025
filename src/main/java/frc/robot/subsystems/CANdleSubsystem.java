@@ -52,7 +52,7 @@ public class CANdleSubsystem extends SubsystemBase {
             m_candle.configAllSettings(configAll, 100);
 
             //first thing the robot does is set lights to default
-            defaultLights();
+            clearAnimations();
         }
     
         public void incrementAnimation() {
@@ -168,26 +168,37 @@ public class CANdleSubsystem extends SubsystemBase {
         
         public static void clearAnimations() {
             m_toAnimate = null;
-        for(int i = 0; i < 10; ++i) {
-                staticCandle.clearAnimation(i);
-        }
-        defaultLights();
+            for(int i = 0; i < 10; ++i) {
+                    staticCandle.clearAnimation(i);
+            }
+            defaultLights();
         }
         public static void defaultLights(){
         // var m_toAnimate0 = new SingleFadeAnimation(0, 0, 255, 0, 0.3, LedCount);
 
         // m_candle.animate(m_toAnimate0, 0);
         staticCandle.setLEDs(0, 0, 255, 0, 0, LedCount);
-        
+        staticCandle.configBrightnessScalar(1.0);
     }
     public static void fireLights(){
         var m_toAnimate = new FireAnimation(0.5, 0.7, LedCount, 0.7, 0.5);
         staticCandle.animate(m_toAnimate,0);
     }
+    public static void timeToClimbLights(){
+        var m_toAnimate = new TwinkleAnimation(255, 0, 0, 0, 1.00, LedCount, TwinklePercent.Percent88);
+        staticCandle.animate(m_toAnimate, 0);
+    }
     public static void limelightBypassLights(){
         var m_toAnimate = new StrobeAnimation(0, 250, 0, 0, 1.0, LedCount);
         staticCandle.animate(m_toAnimate,0);
-
+    }
+    public static void climbLights(){
+        staticCandle.setLEDs(255, 55, 0, 0, 0, LedCount);
+        staticCandle.configBrightnessScalar(0.1);
+    }
+    public static void redLights(){
+        staticCandle.setLEDs(255, 0, 0, 0, 0, LedCount);
+        staticCandle.configBrightnessScalar(1.0);
     }
     public void lightsOne(){
         m_toAnimate = new StrobeAnimation(240, 10, 180, 0, 98.0 / 256.0, LedCount);

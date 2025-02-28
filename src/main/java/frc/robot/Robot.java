@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.LoggedRobot;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -41,6 +42,8 @@ public class Robot extends LoggedRobot {
         // Switch thread to high priority to improve loop timing
     Threads.setCurrentThreadPriority(true, 99);
 
+    //copied from last year to be used on the Elastic dashboard
+    SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled commands, running already-scheduled commands, removing
     // finished or interrupted commands, and running subsystem periodic() methods.
@@ -67,7 +70,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    //LimeLightPoseFilter.res
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
@@ -76,7 +78,7 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {LimeLightPoseFilter.updateOdometry();}
+  public void autonomousPeriodic() {}
 
   @Override
   public void autonomousExit() {}
@@ -89,7 +91,12 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {LimeLightPoseFilter.updateOdometry();}
+  public void teleopPeriodic() {LimeLightPoseFilter.updateOdometry();
+    
+   if(DriverStation.getMatchTime() < constants.Climber.secondsToClimb){
+      MantaState.setToClimbTime();
+   }else{}
+  }
 
   @Override
   public void teleopExit() {}

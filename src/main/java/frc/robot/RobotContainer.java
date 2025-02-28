@@ -301,8 +301,8 @@ public class RobotContainer {
         joystick.back().onTrue(
             new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());})
         .alongWith(
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition),
-            new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.climbExtension)
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition)
+            ,new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.climbExtension)
             ));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());

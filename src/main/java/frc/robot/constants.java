@@ -200,7 +200,7 @@ public class constants {
         public static final double GroundPickupExtension = 38;
         public static final double rearintakePos = .5; 
 
-        public static final double climbExtension = 14;
+        public static final double climbExtension = 13;
 
         public static final double processorExtension = 10;
     }
@@ -209,6 +209,9 @@ public class constants {
 
 
     public class Climber {
+        //how many seconds left in the match for the climb lights to show
+        public static final double secondsToClimb = 130; //20 for actual matches, 130 for testing without waiting 2:10
+
         public static final double maxStatorCurrent = 120;
         public static final double kP = 0.5;
         public static final double kI = 0.04;
