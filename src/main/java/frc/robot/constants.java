@@ -210,7 +210,7 @@ public class constants {
 
     public class Climber {
         //how many seconds left in the match for the climb lights to show
-        public static final double secondsToClimb = 130; //20 for actual matches, 130 for testing without waiting 2:10
+        public static final double secondsToClimb = 20; //20 for actual matches, 130 for testing without waiting 2:10
 
         public static final double maxStatorCurrent = 120;
         public static final double kP = 0.5;

@@ -409,9 +409,15 @@ public class RobotContainer {
             ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
         ));
         joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
-            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion).alongWith(
-            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion).andThen(ss_Climber.C_Stop())
-        ));
+            new ParallelCommandGroup(
+                ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion),
+                ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion))
+                //wait command acts as timeout since if the match ends the motor stops anyway
+            .andThen(new WaitCommand(3.0),ss_Climber.C_Stop()));
+
+            // .alongWith(
+            //     ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion))
+            // .andThen(ss_Climber.C_Stop()));
         joystick.povLeft().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_Stop()
         );
