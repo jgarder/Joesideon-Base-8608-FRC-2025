@@ -15,6 +15,7 @@ import frc.robot.constants;
 import frc.robot.Elastic.Notification.NotificationLevel;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.MantaState;
 
 public class LimeLightPoseFilter {
@@ -86,7 +87,7 @@ public class LimeLightPoseFilter {
                 
                 if(BootupRobotOrientationSet & bootupAprilTagError)
                 {
-                   // CANdleSystem.noAprilTagOnBoot_MightBeOkYellow();    
+                   CANdleSubsystem.noAprilTagOnBoot_MightBeOkYellow();    
                 }
 
             }
@@ -103,12 +104,11 @@ public class LimeLightPoseFilter {
             if(DriverStation.isDisabled() & !BootupRobotOrientationSet)
             {
                 
-               
                 //System.out.println(thislimelight + " Cant see tags from this disabled location!!!");
                 //LimelightHelpers.printPoseEstimate(mt1);
-                //CANdleSystem.noAprilTagOnBoot_strobeRed();
                 if(!bootupAprilTagError)
                 {
+                    CANdleSubsystem.noAprilTagOnBoot_strobeRed();
                     Elastic.sendNotification(notification.withDisplaySeconds(120));
                     NoTagSeenOnBoot.setText(thislimelight + " Cant see tags from this disabled location!!!");
                 }

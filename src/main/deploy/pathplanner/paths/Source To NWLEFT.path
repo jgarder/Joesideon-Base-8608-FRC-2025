@@ -3,40 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.531167763157894,
-        "y": 2.5721217105263157
+        "x": 1.2123355263157893,
+        "y": 6.959621710526315
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.522043030596949,
-        "y": 2.072390725612017
+        "x": 1.7126644736842105,
+        "y": 6.7671874999999995
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.510608552631579,
-        "y": 1.9948190789473688
+        "x": 3.846575342465753,
+        "y": 5.422388698630137
       },
       "prevControl": {
-        "x": 2.3958059210526317,
-        "y": 1.9755756578947365
+        "x": 3.7214931056236478,
+        "y": 5.643688040735398
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.6657754010695194,
-      "rotationDegrees": 179.395
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "gotoL4Travel",
+      "waypointRelativePos": 0.3238095238095241,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "gotoL4Travel"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 5.25,
     "maxAcceleration": 3.6,
@@ -47,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -178.75463573323168
+    "rotation": -61.557071375636596
   },
   "reversed": false,
-  "folder": "FloorCoral 4 coral Pickups",
+  "folder": "OtherSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 58.67130713219586
+    "rotation": -51.74557964748283
   },
   "useDefaultConstraints": true
 }

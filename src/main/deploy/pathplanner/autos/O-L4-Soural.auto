@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "O - Source To W"
+            "pathName": "Source To NWLEFT"
           }
         },
         {
@@ -60,7 +60,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "O - W To Source"
+                  "pathName": "NWLeft To Source"
                 }
               },
               {

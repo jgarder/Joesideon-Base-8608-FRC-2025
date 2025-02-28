@@ -446,27 +446,32 @@ public class RobotContainer {
         .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestLeftScoreL4() {
-        return ATMan.C_ReefLeftSelectCommand().withTimeout(3.75)
+        return ATMan.C_ReefLeftSelectCommand().withTimeout(3.5)
         .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestRightScoreL4() {
-        return ATMan.C_ReefRightSelectCommand().withTimeout(3.75)
+        return ATMan.C_ReefRightSelectCommand().withTimeout(3.5)
         .alongWith(ScoreL4());
     }
     public Command ScoreL4()
     {
         return gotoL4Travel()
-        .andThen(PivotIntoReefL4(),CoralDropScoreL4().withTimeout(.15));//timeout incase we get stuck then just auto reset 
+        .andThen(PivotIntoReefL4(),CoralDropScoreL4().withTimeout(.25));//timeout incase we get stuck then just auto reset 
     }
     public Command Control_RearIntake()
     {
-        return ATMan.C_SourceSelectCommand().asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(5)
+        return ATMan.C_SourceSelectCommand().asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
+            .alongWith(RearIntake());
+    }
+    public Command Control_AutoRearIntake()
+    {
+        return ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
             .alongWith(RearIntake());
     }
     public void bindNamedCommands()
     {
         // Register Named Commands
-        NamedCommands.registerCommand("DoclosestSourceIntake", Control_RearIntake());
+        NamedCommands.registerCommand("DoclosestSourceIntake", Control_AutoRearIntake());
         NamedCommands.registerCommand("DoclosestScoreL4", Control_AlignClosestScoreL4());
         NamedCommands.registerCommand("DoclosestLeftScoreL4", Control_AutonAlignClosestLeftScoreL4());
         NamedCommands.registerCommand("DoclosestRightScoreL4", Control_AutonAlignClosestRightScoreL4());
