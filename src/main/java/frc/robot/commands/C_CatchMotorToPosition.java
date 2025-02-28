@@ -7,7 +7,7 @@ import frc.robot.subsystems.josiahClimber;
 public class C_CatchMotorToPosition extends Command{
     josiahClimber SubSystem;
     double wantedPosition;
-    double Tolerance = constants.Elevator.MoveTolerance;
+    double Tolerance = constants.Climber.MoveTolerance;
     
     public C_CatchMotorToPosition(josiahClimber subSys, double wantedposition){
         SubSystem = subSys;

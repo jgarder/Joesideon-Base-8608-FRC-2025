@@ -217,6 +217,8 @@ public class constants {
         public static final double kI = 0.04;
         public static final double kD = 0;
 
+        public static final double MoveTolerance = 0.5;
+
         public static class CatchSide {
             public static final double gearRatio = 45; //9:1 on a 5:1
             public static final double maxPostion = 5.25;//4.12; //max pos will be hook position
