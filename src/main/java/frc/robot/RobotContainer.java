@@ -183,7 +183,12 @@ public class RobotContainer {
     }
     public Command CoralDropScoreL4()
     {
-        return new C_DropElevateToScore(ss_Elevator).deadlineFor(TridentCoralBumpOut().alongWith(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition +.04)).finallyDo(()->{ss_Trident.setDutyCycle(0);}));
+        return new C_DropElevateToScore(ss_Elevator)
+        .deadlineFor(TridentCoralBumpOut()
+        .alongWith(
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition +.04)
+            )
+            .finallyDo(()->{ss_Trident.setDutyCycle(0);}));
         //
         // return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l2ScorePosition)
         //         .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l2ScorePosition))
@@ -303,6 +308,7 @@ public class RobotContainer {
         .alongWith(
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition)
             ,new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.climbExtension)
+            //,ClimbHookReady()
             ));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
@@ -328,7 +334,7 @@ public class RobotContainer {
         
         //processor score
         joystick.rightTrigger().and(joystick.x()).onTrue(
-            ATMan.C_ProcessorSelectCommand().until(MantaState.getLimeLightBypassed)
+            ATMan.C_ProcessorSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(
                 new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
                 new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.processorPivot),
@@ -367,7 +373,7 @@ public class RobotContainer {
             .andThen(PivotIntoReefL2(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(ATMan.C_ReefL1CenterSelectCommand().until(MantaState.getLimeLightBypassed)
+            .onTrue(ATMan.C_ReefL1CenterSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL1Travel())
             .andThen(PivotIntoReefL1(),TridentCoralShootOut(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
@@ -401,9 +407,7 @@ public class RobotContainer {
     {
         
         joystick.povUp().and(MantaState.getAltControlModeEnabled).onTrue(
-            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.maxPostion).alongWith(
-            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.maxPostion)
-        ));
+            ClimbHookReady());
         joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
             ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
@@ -423,6 +427,12 @@ public class RobotContainer {
         );
     }
 
+    private ParallelCommandGroup ClimbHookReady() {
+        return ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.maxPostion).alongWith(
+        ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.maxPostion)
+      );
+    }
+
     public Command getAutonomousCommand() {
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
@@ -436,21 +446,21 @@ public class RobotContainer {
         .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestLeftScoreL4() {
-        return ATMan.C_ReefLeftSelectCommand().withTimeout(4)
+        return ATMan.C_ReefLeftSelectCommand().withTimeout(3.75)
         .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestRightScoreL4() {
-        return ATMan.C_ReefRightSelectCommand().withTimeout(4)
+        return ATMan.C_ReefRightSelectCommand().withTimeout(3.75)
         .alongWith(ScoreL4());
     }
     public Command ScoreL4()
     {
         return gotoL4Travel()
-        .andThen(PivotIntoReefL4(),CoralDropScoreL4());
+        .andThen(PivotIntoReefL4(),CoralDropScoreL4().withTimeout(.15));//timeout incase we get stuck then just auto reset 
     }
     public Command Control_RearIntake()
     {
-        return ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(5)
+        return ATMan.C_SourceSelectCommand().asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(5)
             .alongWith(RearIntake());
     }
     public void bindNamedCommands()

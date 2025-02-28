@@ -78,7 +78,7 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {LimeLightPoseFilter.updateOdometry();}
 
   @Override
   public void autonomousExit() {}

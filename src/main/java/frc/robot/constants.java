@@ -4,15 +4,15 @@ import edu.wpi.first.math.util.Units;
 
 public class constants {
 
-    public static final double ReefWidthCenterOffset = Units.inchesToMeters(12.875)/2; //Reef Width CenteronCenter divided in half
+    public static final double ReefWidthCenterOffset = Units.inchesToMeters(12.94)/2;// used during test Units.inchesToMeters(12.875)/2; //Reef Width CenteronCenter divided in half
     public static final double SourcePickupWidthCenterOffset = Units.inchesToMeters(24)/2; //Reef Width CenteronCenter divided in half
     public static final double ExtraMetersoffsetForAlgaePickup = Units.inchesToMeters(7.25);
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(1);//.6;
-        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(1);//.6;
-        public static final double minRZErrorToCorrect = 1;//.45;//0.5;//1;//2;//1.25;
+        public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.9);//.6;
+        public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.9);//.6;
+        public static final double minRZErrorToCorrect = .9;//1;//.45;//0.5;//1;//2;//1.25;
 
         public static  double k_PoseX_P = 2.5;//3.0;//2.1;//4;
         public static  double k_PoseX_I = 0.1;//.6;//0.0;//0.000001;//0.02;
