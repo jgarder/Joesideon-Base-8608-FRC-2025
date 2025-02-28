@@ -135,7 +135,7 @@ public class RobotContainer {
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AlgaeReefPickup)
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
             .alongWith(new C_TridentIntake(ss_Trident).withTimeout(5))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition)
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition),new C_TridentIntake(ss_Trident).asProxy().withTimeout(.4)
             .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
             );
     }
