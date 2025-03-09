@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -13,6 +14,7 @@ import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.networktables.DoubleEntry;
@@ -134,6 +136,7 @@ public class Elevator extends SubsystemBase {
     configuration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     configuration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = constants.Elevator.minElevatorHeight;
     
+    configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className);
     frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_ElevatorMotor2,configuration,className);
@@ -335,6 +338,7 @@ public class Elevator extends SubsystemBase {
         m_ElevatorMotor1.setControl(
           new MotionMagicTorqueCurrentFOC(wantedposition)
           .withSlot(1)
+          .withOverrideCoastDurNeutral(false)
             // new PositionDutyCycle(wantedposition)
             // .withOverrideBrakeDurNeutral(true)
             // .withEnableFOC(true)
