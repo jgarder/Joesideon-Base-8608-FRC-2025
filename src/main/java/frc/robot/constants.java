@@ -71,7 +71,7 @@ public class constants {
         public static final double intakeAmpLimit = 40;
 
         public static final double intakeAmpCutoffThreshold = 20; //20
-        public static final double intakeAmpLimittime = .125;
+        public static final double intakeAmpLimittime = 0.06;//.125;
     }
     public class Elevator {
         public static final double kP = 35.0; //15 //MotionMagic
@@ -83,9 +83,10 @@ public class constants {
         public static final double kV = 0.0;
         
 
-        public static final double Accel = 100.0;
+        //higher accel number is more accel for this subsystem
+        public static final double Accel = 130.0;
         public static final double Jerk = 0;//480.0;
-        public static final double Cruise = 200;//180.0;
+        public static final double Cruise = 500;//180.0;
 
 
 
