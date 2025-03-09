@@ -1,30 +1,17 @@
 package frc.robot.commands;
 
-import java.util.Optional;
-
-import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.google.flatbuffers.Constants;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.MantaState;
 import frc.robot.LimelightHelpers;
-import frc.robot.RobotContainer;
 import frc.robot.constants;
-//import frc.robot.AlphaBots.CommandSwerveDrivetrain;
-import frc.robot.AlphaBots.AprilTag;
-import frc.robot.AlphaBots.NT;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
 public class C_Align extends Command{
