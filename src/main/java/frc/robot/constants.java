@@ -76,10 +76,10 @@ public class constants {
     public class RearMotorizedIntake {
         public static final double gearRatio = 3*1; //27:1 gear reduction (was60)
         public static final double maxStatorCurrent = 40;
-        public static final double kP = 1.3;
+        public static final double kP = 1.5;
         public static final double kI = 0.0;
         public static final double kD = 0;
-        public static final double IntakeRps = 20; // this is "WantedRPM * 60" to make the RPM into RPS
+        public static final double IntakeRps = 17; // this is "WantedRPM * 60" to make the RPM into RPS
     }
 
     public class Elevator {
