@@ -177,7 +177,7 @@ public class constants {
 
     public class PlasmaExtension {
         //CURRENTLY EACH "1" POSITION is .25" approx.
-        public static double LiveOffset = 0.0; 
+        public static double LiveOffset = -2.0; 
 
         public static final double gearRatio = 3*3*3; //27:1 gear reduction (was60)
         public static final double maxPositionToBeSafeFromStage1Crossbar = 0;
