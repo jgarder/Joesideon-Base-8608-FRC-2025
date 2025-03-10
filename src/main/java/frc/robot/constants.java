@@ -58,7 +58,7 @@ public class constants {
         public static final int josiahClimberCatchMotorCanID = 42;//42 on canivore
         public static final int josiahClimberSlideCanID = 43;
 
-        public static final int fryscoopIntakeMotorCanID = 0;
+        public static final int MotorizedRearIntakeCanID = 47;
 
         public static final int CANdleID = 2;
         
@@ -73,6 +73,15 @@ public class constants {
         public static final double intakeAmpCutoffThreshold = 20; //20
         public static final double intakeAmpLimittime = 0.06;//.125;
     }
+    public class RearMotorizedIntake {
+        public static final double gearRatio = 3*1; //27:1 gear reduction (was60)
+        public static final double maxStatorCurrent = 40;
+        public static final double kP = 1.3;
+        public static final double kI = 0.0;
+        public static final double kD = 0;
+        public static final double IntakeRps = 20; // this is "WantedRPM * 60" to make the RPM into RPS
+    }
+
     public class Elevator {
         public static final double kP = 35.0; //15 //MotionMagic
         public static final double kI = 15.0; //6
@@ -119,7 +128,7 @@ public class constants {
     public class PlasmaPivot {
 
         public static final double gearRatio = 4*4*5; //3 stage gearbox with 4:1,4:1,5:1 stacked ontop of each other; creates a 80:1 gear ratio 
-        public static final double absoMagnetOffset = .07667;//0.316162;
+        public static final double absoMagnetOffset = 0.0703125;//.07667;//
        
         public static final double minPositionToBeSafeFromStage1Crossbar = -.192;//.03;////3.55; //cant be folded up too much when elevator goes up or else head crashes.
         public static final double maxPositionToBeSafeFromSmashingintoReef = -.107;//0.060;//7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
@@ -131,7 +140,7 @@ public class constants {
         public static final double minposition = -0.247;
 
         public static final double ParkPosition = minposition;
-        public static final double rearintakePos = -0.242;//minposition;
+        public static final double rearintakePos = -0.239;//-0.242;//minposition;
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = 0.0;

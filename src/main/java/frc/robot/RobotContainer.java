@@ -42,6 +42,7 @@ import frc.robot.subsystems.MantaRay;
 import frc.robot.subsystems.MantaState;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.josiahClimber;
+import frc.robot.subsystems.RearIntake;
 
 public class RobotContainer {
     //fields
@@ -58,6 +59,7 @@ public class RobotContainer {
     public final josiahClimber ss_Climber = new josiahClimber();
     public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot);
     public final CANdleSubsystem Candle = new CANdleSubsystem();
+    public final RearIntake RearIntake = new RearIntake();
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -134,8 +136,8 @@ public class RobotContainer {
         return
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AlgaeReefPickup)
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
-            .alongWith(new C_TridentIntake(ss_Trident).withTimeout(5))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition),new C_TridentIntake(ss_Trident).asProxy().withTimeout(.4)
+            .alongWith(new C_TridentIntake(ss_Trident,RearIntake).withTimeout(5))
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition),new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4)
             .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
             );
     }
@@ -238,7 +240,7 @@ public class RobotContainer {
     double intaketimeout = 20;
     public ParallelCommandGroup RearIntake(){
         return new ParallelCommandGroup(
-            new C_TridentIntake(ss_Trident).withTimeout(intaketimeout),
+            new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.rearintakePos),
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
             new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.rearintakePos)
@@ -246,7 +248,7 @@ public class RobotContainer {
     }
     public Command DebugIntake(){
         return new ParallelCommandGroup(
-            new C_TridentIntake(ss_Trident,.75).withTimeout(intaketimeout)
+            new C_TridentIntake(ss_Trident,RearIntake,.75).withTimeout(intaketimeout)
             );
     }
 
@@ -258,7 +260,7 @@ public class RobotContainer {
     public Command GroundIntake(){
         return new ParallelCommandGroup(
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
-            new C_TridentIntake(ss_Trident,groundintakedutycycle).withTimeout(groundintakeTimeout),
+            new C_TridentIntake(ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
             new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension))
         .finallyDo(groundIntakeReset());
@@ -480,7 +482,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));
         NamedCommands.registerCommand("AlignprocSource",  ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded));
         NamedCommands.registerCommand("RearIntake", RearIntake());
-        NamedCommands.registerCommand("Spinintake", new C_TridentIntake(ss_Trident).withTimeout(intaketimeout));
+        NamedCommands.registerCommand("Spinintake", new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout));
         NamedCommands.registerCommand("AlignReefLeft",  ATMan.C_ReefLeftSelectCommand().withTimeout(5));
         NamedCommands.registerCommand("AlignReefRight",  ATMan.C_ReefRightSelectCommand().withTimeout(5));
         NamedCommands.registerCommand("gotoL4Travel", gotoL4Travel());
