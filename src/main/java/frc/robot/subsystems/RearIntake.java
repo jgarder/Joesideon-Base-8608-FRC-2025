@@ -58,7 +58,7 @@ public class RearIntake extends SubsystemBase {
 
   public TalonFXConfiguration buildMotorConfig(){
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
-    _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
     //configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     _configuration.Slot0.kP = NT_PGain.get();
     _configuration.Slot0.kI = NT_IGain.get();
@@ -106,12 +106,12 @@ public class RearIntake extends SubsystemBase {
       GotoVelocity(0);
   }
   
- public double feedforwardsamps = 12.5; //kt = .0198
+ 
   public void GotoVelocity(double wantedRPS){ 
     NT_BrakeEnabled.set(false);
     NT_SetpointVelocity.set(wantedRPS);
     m_Motor.setControl(
-            new VelocityTorqueCurrentFOC(wantedRPS).withFeedForward(feedforwardsamps)
+            new VelocityTorqueCurrentFOC(wantedRPS).withFeedForward(constants.RearMotorizedIntake.feedforwardsamps)
             .withSlot(0).withOverrideCoastDurNeutral(true)
         );
   }

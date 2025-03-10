@@ -73,15 +73,17 @@ public class constants {
         public static final double intakeAmpCutoffThreshold = 20; //20
         public static final double intakeAmpLimittime = 0.06;//.125;
     }
+
     public class RearMotorizedIntake {
         public static final double gearRatio = 3*1; //27:1 gear reduction (was60)
         public static final double maxStatorCurrent = 40;
-        public static final double kP = 1.5;
+        public static final double kP = 5.0;
         public static final double kI = 0.0;
         public static final double kD = 0;
-        public static final double IntakeRps = 17; // this is "WantedRPM * 60" to make the RPM into RPS
+        public static final double IntakeRps = 16; // this is "WantedRPM * 60" to make the RPM into RPS
+        public static double feedforwardsamps = 12.5; //kt = .0198
     }
-
+ 
     public class Elevator {
         public static final double kP = 35.0; //15 //MotionMagic
         public static final double kI = 15.0; //6
@@ -137,10 +139,10 @@ public class constants {
         public static final double MoveTolerance = .015;//.003;
         public static final double MovementDebounceTime = .02;//.1;
         public static final double maxposition = 0.06;
-        public static final double minposition = -0.247;
+        public static final double minposition = -0.249;//-0.247;
 
         public static final double ParkPosition = minposition;
-        public static final double rearintakePos = -0.239;//-0.242;//minposition;
+        public static final double rearintakePos = minposition-.01;//-0.242;//minposition;
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = 0.0;

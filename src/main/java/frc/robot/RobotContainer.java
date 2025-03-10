@@ -315,7 +315,7 @@ public class RobotContainer {
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
-        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().finallyDo(()->{ss_Trident.HoldPosition();}));
+        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().alongWith(new InstantCommand(()->{RearIntake.GotoVelocity(-constants.RearMotorizedIntake.IntakeRps);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
 
         //limelight bypass
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
