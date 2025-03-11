@@ -281,6 +281,7 @@ public class RobotContainer {
     ///////////////
     private double testchoice = 0;
     DoubleSupplier gettestchoice = ()->{return testchoice;};
+    private DoubleSupplier getYAxis = ()->{ return joystick.getLeftX();};
     private void configureBindings() {
 
 
@@ -310,18 +311,19 @@ public class RobotContainer {
         .alongWith(
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition)
             ,new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.climbExtension)
-            //,ClimbHookReady()
+            ,ClimbHookReady()
             ));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
-        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().alongWith(new InstantCommand(()->{RearIntake.GotoVelocity(-constants.RearMotorizedIntake.IntakeRps);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
+        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().alongWith(new InstantCommand(()->{RearIntake.GotoDutyCycle(-constants.RearMotorizedIntake.dutyCyclePercent);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
 
         //limelight bypass
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
         
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
-        joystick.y().toggleOnTrue(gotoL4Travel()
+        joystick.y().whileTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
+            .alongWith(gotoL4Travel())
             //.andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))//-0.2
             .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
             .andThen(new WaitCommand(30))

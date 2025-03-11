@@ -1,6 +1,10 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,13 +23,14 @@ public class C_Align extends Command{
     String className = this.getClass().getSimpleName();
     public final Timer TimeToAlignTimer = new Timer();
     public final frc.robot.subsystems.CommandSwerveDrivetrain drivetrain = MantaState.DriveTrain;
-    public final SwerveRequest.FieldCentric FCdriveAuton = new SwerveRequest.FieldCentric();
+    public final SwerveRequest.FieldCentric FCdriveAuton = new SwerveRequest.FieldCentric().withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
     private final PIDController AlignXPid = new PIDController(constants.drivetrainThings.k_PoseX_P,constants.drivetrainThings.k_PoseX_I,constants.drivetrainThings.k_PoseX_D);
     private final PIDController AlignYPid = new PIDController(constants.drivetrainThings.k_PoseY_P,constants.drivetrainThings.k_PoseY_I,constants.drivetrainThings.k_PoseY_D);
     private final PIDController AlignRZPid = new PIDController(constants.drivetrainThings.k_RZ_P,constants.drivetrainThings.k_RZ_I,constants.drivetrainThings.k_RZ_D);
 
-
+    private DoubleSupplier yAlignOverride;
+    Alliance allianceOnInit;//DriverStation.getAlliance().get();
 
     public double MaxSpeedPercent = 1.0;//9; //6; // 6 meters per second desired top speed
     public double MaxAngularRatePercent = 1.0; //2.5 // 3/4 of a rotation per second max angular velocity
@@ -42,25 +47,34 @@ public class C_Align extends Command{
     Pose2d TargetPose;//this is where we wnt to go in field space coords X,y,Rotation
     Pose2d PoseOffset;//This is how far we are from where we want to be. this is CurrentPose minus TargetPose.
 
-
-    public C_Align(Pose2d PosePositionGoal){
-        TargetPose = PosePositionGoal;
-        AlignXPid.setSetpoint(TargetPose.getX());
-        AlignYPid.setSetpoint(TargetPose.getY());
-        AlignRZPid.setSetpoint(0);
-       
-
-
-        //when we startup an alignment pull the latest numbers to try from the user.
-        MantaState.NT_XPGain.set(MantaState.NT_XPGain.getAsDouble());
-        MantaState.NT_XIGain.set(MantaState.NT_XIGain.getAsDouble());
-        MantaState.NT_XDGain.set(MantaState.NT_XDGain.getAsDouble());
-        MantaState.NT_ZPGain.set(MantaState.NT_ZPGain.getAsDouble());
-        MantaState.NT_ZIGain.set(MantaState.NT_ZIGain.getAsDouble());
-        MantaState.NT_ZDGain.set(MantaState.NT_ZDGain.getAsDouble());
-        addRequirements(drivetrain);
+    public C_Align(Pose2d PosePositionGoal, DoubleSupplier _yAlignOverride){
+      yAlignOverride = _yAlignOverride;
+      SetupAlign(PosePositionGoal);
     }
-    Alliance allianceOnInit;//DriverStation.getAlliance().get();
+    public C_Align(Pose2d PosePositionGoal){
+        SetupAlign(PosePositionGoal);
+    }
+
+
+
+    private void SetupAlign(Pose2d PosePositionGoal) {
+      TargetPose = PosePositionGoal;
+      AlignXPid.setSetpoint(TargetPose.getX());
+      AlignYPid.setSetpoint(TargetPose.getY());
+      AlignRZPid.setSetpoint(0);
+    
+
+
+      //when we startup an alignment pull the latest numbers to try from the user.
+      MantaState.NT_XPGain.set(MantaState.NT_XPGain.getAsDouble());
+      MantaState.NT_XIGain.set(MantaState.NT_XIGain.getAsDouble());
+      MantaState.NT_XDGain.set(MantaState.NT_XDGain.getAsDouble());
+      MantaState.NT_ZPGain.set(MantaState.NT_ZPGain.getAsDouble());
+      MantaState.NT_ZIGain.set(MantaState.NT_ZIGain.getAsDouble());
+      MantaState.NT_ZDGain.set(MantaState.NT_ZDGain.getAsDouble());
+      addRequirements(drivetrain);
+    }
+    
     @Override
     public void initialize() {
         allianceOnInit = DriverStation.getAlliance().get();
@@ -81,7 +95,13 @@ public class C_Align extends Command{
         //PID
         double RZAdjust = AlignRZPid.calculate(PoseOffset.getRotation().getDegrees());
         double xpose_adjust = AlignXPid.calculate(CurrentPose.getX());//GetXPoseAdjust(XP_buffer, min_xpose_command);
-        double Ypose_adjust = AlignYPid.calculate(CurrentPose.getY());//GetYPoseAdjust(YP_buffer, min_Ypose_command );    
+        double Ypose_adjust = AlignYPid.calculate(CurrentPose.getY());
+        //if we have a y Override, feed that override In, instead of the Pose. this removes all Y adjustment. 
+        if(yAlignOverride != null)
+        {
+          Ypose_adjust = yAlignOverride.getAsDouble();
+        }
+        //GetYPoseAdjust(YP_buffer, min_Ypose_command );    
         //drive drive drivetrain with PID clamped something to not go crazy or something
         //clamp all results to a max (and negative max) top speed
         Ypose_adjust = MathUtil.clamp(Ypose_adjust, -maxYvelocity, maxYvelocity);
@@ -213,11 +233,11 @@ public class C_Align extends Command{
 
     public void MoveRobotToTargetInFieldCoordinates(double YposeAxis, double XposeAxis, double RZposeAxis) {
       
-      var xyMirrorRed = (DriverStation.getAlliance().get() == Alliance.Blue) ? 1.0:-1.0; //our drivetrain auto flips itself when we are on red. so we have to aswell. 
+      //var xyMirrorRed = (DriverStation.getAlliance().get() == Alliance.Blue) ? 1.0:-1.0; //our drivetrain auto flips itself when we are on red. so we have to aswell. 
 
         drivetrain.setControl(FCdriveAuton
-            .withVelocityX(XposeAxis * MaxSpeedPercent * xyMirrorRed) // Drive forward with // negative Y (forward)
-            .withVelocityY(YposeAxis * MaxSpeedPercent * xyMirrorRed) // Drive left with negative X (left)
+            .withVelocityX(XposeAxis * MaxSpeedPercent ) // * xyMirrorRed Drive forward with // negative Y (forward)
+            .withVelocityY(YposeAxis * MaxSpeedPercent ) // * xyMirrorRed Drive left with negative X (left)
             .withRotationalRate(RZposeAxis * MaxAngularRatePercent) // Drive counterclockwise with negative X (left)
         );
       }

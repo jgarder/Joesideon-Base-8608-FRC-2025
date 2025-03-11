@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -230,20 +231,40 @@ public class AprilTagManager extends SubsystemBase
 
 
   private int selectSource() {
-
     return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Source).ID;
   }
   private int selectProcessor() {
-
     return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Processor).ID;
   }
   private int selectReef() {
-
   return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Reef).ID;
-
   }
+  private int selectBarge() {
+    TagType BargeToSelect = DriverStation.getAlliance().equals(Alliance.Blue) ? TagType.BlueBarge:TagType.RedBarge;
+    return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,BargeToSelect).ID;
+  }
+    public final SelectCommand C_BargeSelectCommand(DoubleSupplier yAxisOverride){
+      return new SelectCommand<>(
+           // Maps selector values to commands
+           Map.ofEntries(
+               Map.entry(4, new PrintCommand("Command 4 blue was selected!")
+               .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(4,0.0),yAxisOverride))),
+ 
+               Map.entry(14, new PrintCommand("Command 14 blue was selected!")
+               .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(14,0),yAxisOverride))),
+               
+               Map.entry(5, new PrintCommand("Command 5 red was selected!")
+               .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(5,0),yAxisOverride))),
+ 
+               Map.entry(15, new PrintCommand("Command 15 red was selected!")
+               .alongWith(new C_Align(AprilTagManager.getStraightOutLoc(15,0),yAxisOverride)))
+               ),
+ 
+           ()->{return selectBarge();});
+ 
+   }
 
-public final SelectCommand C_SourceSelectCommand(){
+  public final SelectCommand C_SourceSelectCommand(){
      return new SelectCommand<>(
           // Maps selector values to commands
           Map.ofEntries(
@@ -262,7 +283,7 @@ public final SelectCommand C_SourceSelectCommand(){
 
           ()->{return selectSource();});
 
-    }
+  }
     public final SelectCommand C_ProcessorSelectCommand(){
       return new SelectCommand<>(
            // Maps selector values to commands

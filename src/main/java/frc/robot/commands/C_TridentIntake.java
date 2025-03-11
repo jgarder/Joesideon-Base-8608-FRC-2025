@@ -35,7 +35,8 @@ public class C_TridentIntake extends Command {
         startupdebounceTimer.restart();
         ss_Trident.setUnloaded();
         ss_Trident.setDutyCycle(dutycycleSpeed);
-        ss_RearIntake.GotoVelocity(constants.RearMotorizedIntake.IntakeRps);
+        ss_RearIntake.GotoDutyCycle(constants.RearMotorizedIntake.dutyCyclePercent);
+        //ss_RearIntake.GotoVelocity(constants.RearMotorizedIntake.IntakeRps);
     }
     
     @Override

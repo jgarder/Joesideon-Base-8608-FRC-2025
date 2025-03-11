@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -113,6 +114,14 @@ public class RearIntake extends SubsystemBase {
     m_Motor.setControl(
             new VelocityTorqueCurrentFOC(wantedRPS).withFeedForward(constants.RearMotorizedIntake.feedforwardsamps)
             .withSlot(0).withOverrideCoastDurNeutral(true)
+        );
+  }
+
+  public void GotoDutyCycle(double wantedDutyCycle){ 
+    NT_BrakeEnabled.set(false);
+    NT_SetpointVelocity.set(wantedDutyCycle);
+    m_Motor.setControl(
+            new DutyCycleOut(wantedDutyCycle)
         );
   }
 

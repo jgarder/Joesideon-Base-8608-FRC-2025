@@ -80,6 +80,7 @@ public class constants {
         public static final double kP = 5.0;
         public static final double kI = 0.0;
         public static final double kD = 0;
+        public static final double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
         public static final double IntakeRps = 16; // this is "WantedRPM * 60" to make the RPM into RPS
         public static double feedforwardsamps = 12.5; //kt = .0198
     }
@@ -141,7 +142,7 @@ public class constants {
         public static final double maxposition = 0.06;
         public static final double minposition = -0.249;//-0.247;
 
-        public static final double ParkPosition = minposition;
+        public static final double ParkPosition = minposition-.01;
         public static final double rearintakePos = minposition-.01;//-0.242;//minposition;
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
