@@ -16,6 +16,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.C_Align;
 import frc.robot.commands.C_DropElevateToScore;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
@@ -322,6 +325,11 @@ public class RobotContainer {
             ,new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.climbExtension)
             ,ClimbHookReady()
             ));
+        
+        //on the fly align test
+        Pose2d test = new Pose2d(3.8, 5.17, Rotation2d.fromDegrees(-60));
+        joystick.rightStick()
+        .whileTrue(new C_Align(test, true));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 

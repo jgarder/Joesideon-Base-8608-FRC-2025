@@ -1,9 +1,16 @@
 package frc.robot.commands;
 
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -54,7 +61,39 @@ public class C_Align extends Command{
     public C_Align(Pose2d PosePositionGoal){
         SetupAlign(PosePositionGoal);
     }
+    public C_Align(Pose2d PosePositionGoal, boolean onthefly){
+      C_OnTheFlyAlign(PosePositionGoal);
 
+      //exists just to seperate the two constructors
+      @SuppressWarnings("unused")
+      boolean ontheFly = onthefly;
+    }
+
+
+    private Command C_OnTheFlyAlign(Pose2d PosePositionGoal){
+      TargetPose = PosePositionGoal;
+      // List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+      //         //new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
+      //         new Pose2d(5, 5, Rotation2d.fromDegrees(0)),
+      //         new Pose2d(3, 5, Rotation2d.fromDegrees(0))
+      // );
+
+      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+
+      Command pathfindingCommand = AutoBuilder.pathfindToPose(
+        TargetPose,
+        constraints,
+        0.0);
+      // PathPlannerPath path = new PathPlannerPath(
+      //   waypoints,
+      //   constraints,
+      //   null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
+      //   new GoalEndState(0.0, TargetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect
+      //   );
+      //   path.preventFlipping = true;
+      //   return AutoBuilder.followPath(path);
+      return pathfindingCommand;
+    }
 
 
     private void SetupAlign(Pose2d PosePositionGoal) {
