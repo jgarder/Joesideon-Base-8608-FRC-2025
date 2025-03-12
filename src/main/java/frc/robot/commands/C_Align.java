@@ -46,7 +46,7 @@ public class C_Align extends Command{
     Pose2d CurrentPose;//this is our latest position according to our chassis odometry
     Pose2d TargetPose;//this is where we wnt to go in field space coords X,y,Rotation
     Pose2d PoseOffset;//This is how far we are from where we want to be. this is CurrentPose minus TargetPose.
-
+    double xyMirrorRed; //our drivetrain auto flips itself when we are on red. so we have to aswell. 
     public C_Align(Pose2d PosePositionGoal, DoubleSupplier _yAlignOverride){
       yAlignOverride = _yAlignOverride;
       SetupAlign(PosePositionGoal);
@@ -78,6 +78,7 @@ public class C_Align extends Command{
     @Override
     public void initialize() {
         allianceOnInit = DriverStation.getAlliance().get();
+        xyMirrorRed = (allianceOnInit == Alliance.Blue) ? 1.0:-1.0;
         CurrentPose = drivetrain.getState().Pose;    
         MantaState.NT_AlignSetpoint.set(TargetPose); 
         //setposeoffsets();

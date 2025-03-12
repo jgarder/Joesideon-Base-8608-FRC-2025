@@ -60,6 +60,7 @@ public class MantaState extends SubsystemBase {
 
 
     DoubleEntry NT_ExtensionLiveOffset = NT.getDoubleEntry(className , "ExtensionLiveOffset",0.0);
+    DoubleEntry NT_RearIntakeLiveOffset = NT.getDoubleEntry(className , "RearIntakeLiveOffset",constants.RearMotorizedIntake.dutyCyclePercent);
 
     public static StringEntry NT_AlignedUsing = NT.getStringEntry(className, "AlignedUsing", "none");
     public static DoubleEntry NT_TimeToAlign = NT.getDoubleEntry(PidAlignmentClassname, "TimeToAlign",0.0);
@@ -75,6 +76,10 @@ public class MantaState extends SubsystemBase {
     public void periodic() {
       double Liveoffset = NT_ExtensionLiveOffset.getAsDouble();
       if(Liveoffset != constants.PlasmaExtension.LiveOffset){constants.PlasmaExtension.LiveOffset = Liveoffset;}
+
+      double LiveIntakeoffset = NT_RearIntakeLiveOffset.getAsDouble();
+      if(LiveIntakeoffset != constants.RearMotorizedIntake.dutyCyclePercent){constants.RearMotorizedIntake.dutyCyclePercent = LiveIntakeoffset;}
+
       NT_UpperAlgae.set(NearestTagIsUpperAlgae.getAsBoolean());
       //hoping this works, stolen from Elastic Documentation
       // SmartDashboard.putData("Swerve Drive", new Sendable() {
@@ -129,6 +134,7 @@ public class MantaState extends SubsystemBase {
       setAltControlModeEnabled(false);
       NT_ExtensionLiveOffset.set(constants.PlasmaExtension.LiveOffset);
       NT_AlignedUsing.set("none");
+      NT_RearIntakeLiveOffset.set(constants.RearMotorizedIntake.dutyCyclePercent);
     }
 
 

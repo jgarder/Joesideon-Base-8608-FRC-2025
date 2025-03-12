@@ -80,7 +80,7 @@ public class constants {
         public static final double kP = 5.0;
         public static final double kI = 0.0;
         public static final double kD = 0;
-        public static final double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
+        public static double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
         public static final double IntakeRps = 16; // this is "WantedRPM * 60" to make the RPM into RPS
         public static double feedforwardsamps = 12.5; //kt = .0198
     }
@@ -130,8 +130,8 @@ public class constants {
 
     public class PlasmaPivot {
 
-        public static final double gearRatio = 4*4*5; //3 stage gearbox with 4:1,4:1,5:1 stacked ontop of each other; creates a 80:1 gear ratio 
-        public static final double absoMagnetOffset = 0.0703125;//.07667;//
+        public static final double gearRatio = 5*9*(52/26);//is now 5:1 on 9:1 on 26T driving gear to 52T driven gear - 90:1 gear ratio.
+        public static final double absoMagnetOffset = 0.475830078125;//
        
         public static final double minPositionToBeSafeFromStage1Crossbar = -.192;//.03;////3.55; //cant be folded up too much when elevator goes up or else head crashes.
         public static final double maxPositionToBeSafeFromSmashingintoReef = -.107;//0.060;//7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
@@ -140,10 +140,10 @@ public class constants {
         public static final double MoveTolerance = .015;//.003;
         public static final double MovementDebounceTime = .02;//.1;
         public static final double maxposition = 0.06;
-        public static final double minposition = -0.249;//-0.247;
-
-        public static final double ParkPosition = minposition-.01;
-        public static final double rearintakePos = minposition-.01;//-0.242;//minposition;
+        public static final double minposition = -0.247;//-0.247;
+        public static final double AddedOffsetToMinPositionToHold = 0.01;
+        public static final double ParkPosition = minposition;
+        public static final double rearintakePos = minposition;//-0.242;//minposition;
         public static final double TravelPosition = -.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = 0.0;
@@ -202,6 +202,7 @@ public class constants {
         public static final double MoveTolerance = .5;
 
         //public static final double positionAddIfCoralOffset = 6;
+        public static final double parkPostion = 0.5;
         public static final double l1ReadyPosition =  34.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
         public static final double l2ReadyPosition = 38;//uses LiveOffset
         public static final double l3ReadyPosition =  41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
@@ -212,6 +213,7 @@ public class constants {
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;
         public static final double rearintakePos = .5; 
+
 
         public static final double climbExtension = 13;
 

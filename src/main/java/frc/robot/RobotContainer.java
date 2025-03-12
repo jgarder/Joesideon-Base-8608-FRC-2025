@@ -137,14 +137,17 @@ public class RobotContainer {
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AlgaeReefPickup)
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
             .alongWith(new C_TridentIntake(ss_Trident,RearIntake).withTimeout(5))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition),new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4)
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion),new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4)
             .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
             );
     }
     public Command GotoTravelPostion()
     {
         return new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition)
-            .alongWith(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
+            .alongWith(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.parkPostion));//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
+    }
+    private SequentialCommandGroup GotoBargePosition() {
+        return gotoL4Travel().andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
     }
     // BooleanSupplier jake = ()->{return ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.l1Position;};
     // BooleanSupplier jake2 = ()->{return ss_Elevator.m_ElevatorMotor1.getVelocity().getValueAsDouble() < 100;};
@@ -161,7 +164,7 @@ public class RobotContainer {
     public Command ParkElevatorAndHead()
     {
         return elevator1StepPark().unless(ss_Elevator.elevatorisparked)//new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
-        .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.minposition))
+        .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion))
         .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition)
             .unless(()->{return ss_Pivot.IsPivotParked.getAsBoolean() && ss_Elevator.elevatorisparked.getAsBoolean();}) //Why is this here? it seems redundant?
             ).andThen(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.ParkPosition));
@@ -233,6 +236,12 @@ public class RobotContainer {
     {
         return ss_Trident.bumpout()
         .andThen(new WaitCommand(2))
+        .andThen(ss_Trident.Stop());
+    }
+    public Command TridentBargeAlgaeBumpOut()
+    {
+        return ss_Trident.bumpout()
+        .andThen(new WaitCommand(.5))
         .andThen(ss_Trident.Stop());
     }
 
@@ -323,10 +332,8 @@ public class RobotContainer {
         
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
         joystick.y().whileTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
-            .alongWith(gotoL4Travel())
-            //.andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))//-0.2
-            .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
-            .andThen(new WaitCommand(30))
+            .alongWith(GotoBargePosition())
+            .andThen(TridentBargeAlgaeBumpOut())
             .finallyDo(traveltopark()));
 
 
@@ -405,6 +412,8 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
         configAltCommands();
     }
+
+
 
 
     public void configAltCommands()

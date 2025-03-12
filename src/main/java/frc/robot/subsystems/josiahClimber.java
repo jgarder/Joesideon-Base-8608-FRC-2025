@@ -15,6 +15,7 @@ import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.BooleanEntry;
@@ -91,6 +92,8 @@ public class josiahClimber extends SubsystemBase {
 
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     _configuration.CurrentLimits.StatorCurrentLimit = constants.Climber.maxStatorCurrent;
+
+    _configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.Climber.CatchSide.maxPostion;

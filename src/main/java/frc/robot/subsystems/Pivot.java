@@ -131,7 +131,7 @@ public class Pivot extends SubsystemBase {
   public TalonFXConfiguration buildMotorConfig(){
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
 
-    _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
     //configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     _configuration.Slot1.kP = constants.PlasmaPivot.kP;
