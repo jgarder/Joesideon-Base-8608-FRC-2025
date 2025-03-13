@@ -77,11 +77,18 @@ public class constants {
     public class RearMotorizedIntake {
         public static final double gearRatio = 3*1; //27:1 gear reduction (was60)
         public static final double maxStatorCurrent = 40;
-        public static final double kP = 5.0;
+
+        public static final double kP = 0.5;
         public static final double kI = 0.0;
         public static final double kD = 0;
+
+        public static final double kA = 0;
+        public static final double kS = 2.12;
+        public static final double kV = 0.047;
+       
+        
         public static double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
-        public static final double IntakeRps = 16; // this is "WantedRPM * 60" to make the RPM into RPS
+        public static final double IntakeRps = 30; // this is "WantedRPM * 60" to make the RPM into RPS
         public static double feedforwardsamps = 12.5; //kt = .0198
     }
  
@@ -170,8 +177,8 @@ public class constants {
         public static final double kI = 60.0;//50.00;
         public static final double kD = 80.0;//65.00;
 
-        public static final double kV = 0.0;
-        public static final double kS = 3.0;
+        public static final double kA = 0.0;
+        public static final double kS = 0.0;
         public static final double kG = -20.0;
 
         public static final double Accel = 30.0;//9.0;//10.0;

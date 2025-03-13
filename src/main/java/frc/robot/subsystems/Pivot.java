@@ -73,7 +73,7 @@ public class Pivot extends SubsystemBase {
 
   DoubleEntry NT_SGain = NT.getDoubleEntry(className , "S Gain",0);
   DoubleEntry NT_GGain = NT.getDoubleEntry(className , "G Gain",0);
-  DoubleEntry NT_VGain = NT.getDoubleEntry(className , "V Gain",0);
+  DoubleEntry NT_AGain = NT.getDoubleEntry(className , "A Gain",0);
 
   DoubleEntry NT_Acceleration = NT.getDoubleEntry(className , "Acceleration",0);
   DoubleEntry NT_Jerk = NT.getDoubleEntry(className , "Jerk",0);
@@ -106,7 +106,7 @@ public class Pivot extends SubsystemBase {
     NT_IGain.set(constants.PlasmaPivot.kI);
     NT_DGain.set(constants.PlasmaPivot.kD);
 
-    NT_VGain.set(constants.PlasmaPivot.kV);
+    NT_AGain.set(constants.PlasmaPivot.kA);
 
     NT_SGain.set(constants.PlasmaPivot.kS);
     NT_GGain.set(constants.PlasmaPivot.kG);
@@ -138,7 +138,7 @@ public class Pivot extends SubsystemBase {
     _configuration.Slot1.kI = constants.PlasmaPivot.kI;
     _configuration.Slot1.kD = constants.PlasmaPivot.kD;
 
-    _configuration.Slot1.kV = constants.PlasmaPivot.kV;
+    _configuration.Slot1.kA = constants.PlasmaPivot.kA;
 
     _configuration.Slot1.kG = constants.PlasmaPivot.kG;
     _configuration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
@@ -213,7 +213,7 @@ public class Pivot extends SubsystemBase {
     double d = NT_DGain.getAsDouble();
 
     //feedforward
-    double v = NT_VGain.getAsDouble();
+    double a = NT_AGain.getAsDouble();
     double s = NT_SGain.getAsDouble();
     double g = NT_GGain.getAsDouble();
 
@@ -226,7 +226,7 @@ public class Pivot extends SubsystemBase {
     if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; motorNeedsConfig = true; }
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; motorNeedsConfig = true; }
   
-    if((v != configuration.Slot1.kV)) { configuration.Slot1.kV = v; motorNeedsConfig = true; }
+    if((a != configuration.Slot1.kA)) { configuration.Slot1.kA = a; motorNeedsConfig = true; }
     if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; motorNeedsConfig = true; }
     if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; motorNeedsConfig = true; }
 

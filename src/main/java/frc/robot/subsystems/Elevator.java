@@ -115,16 +115,16 @@ public class Elevator extends SubsystemBase {
     configuration = new TalonFXConfiguration();
     configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     //configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    configuration.Slot1.kP = constants.PlasmaPivot.kP;
-    configuration.Slot1.kI = constants.PlasmaPivot.kI;
-    configuration.Slot1.kD = constants.PlasmaPivot.kD;
+    configuration.Slot1.kP = constants.Elevator.kP;
+    configuration.Slot1.kI = constants.Elevator.kI;
+    configuration.Slot1.kD = constants.Elevator.kD;
 
-    configuration.Slot1.kV = constants.PlasmaPivot.kV;
+    configuration.Slot1.kV = constants.Elevator.kV;
 
-    configuration.Slot1.kG = constants.PlasmaPivot.kG;
+    configuration.Slot1.kG = constants.Elevator.kG;
     configuration.Slot1.GravityType = GravityTypeValue.Elevator_Static;
 
-    configuration.Slot1.kS = constants.PlasmaPivot.kS;
+    configuration.Slot1.kS = constants.Elevator.kS;
     configuration.Slot1.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
     configuration.CurrentLimits.StatorCurrentLimitEnable = true;

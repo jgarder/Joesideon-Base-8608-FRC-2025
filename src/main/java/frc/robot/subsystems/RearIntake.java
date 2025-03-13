@@ -42,6 +42,10 @@ public class RearIntake extends SubsystemBase {
   DoubleEntry NT_IGain = NT.getDoubleEntry(className, "I Gain",0);
   DoubleEntry NT_DGain = NT.getDoubleEntry(className , "D Gain",0);
 
+  DoubleEntry NT_AGain = NT.getDoubleEntry(className , "A Gain",0);
+  DoubleEntry NT_SGain = NT.getDoubleEntry(className , "S Gain",0);
+  DoubleEntry NT_VGain = NT.getDoubleEntry(className , "V Gain",0);
+
   DoubleEntry NT_SetpointVelocity = NT.getDoubleEntry(className , "SetpointRPS",0.0);
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
 
@@ -55,6 +59,11 @@ public class RearIntake extends SubsystemBase {
     NT_IGain.set(constants.RearMotorizedIntake.kI);
     NT_DGain.set(constants.RearMotorizedIntake.kD);
 
+    NT_AGain.set(constants.RearMotorizedIntake.kA);
+    NT_SGain.set(constants.RearMotorizedIntake.kS);
+    NT_VGain.set(constants.RearMotorizedIntake.kV);
+
+
   }
 
   public TalonFXConfiguration buildMotorConfig(){
@@ -64,6 +73,11 @@ public class RearIntake extends SubsystemBase {
     _configuration.Slot0.kP = NT_PGain.get();
     _configuration.Slot0.kI = NT_IGain.get();
     _configuration.Slot0.kD = NT_DGain.get();
+
+    _configuration.Slot0.kA = NT_AGain.get();
+    _configuration.Slot0.kS = NT_SGain.get();
+    _configuration.Slot0.kV = NT_VGain.get();
+
 
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     _configuration.CurrentLimits.StatorCurrentLimit = constants.RearMotorizedIntake.maxStatorCurrent;
@@ -84,11 +98,20 @@ public class RearIntake extends SubsystemBase {
     double p = NT_PGain.getAsDouble();
     double i = NT_IGain.getAsDouble();
     double d = NT_DGain.getAsDouble();
+
+    double a = NT_AGain.getAsDouble();
+    double s = NT_SGain.getAsDouble();
+    double v = NT_VGain.getAsDouble();
+
           
     if((p != configuration.Slot0.kP)) { configuration.Slot0.kP = p; Tools.SetConfigToTalonFX(m_Motor,configuration,className); }
     if((i != configuration.Slot0.kI)) { configuration.Slot0.kI = i; Tools.SetConfigToTalonFX(m_Motor,configuration,className); }
     if((d != configuration.Slot0.kD)) { configuration.Slot0.kD = d; Tools.SetConfigToTalonFX(m_Motor,configuration,className); }
   
+    if((a != configuration.Slot0.kA)) { configuration.Slot0.kA = a; Tools.SetConfigToTalonFX(m_Motor,configuration,className); }
+    if((s != configuration.Slot0.kS)) { configuration.Slot0.kS = s; Tools.SetConfigToTalonFX(m_Motor,configuration,className); }
+    if((v != configuration.Slot0.kV)) { configuration.Slot0.kV = v; Tools.SetConfigToTalonFX(m_Motor,configuration,className); }
+
   }
 
 
@@ -112,7 +135,7 @@ public class RearIntake extends SubsystemBase {
     NT_BrakeEnabled.set(false);
     NT_SetpointVelocity.set(wantedRPS);
     m_Motor.setControl(
-            new VelocityTorqueCurrentFOC(wantedRPS).withFeedForward(constants.RearMotorizedIntake.feedforwardsamps)
+            new VelocityTorqueCurrentFOC(wantedRPS)//.withFeedForward(constants.RearMotorizedIntake.feedforwardsamps)
             .withSlot(0).withOverrideCoastDurNeutral(true)
         );
   }
