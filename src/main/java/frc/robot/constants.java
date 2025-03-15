@@ -173,17 +173,17 @@ public class constants {
 
         public static final double maxStatorCurrent = 60;
 
-        public static final double kP = 270.0;
-        public static final double kI = 60.0;//50.00;
-        public static final double kD = 80.0;//65.00;
+        public static final double kP = 100;//270.0;
+        public static final double kI = 0;//60.0;
+        public static final double kD = 10;//80.0;
 
         public static final double kA = 0.0;
         public static final double kS = 0.0;
-        public static final double kG = -20.0;
+        public static final double kG = -20;
 
-        public static final double Accel = 30.0;//9.0;//10.0;
-        public static final double Jerk = 0;//400.0;
-        public static final double Cruise = 120;//100.0;
+        public static final double Accel = 10.0;//9.0;//10.0;
+        public static final double Jerk = 40;//400.0;
+        public static final double Cruise = 100;//100.0;
         public static final double SideScore = -0.05;
         
         

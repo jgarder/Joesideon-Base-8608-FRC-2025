@@ -133,7 +133,7 @@ public class Pivot extends SubsystemBase {
 
     _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
-    //configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    //_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     _configuration.Slot1.kP = constants.PlasmaPivot.kP;
     _configuration.Slot1.kI = constants.PlasmaPivot.kI;
     _configuration.Slot1.kD = constants.PlasmaPivot.kD;

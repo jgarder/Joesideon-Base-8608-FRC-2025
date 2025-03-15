@@ -18,6 +18,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -328,8 +329,12 @@ public class RobotContainer {
         
         //on the fly align test
         Pose2d test = new Pose2d(3.8, 5.17, Rotation2d.fromDegrees(-60));
+        // joystick.rightStick()
+        // .whileTrue(new C_Align(test, true));
+
         joystick.rightStick()
-        .whileTrue(new C_Align(test, true));
+            .onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition))
+            .onFalse(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
