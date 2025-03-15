@@ -193,7 +193,7 @@ public class AprilTagManager extends SubsystemBase
       double offcenterY = ((Thistag.offset90Offset + offcenter90distMeters)* Math.sin(Thistag.Pose.getRotation().getRadians()+offsetangle));
         return new Pose2d(offcenterX, offcenterY, Thistag.Pose.getRotation());
     }
-
+    public static double BargeOffset = Units.inchesToMeters(6);//-0.5; //LIVE
     public static double SourceOffset = Units.inchesToMeters(2.5);//-0.5; //LIVE
     //public static double SourceOffset =  Units.inchesToMeters(60); //TESTING ONLY
     public static List<AprilTag> tagList = Arrays.asList(
@@ -204,8 +204,10 @@ public class AprilTagManager extends SubsystemBase
         .Withdepthoffset(SourceOffset), 
         new AprilTag(16,"Processor",new Pose2d(Units.inchesToMeters(235.73),Units.inchesToMeters(-0.15),Rotation2d.fromDegrees(90)),0,Alliance.Blue).WithType(TagType.Processor)
         .Withdepthoffset(Units.inchesToMeters(2)),
-        new AprilTag(14,"blueBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.BlueBarge),
-        new AprilTag(15,"redBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(75.39),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.RedBarge),
+        new AprilTag(14,"blueBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.BlueBarge)
+        .Withdepthoffset(BargeOffset),
+        new AprilTag(15,"redBarge",new Pose2d(Units.inchesToMeters(325.68),Units.inchesToMeters(75.39),Rotation2d.fromDegrees(180)),30,Alliance.Blue).WithType(TagType.RedBarge)
+        .Withdepthoffset(BargeOffset),
         new AprilTag(22,"reefSE",new Pose2d(Units.inchesToMeters(193.10),Units.inchesToMeters(130.17),Rotation2d.fromDegrees(300)),0,Alliance.Blue).WithAlgaeOnUpper().WithType(TagType.Reef),
         new AprilTag(21,"reefE",new Pose2d(Units.inchesToMeters(209.49),Units.inchesToMeters(158.50),Rotation2d.fromDegrees(0)),0,Alliance.Blue).WithType(TagType.Reef),
         new AprilTag(20,"reefNE",new Pose2d(Units.inchesToMeters(193.10),Units.inchesToMeters(186.83),Rotation2d.fromDegrees(60)),0,Alliance.Blue).WithAlgaeOnUpper().WithType(TagType.Reef),
@@ -219,8 +221,10 @@ public class AprilTagManager extends SubsystemBase
         .Withdepthoffset(SourceOffset), 
         new AprilTag(3,"Processor",new Pose2d(Units.inchesToMeters(455.15),Units.inchesToMeters(317.15),Rotation2d.fromDegrees(270)),0,Alliance.Red).WithType(TagType.Processor)
         .Withdepthoffset(Units.inchesToMeters(2)),
-        new AprilTag(4,"blueBarge",new Pose2d(Units.inchesToMeters(365.2),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.BlueBarge),
-        new AprilTag(5,"redBarge",new Pose2d(Units.inchesToMeters(365.20),Units.inchesToMeters(75.39),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.RedBarge),
+        new AprilTag(4,"blueBarge",new Pose2d(Units.inchesToMeters(365.2),Units.inchesToMeters(241.64),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.BlueBarge)
+        .Withdepthoffset(BargeOffset),
+        new AprilTag(5,"redBarge",new Pose2d(Units.inchesToMeters(365.20),Units.inchesToMeters(75.39),Rotation2d.fromDegrees(0)),30,Alliance.Red).WithType(TagType.RedBarge)
+        .Withdepthoffset(BargeOffset),
         new AprilTag(6,"reefSE",new Pose2d(Units.inchesToMeters(530.49),Units.inchesToMeters(130.17),Rotation2d.fromDegrees(300)),0,Alliance.Red).WithType(TagType.Reef),
         new AprilTag(7,"reefE",new Pose2d(Units.inchesToMeters(546.87),Units.inchesToMeters(158.50),Rotation2d.fromDegrees(0)),0,Alliance.Red).WithAlgaeOnUpper().WithType(TagType.Reef),
         new AprilTag(8,"reefNE",new Pose2d(Units.inchesToMeters(530.49),Units.inchesToMeters(186.83),Rotation2d.fromDegrees(60)),0,Alliance.Red).WithType(TagType.Reef),
@@ -240,7 +244,7 @@ public class AprilTagManager extends SubsystemBase
   return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,TagType.Reef).ID;
   }
   private int selectBarge() {
-    TagType BargeToSelect = DriverStation.getAlliance().equals(Alliance.Blue) ? TagType.BlueBarge:TagType.RedBarge;
+    TagType BargeToSelect = DriverStation.getAlliance().equals(Alliance.Blue) ? TagType.RedBarge:TagType.BlueBarge;
     return AprilTagManager.getClosestTagofTypeToRobotCenter(this.drivetrain.getState().Pose,BargeToSelect).ID;
   }
     public final SelectCommand C_BargeSelectCommand(DoubleSupplier yAxisOverride){

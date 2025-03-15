@@ -93,12 +93,12 @@ public class constants {
     }
  
     public class Elevator {
-        public static final double kP = 35.0; //15 //MotionMagic
-        public static final double kI = 15.0; //6
-        public static final double kD = 4.0; //0
+        public static final double kP = 30.0; //15 //MotionMagic
+        public static final double kI = 20.0; //6
+        public static final double kD = 8.0; //0
 
         public static final double kS = 0.0;
-        public static final double kG = 20;
+        public static final double kG = 17;
         public static final double kV = 0.0;
         
 
@@ -118,10 +118,10 @@ public class constants {
         public static final double maxStatorCurrent = 70;
         
         public static final double ElevatorBrakeParkTolerance = 1.0;
-        public static final double MoveTolerance = .5;
+        public static final double MoveTolerance = .7;//.5;
 
         public static final double CannotPivotParkBelowElevatorPosition = 18;//when elevator is above this, pivot must be in travel position for elevator to go below this number
-        public static final double CannotPivotParkAboveElevatorPosition = 3;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
+        public static final double CannotPivotParkAboveElevatorPosition = 2.5;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
         
         public static final double groundPickup = 5.2;
 
@@ -138,7 +138,7 @@ public class constants {
     public class PlasmaPivot {
 
         public static final double gearRatio = 5*9*(52/26);//is now 5:1 on 9:1 on 26T driving gear to 52T driven gear - 90:1 gear ratio.
-        public static final double absoMagnetOffset = 0.475830078125;//
+        public static final double absoMagnetOffset = 0.4716796875;//
        
         public static final double minPositionToBeSafeFromStage1Crossbar = -.192;//.03;////3.55; //cant be folded up too much when elevator goes up or else head crashes.
         public static final double maxPositionToBeSafeFromSmashingintoReef = -.107;//0.060;//7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
@@ -173,17 +173,17 @@ public class constants {
 
         public static final double maxStatorCurrent = 60;
 
-        public static final double kP = 100;//270.0;
-        public static final double kI = 0;//60.0;
-        public static final double kD = 10;//80.0;
+        public static final double kP = 270;//270.0;
+        public static final double kI = 60;//60.0;
+        public static final double kD = 80;//80.0;
 
         public static final double kA = 0.0;
         public static final double kS = 0.0;
         public static final double kG = -20;
 
-        public static final double Accel = 10.0;//9.0;//10.0;
-        public static final double Jerk = 40;//400.0;
-        public static final double Cruise = 100;//100.0;
+        public static final double Accel = 30.0;//9.0;//10.0;
+        public static final double Jerk = 0;//400.0;
+        public static final double Cruise = 120;//100.0;
         public static final double SideScore = -0.05;
         
         

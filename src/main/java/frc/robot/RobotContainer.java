@@ -344,10 +344,10 @@ public class RobotContainer {
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
         
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
-        joystick.y().whileTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
+        joystick.y().whileTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
             .alongWith(GotoBargePosition())
             .andThen(TridentBargeAlgaeBumpOut())
-            .finallyDo(traveltopark()));
+            .finallyDo(()->{ss_Trident.HoldPosition(); traveltopark();}));
 
 
         joystick.rightTrigger().whileTrue(
