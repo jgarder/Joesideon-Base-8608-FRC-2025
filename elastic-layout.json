@@ -691,7 +691,7 @@
           {
             "title": "MotorTemp",
             "x": 640.0,
-            "y": 256.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -705,7 +705,7 @@
           {
             "title": "Motor2Temp",
             "x": 640.0,
-            "y": 384.0,
+            "y": 512.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -733,7 +733,7 @@
           {
             "title": "StatorCurrent",
             "x": 768.0,
-            "y": 256.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -747,7 +747,7 @@
           {
             "title": "StatorCurrent2",
             "x": 768.0,
-            "y": 384.0,
+            "y": 512.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -836,8 +836,8 @@
           },
           {
             "title": "InElevatorTravelPosition",
-            "x": 640.0,
-            "y": 512.0,
+            "x": 896.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -866,6 +866,76 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Jerk",
+            "x": 640.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Elevator/Jerk",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Cruise",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Elevator/Cruise",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Acceleration",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Elevator/Acceleration",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "S Gain",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Elevator/S Gain",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "G Gain",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Elevator/G Gain",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
             }
           }
         ]
@@ -1589,7 +1659,7 @@
               "topic": "/AlphaBots/Pivot/A Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           }
         ]
