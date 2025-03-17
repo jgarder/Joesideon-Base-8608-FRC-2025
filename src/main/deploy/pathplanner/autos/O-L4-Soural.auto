@@ -114,6 +114,18 @@
           "data": {
             "name": "DoclosestSourceIntake"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "O - Source To W"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestLeftScoreL4"
+          }
         }
       ]
     }

@@ -100,6 +100,7 @@ public class constants {
         public static final double kS = 0.0;
         public static final double kG = 17;
         public static final double kV = 0.0;
+        public static final double kA = 0.0;
         
 
         //higher accel number is more accel for this subsystem
@@ -173,7 +174,7 @@ public class constants {
 
         public static final double maxStatorCurrent = 60;
 
-        public static final double kP = 270;//270.0;
+        public static final double kP = 325;//270.0;
         public static final double kI = 60;//60.0;
         public static final double kD = 80;//80.0;
 
