@@ -33,6 +33,17 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "ClearRearIntake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ClearRearIntake"
+        }
+      }
+    },
+    {
       "name": "gotoL4Travel",
       "waypointRelativePos": 0.3238095238095241,
       "endWaypointRelativePos": null,

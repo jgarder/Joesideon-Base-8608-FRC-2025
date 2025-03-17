@@ -6,7 +6,7 @@ public class constants {
 
     public static final double ReefWidthCenterOffset = Units.inchesToMeters(12.94)/2;// used during test Units.inchesToMeters(12.875)/2; //Reef Width CenteronCenter divided in half
     public static final double SourcePickupWidthCenterOffset = Units.inchesToMeters(24)/2; //Reef Width CenteronCenter divided in half
-    public static final double ExtraMetersoffsetForAlgaePickup = Units.inchesToMeters(7.25);
+    public static final double ExtraMetersoffsetForAlgaePickup = Units.inchesToMeters(6.25);
     public static class drivetrainThings{
         public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -88,7 +88,7 @@ public class constants {
        
         
         public static double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
-        public static final double IntakeRps = 30; // this is "WantedRPM * 60" to make the RPM into RPS
+        public static final double IntakeRps = 30;//25; // this is "WantedRPM * 60" to make the RPM into RPS
         public static double feedforwardsamps = 12.5; //kt = .0198
     }
  
@@ -174,9 +174,9 @@ public class constants {
 
         public static final double maxStatorCurrent = 60;
 
-        public static final double kP = 325;//270.0;
-        public static final double kI = 60;//60.0;
-        public static final double kD = 80;//80.0;
+        public static final double kP = 350;//270.0;
+        public static final double kI = 160;//60.0;
+        public static final double kD = 83;//80.0;
 
         public static final double kA = 0.0;
         public static final double kS = 0.0;
@@ -211,6 +211,7 @@ public class constants {
 
         //public static final double positionAddIfCoralOffset = 6;
         public static final double parkPostion = 0.5;
+        public static final double rearintakePos = 0.5;//.5;
         public static final double l1ReadyPosition =  34.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
         public static final double l2ReadyPosition = 38;//uses LiveOffset
         public static final double l3ReadyPosition =  41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
@@ -220,7 +221,7 @@ public class constants {
         public static final double l4ScorePosition = 39;//uses LiveOffset
         public static final double ReefAlgaePickupExtension = maxposition-10;
         public static final double GroundPickupExtension = 38;
-        public static final double rearintakePos = .5; 
+         
 
 
         public static final double climbExtension = 13;

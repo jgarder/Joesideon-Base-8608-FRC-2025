@@ -118,6 +118,8 @@ public class josiahClimber extends SubsystemBase {
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     _configuration.CurrentLimits.StatorCurrentLimit = constants.Climber.maxStatorCurrent;
 
+    _configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.Climber.SlideSide.maxPostion;
 

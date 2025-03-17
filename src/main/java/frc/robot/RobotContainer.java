@@ -25,10 +25,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.C_Align;
+import frc.robot.commands.C_ClearRearIntake;
 import frc.robot.commands.C_DropElevateToScore;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
@@ -69,13 +72,15 @@ public class RobotContainer {
     private double MaxAngularRate = RotationsPerSecond.of(0.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
+    public double translationDeadbandPercent = 0.025;//0.025 = 2.5%
+    public double rotationalDeadband = 0.05;//0.05 = 5% deadband
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
+            .withDeadband(MaxSpeed * translationDeadbandPercent).withRotationalDeadband(MaxAngularRate * rotationalDeadband) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-    private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.Velocity);
+    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    // private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
+            //.withDriveRequestType(DriveRequestType.Velocity);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -245,14 +250,15 @@ public class RobotContainer {
     public Command TridentBargeAlgaeBumpOut()
     {
         return ss_Trident.bumpout()
-        .andThen(new WaitCommand(.5))
-        .andThen(ss_Trident.Stop());
+        .andThen(new WaitCommand(.25))
+        .finallyDo(()->{ss_Trident.HoldPosition();});
+        //.andThen(ss_Trident.Stop());
     }
 
     //started working on this, not done yet
     double intaketimeout = 20;
-    public ParallelCommandGroup RearIntake(){
-        return new ParallelCommandGroup(
+    public ParallelDeadlineGroup RearIntake(){
+        return new ParallelDeadlineGroup(
             new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.rearintakePos),
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
@@ -319,12 +325,19 @@ public class RobotContainer {
             new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
             ));
         
-        joystick.back().onTrue(
-            new InstantCommand(()->{MantaState.setAltControlModeEnabled(!MantaState.getAltControlModeEnabled.getAsBoolean());})
+        joystick.back().and(joystick.x().negate()).onTrue(
+            new InstantCommand(()->{MantaState.setAltControlModeEnabled(true);})
         .alongWith(
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition)
             ,new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.climbExtension)
             ,ClimbHookReady()
+            ));
+
+        joystick.back().and(joystick.x()).onTrue(
+            new InstantCommand(()->{MantaState.setAltControlModeEnabled(false);})
+        .alongWith(
+            ClimbHookStartFlat(),
+            new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition)
             ));
         
         //on the fly align test
@@ -344,17 +357,17 @@ public class RobotContainer {
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
         
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
-        joystick.y().whileTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
+        joystick.y().onTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
             .alongWith(GotoBargePosition())
             .andThen(TridentBargeAlgaeBumpOut())
-            .finallyDo(()->{ss_Trident.HoldPosition(); traveltopark();}));
+            .finallyDo(traveltopark()));
 
 
         joystick.rightTrigger().whileTrue(
             ATMan.C_ReefCenterAlgaeSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
-            .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))
-            .andThen(AlgaeReefIntake(),gotoMinTravel()))
-            .onFalse(gotoMinTravel());
+            .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))//.withTimeout(2)
+            .andThen(AlgaeReefIntake(),gotoMinTravel()).finallyDo(traveltopark()));
+            //.onFalse(gotoMinTravel());
         
         //processor score
         joystick.rightTrigger().and(joystick.x()).onTrue(
@@ -433,11 +446,11 @@ public class RobotContainer {
     {
         
         joystick.povUp().and(MantaState.getAltControlModeEnabled).onTrue(
-            ClimbHookReady());
+            ClimbHookReady()
+        );
         joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
-            ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
-            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
-        ));
+            ClimbHookStartFlat()
+        );
         joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
             new ParallelCommandGroup(
                 ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion),
@@ -456,6 +469,11 @@ public class RobotContainer {
     private ParallelCommandGroup ClimbHookReady() {
         return ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.maxPostion).alongWith(
         ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.maxPostion)
+      );
+    }
+    private ParallelCommandGroup ClimbHookStartFlat() {
+        return  ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
+            ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
       );
     }
 
@@ -487,7 +505,11 @@ public class RobotContainer {
     public Command Control_RearIntake()
     {
         return ATMan.C_SourceSelectCommand().asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
-            .alongWith(RearIntake());
+            .alongWith(RearIntake().andThen(new ParallelCommandGroup(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition),
+            new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout))
+            )
+            .andThen(new ScheduleCommand(new C_ClearRearIntake(RearIntake)))
+            );
     }
     public Command Control_AutoRearIntake()
     {
@@ -501,11 +523,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("DoclosestScoreL4", Control_AlignClosestScoreL4());
         NamedCommands.registerCommand("DoclosestLeftScoreL4", Control_AutonAlignClosestLeftScoreL4());
         NamedCommands.registerCommand("DoclosestRightScoreL4", Control_AutonAlignClosestRightScoreL4());
+        NamedCommands.registerCommand("ClearRearIntake", new C_ClearRearIntake(RearIntake));
         
         //unused below lol
         NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));
         NamedCommands.registerCommand("AlignprocSource",  ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded));
-        NamedCommands.registerCommand("RearIntake", RearIntake());
+        NamedCommands.registerCommand("RearIntake", RearIntake()); //new C_ClearRearIntake(RearIntake).asProxy()
         NamedCommands.registerCommand("Spinintake", new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout));
         NamedCommands.registerCommand("AlignReefLeft",  ATMan.C_ReefLeftSelectCommand().withTimeout(5));
         NamedCommands.registerCommand("AlignReefRight",  ATMan.C_ReefRightSelectCommand().withTimeout(5));

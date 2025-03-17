@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1552631578947365,
-        "y": 6.959621710526315
+        "x": 1.9232876712328766,
+        "y": 6.639469178082192
       },
       "isLocked": false,
       "linkedName": null
@@ -32,6 +32,17 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
+    {
+      "name": "ClearRearIntake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ClearRearIntake"
+        }
+      }
+    },
     {
       "name": "gotoL4Travel",
       "waypointRelativePos": 0.42513368983957256,

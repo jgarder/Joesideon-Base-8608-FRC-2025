@@ -70,7 +70,7 @@ public class MantaState extends SubsystemBase {
     public static LoggedNetworkBoolean NT_Mt2FrontdoRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt2FrontdoRejectUpdate",false);
     public static LoggedNetworkBoolean NT_Mt2BackdoRejectUpdate = new LoggedNetworkBoolean("/AlphaBots/Mt2BackdoRejectUpdate",false);
 
-
+    public static DoubleEntry NT_MaxSpeed = NT.getDoubleEntry(className, "Max Speed",TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     @Override
     public void periodic() {
@@ -102,6 +102,8 @@ public class MantaState extends SubsystemBase {
       //     builder.addDoubleProperty("Robot Angle", () -> DriveTrain.getRotation3d().getX(), null);
       //   }
       // });
+
+      getmaxspeed();
     }
     
     public static MantaState getInstance() throws Throwable
@@ -161,6 +163,7 @@ public class MantaState extends SubsystemBase {
 
     //getters
     public static BooleanSupplier getAltControlModeEnabled = ()->{return AltControlModeEnabled;};
+    public static BooleanSupplier getAltControlModeDisabled = ()->{return !AltControlModeEnabled;};
     public static BooleanSupplier getLimeLightBypassed = ()->{return LimeLightBypassed;};
     public BooleanSupplier IsPivotFoldedOut;
     public BooleanSupplier IsPivotFoldedFarOut;
@@ -186,8 +189,14 @@ public class MantaState extends SubsystemBase {
         NT_AltControls.set(AltControlModeEnabled);
       return AltControlModeEnabled;
     }
+    public static double additionalSpeedOffset = 1.10;
     public static double getmaxspeed()
     {
+      double percentofMaxheight = ss_Elevator.getPosition() / constants.Elevator.maxElevatorheight * additionalSpeedOffset;
+      double reductionOfSpeedAmount = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * percentofMaxheight;
+      double maxSpeedAtheight = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) - reductionOfSpeedAmount;
+      NT_MaxSpeed.set(maxSpeedAtheight);
+
       return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     }
     public static double getmaxAngularRate()
