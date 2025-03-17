@@ -148,7 +148,7 @@ public class constants {
         public static final double MoveTolerance = .015;//.003;
         public static final double MovementDebounceTime = .02;//.1;
         public static final double maxposition = 0.06;
-        public static final double minposition = -0.247;//-0.247;
+        public static final double minposition = -0.25;//-0.247;
         public static final double AddedOffsetToMinPositionToHold = 0.01;
         public static final double ParkPosition = minposition;
         public static final double rearintakePos = minposition;//-0.242;//minposition;
@@ -197,7 +197,7 @@ public class constants {
 
     public class PlasmaExtension {
         //CURRENTLY EACH "1" POSITION is .25" approx.
-        public static double LiveOffset = -2.0; 
+        public static double LiveOffset = 1.0;//-2.0; 
 
         public static final double gearRatio = 3*3*3; //27:1 gear reduction (was60)
         public static final double maxPositionToBeSafeFromStage1Crossbar = 0;
