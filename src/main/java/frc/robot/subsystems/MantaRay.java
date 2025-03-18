@@ -173,11 +173,16 @@ public class MantaRay extends SubsystemBase {
         BRAKE();
       });
     }
+    public double PostRollAmount = 10;
+    public void PostRollPosition()
+    {
+      double currentRotorposition = m_TridentMotor.getPosition(true).getValueAsDouble();
+      LastPosition = currentRotorposition;
+      //BRAKE();
+      GotoPosition(currentRotorposition+PostRollAmount);//(m_TridentMotor.getVelocity().getValueAsDouble()/canBusUpdateFrequency));
+    }
     public void HoldPosition(){ 
-        double currentRotorposition = m_TridentMotor.getPosition(true).getValueAsDouble();
-        LastPosition = currentRotorposition;
-        //BRAKE();
-        //GotoPosition(currentRotorposition-(m_TridentMotor.getVelocity().getValueAsDouble()/canBusUpdateFrequency));
+       
         holdPositionThroughVelocity();
     }
     public void GotoPosition(double wantedposition){ 

@@ -92,7 +92,7 @@ public class Elevator extends SubsystemBase {
 
   public Elevator() {
     System.out.println("Creating " + className + " object"); 
-    m_ElevatorMotor1.setPosition(0,1);
+    m_ElevatorMotor1.setPosition(0);
     setMotorConfig();
     
     m_ElevatorMotor2.setControl(

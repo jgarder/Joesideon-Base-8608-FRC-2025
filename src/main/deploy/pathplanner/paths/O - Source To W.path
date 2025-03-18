@@ -45,7 +45,7 @@
     },
     {
       "name": "gotoL4Travel",
-      "waypointRelativePos": 0.42513368983957256,
+      "waypointRelativePos": 0.6357142857142851,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -57,7 +57,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 5.2,
-    "maxAcceleration": 11.0,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 240.0,
     "maxAngularAcceleration": 240.0,
     "nominalVoltage": 12.0,

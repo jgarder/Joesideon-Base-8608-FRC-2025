@@ -54,7 +54,7 @@ public class ArmExtension extends SubsystemBase {
     NT_PGain.set(constants.PlasmaExtension.kP);
     NT_IGain.set(constants.PlasmaExtension.kI);
     NT_DGain.set(constants.PlasmaExtension.kD);
-
+    m_ExtensionMotor.setPosition(0);
   }
 
   public TalonFXConfiguration buildMotorConfig(){

@@ -146,7 +146,7 @@ public class RobotContainer {
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AlgaeReefPickup)
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
             .alongWith(new C_TridentIntake(ss_Trident,RearIntake).withTimeout(5))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion),
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion,true),
                 new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4)
             .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
             );
@@ -154,7 +154,7 @@ public class RobotContainer {
     public Command GotoTravelPostion()
     {
         return new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition)
-            .alongWith(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.parkPostion));//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
+            .alongWith(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.parkPostion,true));//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
     }
     private SequentialCommandGroup GotoBargePosition() {
         return gotoL4Travel().andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
@@ -174,7 +174,7 @@ public class RobotContainer {
     public Command ParkElevatorAndHead()
     {
         return elevator1StepPark().unless(ss_Elevator.elevatorisparked)//new C_ElevateToPosition(ss_Elevator,constants.Elevator.minElevatorHeight)
-        .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion))
+        .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion,true))
         .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition)
             .unless(()->{return ss_Pivot.IsPivotParked.getAsBoolean() && ss_Elevator.elevatorisparked.getAsBoolean();}) //Why is this here? it seems redundant?
             ).andThen(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.ParkPosition));
@@ -263,7 +263,7 @@ public class RobotContainer {
             new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.rearintakePos),
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
-            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.rearintakePos)
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.rearintakePos,true)
             );
     }
     public Command DebugIntake(){
@@ -282,7 +282,7 @@ public class RobotContainer {
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
             new C_TridentIntake(ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
-            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension))
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension,true))
         .finallyDo(groundIntakeReset());
     }
 
@@ -362,7 +362,7 @@ public class RobotContainer {
 
         //limelight bypass
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
-        
+        joystick.b().and(joystick.x()).onTrue(gotoL2Travel());
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
         joystick.y().onTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
             .alongWith(GotoBargePosition())
@@ -380,7 +380,7 @@ public class RobotContainer {
             .alongWith(
                 new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
                 new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.processorPivot),
-                new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.processorExtension)
+                new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.processorExtension,true)
                 )
             .andThen(TridentAlgaeBumpOut().withTimeout(.5).finallyDo(()->{ss_Trident.HoldPosition(); traveltopark();}))
             
@@ -523,7 +523,10 @@ public class RobotContainer {
     public Command Control_AutoRearIntake()
     {
         return ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
-            .alongWith(RearIntake());
+        .alongWith(RearIntake()
+            .andThen(new ParallelCommandGroup(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition),
+            new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout)))
+        );
     }
     public void bindNamedCommands()
     {
@@ -533,7 +536,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("DoclosestLeftScoreL4", Control_AutonAlignClosestLeftScoreL4());
         NamedCommands.registerCommand("DoclosestRightScoreL4", Control_AutonAlignClosestRightScoreL4());
         NamedCommands.registerCommand("ClearRearIntake", new C_ClearRearIntake(RearIntake));
-        
+        NamedCommands.registerCommand("ParkElevatorAndHead", ParkElevatorAndHead().withTimeout(3));
+
         //unused below lol
         NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));
         NamedCommands.registerCommand("AlignprocSource",  ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded));
@@ -544,7 +548,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("gotoL4Travel", gotoL4Travel());
         NamedCommands.registerCommand("PivotIntoReefL4", PivotIntoReefL4());
         NamedCommands.registerCommand("ScoreL4", new SequentialCommandGroup(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()));
-        NamedCommands.registerCommand("ParkElevatorAndHead", ParkElevatorAndHead());
+
 
         NamedCommands.registerCommand("GroundIntakeCoral", GroundIntake());
     }

@@ -14,7 +14,14 @@ public class C_ExtendToPosition extends Command{
     double Tolerance = constants.PlasmaExtension.MoveTolerance;
     double Liveoffset = 0;
     double wantedPositionWithOffset = 0;
+    boolean ignoreLiveOffset = false;
     public C_ExtendToPosition(ArmExtension subSys, double wantedposition){
+        SubSystem = subSys;
+        wantedPosition = wantedposition;
+        addRequirements(subSys);
+    }
+    public C_ExtendToPosition(ArmExtension subSys, double wantedposition,boolean _ignoreLiveOffset){
+        ignoreLiveOffset = _ignoreLiveOffset;
         SubSystem = subSys;
         wantedPosition = wantedposition;
         addRequirements(subSys);
@@ -22,7 +29,7 @@ public class C_ExtendToPosition extends Command{
 
     @Override
     public void initialize() {
-        Liveoffset = constants.PlasmaExtension.LiveOffset;
+        Liveoffset =  ignoreLiveOffset ? 0.0 : constants.PlasmaExtension.LiveOffset;
         double tempnewwantedPosition =  wantedPosition + Liveoffset;
         wantedPositionWithOffset = MathUtil.clamp(tempnewwantedPosition,constants.PlasmaExtension.minposition,constants.PlasmaExtension.maxposition);
         SubSystem.GotoPosition(wantedPositionWithOffset);

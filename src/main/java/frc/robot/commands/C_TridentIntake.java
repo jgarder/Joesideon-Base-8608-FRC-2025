@@ -13,7 +13,7 @@ public class C_TridentIntake extends Command {
     RearIntake ss_RearIntake;
     boolean isloaded = false;
     public final Timer startupdebounceTimer = new Timer();
-    private double debounceSecondsNeeded = .40;
+    private double debounceSecondsNeeded = .30;
     private double dutycycleSpeed = constants.MantaRay.IntakeDutyCycle;
     private double RearIntakeDutyCyle = constants.RearMotorizedIntake.dutyCyclePercent;
     public C_TridentIntake(MantaRay incomingss_Trident, RearIntake _ss_RearIntake,double _dutycycleSpeed)
@@ -47,9 +47,10 @@ public class C_TridentIntake extends Command {
     //is called once per periodic and will run the end command when true is returned. 
     @Override
     public boolean isFinished(){
+        
         if(startupdebounceTimer.get()<debounceSecondsNeeded){return false;}
-
         boolean isloaded = ss_Trident.isLoaded();
+        
         // if(isloaded)
         // {
         //     ss_Trident.HoldPosition();     
@@ -63,6 +64,16 @@ public class C_TridentIntake extends Command {
     @Override
     public void end(boolean interrupted) {
         ss_Trident.HoldPosition();
+        // if (interrupted) {
+        //     //just hold here if manually stopped
+        //     ss_Trident.HoldPosition();
+        // }
+        // else{
+        //     //roll in another 10 if ended cleanly (postroll)
+        //     ss_Trident.PostRollPosition();
+        // }
+        
+        
         ss_RearIntake.COAST(); //hold position does not work here because of such a large feedforward. so we coast out when nuetral. 
     }
 

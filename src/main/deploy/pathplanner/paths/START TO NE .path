@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "gotoL4Travel",
-      "waypointRelativePos": 0.1476190476190477,
+      "waypointRelativePos": 0.26428571428571396,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -60,7 +60,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 5.2,
-    "maxAcceleration": 11.0,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 240.0,
     "maxAngularAcceleration": 240.0,
     "nominalVoltage": 12.0,

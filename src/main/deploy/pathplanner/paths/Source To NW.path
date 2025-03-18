@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7126644736842105,
-        "y": 6.7671874999999995
+        "x": 1.5776969178082192,
+        "y": 6.6995719178082185
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 5.275822368421052
       },
       "prevControl": {
-        "x": 3.3868421052631574,
-        "y": 5.497121710526313
+        "x": 3.305650684931507,
+        "y": 5.948287671232877
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     },
     {
       "name": "gotoL4Travel",
-      "waypointRelativePos": 0.3238095238095241,
+      "waypointRelativePos": 0.7404761904761902,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -57,7 +57,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 5.2,
-    "maxAcceleration": 11.0,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 240.0,
     "maxAngularAcceleration": 240.0,
     "nominalVoltage": 12.0,

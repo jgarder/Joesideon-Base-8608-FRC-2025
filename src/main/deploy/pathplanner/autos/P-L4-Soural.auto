@@ -44,43 +44,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Source To W"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "DoclosestRightScoreL4"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "W To Source"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ParkElevatorAndHead"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "DoclosestSourceIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "Source To SW"
           }
         },
@@ -118,13 +81,38 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Source To SW"
+            "pathName": "Source To SW L"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "DoclosestRightScoreL4"
+            "name": "DoclosestLeftScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SWL To Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ParkElevatorAndHead"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestSourceIntake"
           }
         }
       ]

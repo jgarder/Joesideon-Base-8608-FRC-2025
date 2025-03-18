@@ -14,7 +14,7 @@ public class constants {
         public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.9);//.6;
         public static final double minRZErrorToCorrect = .9;//1;//.45;//0.5;//1;//2;//1.25;
 
-        public static  double k_PoseX_P = 2.5;//3.0;//2.1;//4;
+        public static  double k_PoseX_P = 2.4;//3.0;//2.1;//4;
         public static  double k_PoseX_I = 0.1;//.6;//0.0;//0.000001;//0.02;
         public static  double k_PoseX_D = 0.0;//.0;//0.06;
 
@@ -93,7 +93,7 @@ public class constants {
     }
  
     public class Elevator {
-        public static final double kP = 30.0; //15 //MotionMagic
+        public static final double kP = 60.0;//30.0; //15 //MotionMagic
         public static final double kI = 20.0; //6
         public static final double kD = 8.0; //0
 
@@ -105,7 +105,7 @@ public class constants {
 
         //higher accel number is more accel for this subsystem
         public static final double Accel = 250.0;
-        public static final double Jerk = 0;//480.0;
+        public static final double Jerk = 1200;//0;//480.0;
         public static final double Cruise = 500;//180.0;
 
 
@@ -122,7 +122,7 @@ public class constants {
         public static final double MoveTolerance = .7;//.5;
 
         public static final double CannotPivotParkBelowElevatorPosition = 18;//when elevator is above this, pivot must be in travel position for elevator to go below this number
-        public static final double CannotPivotParkAboveElevatorPosition = 2.5;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
+        public static final double CannotPivotParkAboveElevatorPosition = 2.0;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
         
         public static final double groundPickup = 5.2;
 
@@ -174,8 +174,8 @@ public class constants {
 
         public static final double maxStatorCurrent = 60;
 
-        public static final double kP = 350;//270.0;
-        public static final double kI = 160;//60.0;
+        public static final double kP = 300;//350;//270.0;
+        public static final double kI = 400;//160;//60.0;
         public static final double kD = 83;//80.0;
 
         public static final double kA = 0.0;
@@ -198,35 +198,36 @@ public class constants {
     public class PlasmaExtension {
         //CURRENTLY EACH "1" POSITION is .25" approx.
         public static double LiveOffset = 1.0;//-2.0; 
-
-        public static final double gearRatio = 3*3*3; //27:1 gear reduction (was60)
-        public static final double maxPositionToBeSafeFromStage1Crossbar = 0;
+        //0.7407407
+        public static final double gearRatio = 4*5;//3*3*3; //27:1 gear reduction (was60)
+  
         public static final double maxStatorCurrent = 40;
-        public static final double maxposition = 49;//117;
+        public static final double maxposition = 36.29;//117;
         public static final double minposition = 0;
         public static final double kP = 1;
         public static final double kI = 0.0;
         public static final double kD = 0;
-        public static final double MoveTolerance = .5;
+        public static final double MoveTolerance = .3;//.5;
 
         //public static final double positionAddIfCoralOffset = 6;
-        public static final double parkPostion = 0.5;
-        public static final double rearintakePos = 0.5;//.5;
-        public static final double l1ReadyPosition =  34.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
-        public static final double l2ReadyPosition = 38;//uses LiveOffset
-        public static final double l3ReadyPosition =  41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
+        public static final double maxPositionToBeSafeFromStage1Crossbar = 0;
+        public static final double parkPostion = 0.0;//0.37;
+        public static final double rearintakePos = 0.0;//0.37;//.5;
+        public static final double l1ReadyPosition =  25.18;//34.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
+        public static final double l2ReadyPosition = 28.14;//38;//uses LiveOffset
+        public static final double l3ReadyPosition =  30.36;//41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
 
-        public static final double l1ScorePosition = 21.0;//uses LiveOffset
+        public static final double l1ScorePosition = 15.55;//21.0;//uses LiveOffset
         public static final double l2ScorePosition = 0;//uses LiveOffset
-        public static final double l4ScorePosition = 39;//uses LiveOffset
-        public static final double ReefAlgaePickupExtension = maxposition-10;
-        public static final double GroundPickupExtension = 38;
+        public static final double l4ScorePosition = 28.8;//39;//uses LiveOffset
+        public static final double ReefAlgaePickupExtension = maxposition-7.4;//10;
+        public static final double GroundPickupExtension = 28;//38;
          
 
 
-        public static final double climbExtension = 13;
+        public static final double climbExtension = 9.6291;//13;
 
-        public static final double processorExtension = 10;
+        public static final double processorExtension = 7.40;//10;
     }
         
 

@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0264640410958905,
-        "y": 1.445590753424657
+        "x": 1.3957151297059822,
+        "y": 1.2074833950980879
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.899957191780822,
-        "y": 3.7395119863013697
+        "x": 3.5610873287671234,
+        "y": 2.8529965753424653
       },
       "prevControl": {
-        "x": 2.6595462328767123,
-        "y": 3.514126712328767
+        "x": 3.3507277397260276,
+        "y": 2.6426369863013703
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     },
     {
       "name": "gotoL4Travel",
-      "waypointRelativePos": 0.32619047619047614,
+      "waypointRelativePos": 0.3238095238095241,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -65,13 +65,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 54.0
   },
   "reversed": false,
   "folder": "ProcSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 52.765166018425404
+    "rotation": 53.471144633014816
   },
   "useDefaultConstraints": true
 }
