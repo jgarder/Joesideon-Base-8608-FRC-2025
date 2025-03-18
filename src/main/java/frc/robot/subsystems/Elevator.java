@@ -1,9 +1,13 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -11,6 +15,7 @@ import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.StrictFollower;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -24,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
@@ -78,6 +84,7 @@ public class Elevator extends SubsystemBase {
   DoubleEntry NT_SGain = NT.getDoubleEntry(className , "S Gain",0);
   DoubleEntry NT_GGain = NT.getDoubleEntry(className , "G Gain",0);
   DoubleEntry NT_VGain = NT.getDoubleEntry(className , "V Gain",0);
+  DoubleEntry NT_AGain = NT.getDoubleEntry(className , "A Gain",0);
 
   DoubleEntry NT_Acceleration = NT.getDoubleEntry(className , "Acceleration",0);
   DoubleEntry NT_Jerk = NT.getDoubleEntry(className , "Jerk",0);
@@ -97,6 +104,7 @@ public class Elevator extends SubsystemBase {
     NT_DGain.set(constants.Elevator.kD);
 
     NT_VGain.set(constants.Elevator.kV);
+    NT_AGain.set(constants.Elevator.kA);
 
     NT_SGain.set(constants.Elevator.kS);
     NT_GGain.set(constants.Elevator.kG);
@@ -120,6 +128,8 @@ public class Elevator extends SubsystemBase {
     configuration.Slot1.kD = constants.Elevator.kD;
 
     configuration.Slot1.kV = constants.Elevator.kV;
+    configuration.Slot1.kA = constants.Elevator.kA;
+ 
 
     configuration.Slot1.kG = constants.Elevator.kG;
     configuration.Slot1.GravityType = GravityTypeValue.Elevator_Static;
@@ -173,6 +183,7 @@ public class Elevator extends SubsystemBase {
     double d = NT_DGain.getAsDouble();
 
     //feedforward
+    double a = NT_VGain.getAsDouble();    
     double v = NT_VGain.getAsDouble();
     double s = NT_SGain.getAsDouble();
     double g = NT_GGain.getAsDouble();
@@ -189,6 +200,7 @@ public class Elevator extends SubsystemBase {
     if((v != configuration.Slot1.kV)) { configuration.Slot1.kV = v; motorNeedsConfig = true; }
     if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; motorNeedsConfig = true; }
     if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; motorNeedsConfig = true; }
+    if((a != configuration.Slot1.kA)) { configuration.Slot1.kA = a; motorNeedsConfig = true; }
 
     if((mA != configuration.MotionMagic.MotionMagicAcceleration)) { configuration.MotionMagic.MotionMagicAcceleration = mA; motorNeedsConfig = true; }
     if((mJ != configuration.MotionMagic.MotionMagicJerk)) { configuration.MotionMagic.MotionMagicJerk = mJ; motorNeedsConfig = true; }

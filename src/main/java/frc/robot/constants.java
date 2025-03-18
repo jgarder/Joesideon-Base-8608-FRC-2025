@@ -104,7 +104,7 @@ public class constants {
         
 
         //higher accel number is more accel for this subsystem
-        public static final double Accel = 130.0;
+        public static final double Accel = 250.0;
         public static final double Jerk = 0;//480.0;
         public static final double Cruise = 500;//180.0;
 
@@ -116,7 +116,7 @@ public class constants {
         public static final double maxElevatorheight = 26.43;//26.43 measured actual
         public static final double minElevatorHeight = 0;
 
-        public static final double maxStatorCurrent = 70;
+        public static final double maxStatorCurrent = 100;
         
         public static final double ElevatorBrakeParkTolerance = 1.0;
         public static final double MoveTolerance = .7;//.5;

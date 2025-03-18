@@ -284,8 +284,19 @@
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-front",
-              "period": 0.06,
-              "rotation_turns": 0
+              "period": 0.06
+            }
+          },
+          {
+            "title": "limelight-back",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 512.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-back",
+              "period": 0.06
             }
           },
           {
@@ -302,19 +313,6 @@
               "time_display_mode": "Minutes and Seconds",
               "red_start_time": 15,
               "yellow_start_time": 30
-            }
-          },
-          {
-            "title": "limelight-back",
-            "x": 1024.0,
-            "y": 384.0,
-            "width": 512.0,
-            "height": 384.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight-back",
-              "period": 0.06,
-              "rotation_turns": 0
             }
           }
         ]
@@ -691,7 +689,7 @@
           {
             "title": "MotorTemp",
             "x": 640.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -705,7 +703,7 @@
           {
             "title": "Motor2Temp",
             "x": 640.0,
-            "y": 512.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -733,7 +731,7 @@
           {
             "title": "StatorCurrent",
             "x": 768.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -747,7 +745,7 @@
           {
             "title": "StatorCurrent2",
             "x": 768.0,
-            "y": 512.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -788,7 +786,7 @@
           },
           {
             "title": "MotorTemp",
-            "x": 1536.0,
+            "x": 1152.0,
             "y": 512.0,
             "width": 384.0,
             "height": 256.0,
@@ -804,7 +802,7 @@
           },
           {
             "title": "StatorCurrent",
-            "x": 1536.0,
+            "x": 1152.0,
             "y": 256.0,
             "width": 384.0,
             "height": 256.0,
@@ -820,7 +818,7 @@
           },
           {
             "title": "CurrentPosition",
-            "x": 1536.0,
+            "x": 1152.0,
             "y": 0.0,
             "width": 384.0,
             "height": 256.0,
@@ -836,9 +834,9 @@
           },
           {
             "title": "InElevatorTravelPosition",
-            "x": 896.0,
-            "y": 128.0,
-            "width": 128.0,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -853,9 +851,9 @@
           },
           {
             "title": "ElevatorPosOk",
-            "x": 896.0,
-            "y": 0.0,
-            "width": 128.0,
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -869,22 +867,64 @@
             }
           },
           {
-            "title": "Jerk",
-            "x": 640.0,
+            "title": "G Gain",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Elevator/G Gain",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "S Gain",
+            "x": 384.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Elevator/S Gain",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "V Gain",
+            "x": 384.0,
             "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/AlphaBots/Elevator/Jerk",
+              "topic": "/AlphaBots/Elevator/V Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Acceleration",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Elevator/Acceleration",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
             }
           },
           {
             "title": "Cruise",
-            "x": 768.0,
+            "x": 256.0,
             "y": 256.0,
             "width": 128.0,
             "height": 128.0,
@@ -893,46 +933,32 @@
               "topic": "/AlphaBots/Elevator/Cruise",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           },
           {
-            "title": "Acceleration",
-            "x": 512.0,
-            "y": 256.0,
+            "title": "Jerk",
+            "x": 256.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/AlphaBots/Elevator/Acceleration",
+              "topic": "/AlphaBots/Elevator/Jerk",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
             }
           },
           {
-            "title": "S Gain",
-            "x": 896.0,
-            "y": 256.0,
+            "title": "A Gain",
+            "x": 384.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/AlphaBots/Elevator/S Gain",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "G Gain",
-            "x": 1024.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AlphaBots/Elevator/G Gain",
+              "topic": "/AlphaBots/Elevator/A Gain",
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": true
@@ -1659,7 +1685,7 @@
               "topic": "/AlphaBots/Pivot/A Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": true
+              "show_submit_button": false
             }
           }
         ]
