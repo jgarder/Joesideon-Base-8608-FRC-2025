@@ -146,7 +146,8 @@ public class RobotContainer {
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AlgaeReefPickup)
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
             .alongWith(new C_TridentIntake(ss_Trident,RearIntake).withTimeout(5))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion),new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4)
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion),
+                new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4)
             .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
             );
     }
@@ -296,6 +297,12 @@ public class RobotContainer {
         return ()->{ParkElevatorAndHead().schedule();};
     }
 
+    private SequentialCommandGroup GetClosestAlgae() {
+        return ATMan.C_ReefCenterAlgaeSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
+        .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))//.withTimeout(2)
+        .andThen(AlgaeReefIntake(),gotoMinTravel());
+    }
+
 
     ///////////////
     private double testchoice = 0;
@@ -364,9 +371,7 @@ public class RobotContainer {
 
 
         joystick.rightTrigger().whileTrue(
-            ATMan.C_ReefCenterAlgaeSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
-            .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))//.withTimeout(2)
-            .andThen(AlgaeReefIntake(),gotoMinTravel()).finallyDo(traveltopark()));
+            GetClosestAlgae().finallyDo(traveltopark()));
             //.onFalse(gotoMinTravel());
         
         //processor score
@@ -395,7 +400,9 @@ public class RobotContainer {
 
         //Faster
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(Control_AlignClosestScoreL4().andThen(ParkElevatorAndHead()).finallyDo(traveltopark()));
+            .onTrue(Control_AlignClosestScoreL4()
+            .andThen(GetClosestAlgae().unless(()->{return !joystick.x().getAsBoolean();}))
+            .andThen(ParkElevatorAndHead()).finallyDo(traveltopark()));
             
             //.onFalse(ParkElevatorAndHead());
 
@@ -438,6 +445,8 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
         configAltCommands();
     }
+
+
 
 
 

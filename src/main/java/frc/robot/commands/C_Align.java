@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.MantaState;
 import frc.robot.LimelightHelpers;
 import frc.robot.constants;
@@ -62,7 +63,8 @@ public class C_Align extends Command{
         SetupAlign(PosePositionGoal);
     }
     public C_Align(Pose2d PosePositionGoal, boolean onthefly){
-      C_OnTheFlyAlign(PosePositionGoal);
+      CommandScheduler.getInstance().removeComposedCommand(this);//wishing
+      this.beforeStarting(C_OnTheFlyAlign(PosePositionGoal));//wishing
 
       //exists just to seperate the two constructors
       @SuppressWarnings("unused")
