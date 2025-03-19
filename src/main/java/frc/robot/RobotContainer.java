@@ -10,6 +10,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -18,10 +19,12 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -30,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.C_Align;
 import frc.robot.commands.C_ClearRearIntake;
 import frc.robot.commands.C_DropElevateToScore;
@@ -322,8 +326,22 @@ public class RobotContainer {
         // joystick.x().onTrue(new InstantCommand(()->{testchoice= testchoice +1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
         // joystick.y().onTrue(new InstantCommand(()->{testchoice= testchoice -1;ss_ArmExtension.GotoPosition(gettestchoice.getAsDouble());}));
 
+        // Testjoystick.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+        // Testjoystick.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+
+        // /*
+        // * Joystick Y = quasistatic forward
+        // * Joystick A = quasistatic reverse
+        // * Joystick B = dynamic forward
+        // * Joystick X = dyanmic reverse
+        // */
+        // Testjoystick.y().whileTrue(ss_Pivot.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // Testjoystick.a().whileTrue(ss_Pivot.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // Testjoystick.b().whileTrue(ss_Pivot.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // Testjoystick.x().whileTrue(ss_Pivot.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
         
-        joystick.start().onTrue(
+        joystick.start().and(joystick.x().negate()).onTrue(
             new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
         .andThen(
             new WaitCommand(.01),
@@ -331,6 +349,11 @@ public class RobotContainer {
             new WaitCommand(.01),
             new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
             ));
+        //barge mode no scoring though, usually for debug
+        joystick.start().and(joystick.x()).onTrue(ss_Elevator.GotoPositonCommand(constants.Elevator.l4Position)
+        .alongWith(GotoTravelPostion().withTimeout(1))
+        .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
+        );
         
         joystick.back().and(joystick.x().negate()).onTrue(
             new InstantCommand(()->{MantaState.setAltControlModeEnabled(true);})
@@ -358,12 +381,18 @@ public class RobotContainer {
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
-        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().alongWith(new InstantCommand(()->{RearIntake.GotoDutyCycle(-constants.RearMotorizedIntake.dutyCyclePercent);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
+        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().alongWith(new InstantCommand(()->{RearIntake.GotoDutyCycle(-constants.RearMotorizedIntake.ReversingdutyCyclePercent);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
 
         //limelight bypass
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
         joystick.b().and(joystick.x()).onTrue(gotoL2Travel());
         joystick.x();//X button is the alt button dont assign it anything more. unless its a combo
+        //test button please diable for comp!
+        if(!DriverStation.isFMSAttached())
+        {
+            //joystick.x().whileTrue(AprilTagManager.C_OnTheFlyWaypointAlign(new Pose2d(1.19,6.93,Rotation2d.fromDegrees(-53))));
+        }
+        
         joystick.y().onTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
             .alongWith(GotoBargePosition())
             .andThen(TridentBargeAlgaeBumpOut())
@@ -499,11 +528,11 @@ public class RobotContainer {
         .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestLeftScoreL4() {
-        return ATMan.C_ReefLeftSelectCommand().withTimeout(3.5)
+        return ATMan.C_ReefLeftSelectCommand().withTimeout(2.5)
         .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestRightScoreL4() {
-        return ATMan.C_ReefRightSelectCommand().withTimeout(3.5)
+        return ATMan.C_ReefRightSelectCommand().withTimeout(2.5)
         .alongWith(ScoreL4());
     }
     public Command ScoreL4()

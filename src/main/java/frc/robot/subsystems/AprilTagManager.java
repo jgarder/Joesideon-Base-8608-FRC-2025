@@ -5,12 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.StructEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -528,4 +535,36 @@ public class AprilTagManager extends SubsystemBase
 
               ()->{return selectReef();});
         }
+
+    public static PathConstraints constraints = new PathConstraints(4.2, 9.0, 2 * Math.PI, 4 * Math.PI);
+
+    public static Command C_OnTheFlyAlign(Pose2d PosePositionGoal){
+
+      Command pathfindingCommand = AutoBuilder.pathfindToPose(
+        PosePositionGoal,
+        constraints,
+        0.0);
+
+      return pathfindingCommand;
+    }
+
+    public static Command C_OnTheFlyWaypointAlign(Pose2d PosePositionGoal){
+      Pose2d TargetPose = PosePositionGoal;
+
+       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+              //MantaState.DriveTrain.getState().Pose,
+              new Pose2d(2.12,6.28,Rotation2d.fromDegrees(-53)),
+              PosePositionGoal
+      );
+
+      PathPlannerPath path = new PathPlannerPath(
+        waypoints,
+        constraints,
+        null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
+        new GoalEndState(0.0, TargetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect
+        );
+        path.preventFlipping = true;
+        
+        return AutoBuilder.followPath(path);
+    }
   }

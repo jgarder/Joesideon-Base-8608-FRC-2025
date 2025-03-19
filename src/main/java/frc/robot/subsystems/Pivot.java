@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -17,6 +20,7 @@ import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -43,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
@@ -74,6 +79,8 @@ public class Pivot extends SubsystemBase {
   DoubleEntry NT_SGain = NT.getDoubleEntry(className , "S Gain",0);
   DoubleEntry NT_GGain = NT.getDoubleEntry(className , "G Gain",0);
   DoubleEntry NT_AGain = NT.getDoubleEntry(className , "A Gain",0);
+  DoubleEntry NT_VGain = NT.getDoubleEntry(className , "V Gain",0);
+
 
   DoubleEntry NT_Acceleration = NT.getDoubleEntry(className , "Acceleration",0);
   DoubleEntry NT_Jerk = NT.getDoubleEntry(className , "Jerk",0);
@@ -107,6 +114,7 @@ public class Pivot extends SubsystemBase {
     NT_DGain.set(constants.PlasmaPivot.kD);
 
     NT_AGain.set(constants.PlasmaPivot.kA);
+    NT_VGain.set(constants.PlasmaPivot.kV);
 
     NT_SGain.set(constants.PlasmaPivot.kS);
     NT_GGain.set(constants.PlasmaPivot.kG);
@@ -139,6 +147,7 @@ public class Pivot extends SubsystemBase {
     _configuration.Slot1.kD = constants.PlasmaPivot.kD;
 
     _configuration.Slot1.kA = constants.PlasmaPivot.kA;
+    _configuration.Slot1.kV = constants.PlasmaPivot.kV;
 
     _configuration.Slot1.kG = constants.PlasmaPivot.kG;
     _configuration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
@@ -214,6 +223,7 @@ public class Pivot extends SubsystemBase {
 
     //feedforward
     double a = NT_AGain.getAsDouble();
+    double v = NT_AGain.getAsDouble();
     double s = NT_SGain.getAsDouble();
     double g = NT_GGain.getAsDouble();
 
@@ -227,6 +237,7 @@ public class Pivot extends SubsystemBase {
     if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; motorNeedsConfig = true; }
   
     if((a != configuration.Slot1.kA)) { configuration.Slot1.kA = a; motorNeedsConfig = true; }
+    if((v != configuration.Slot1.kV)) { configuration.Slot1.kV = v; motorNeedsConfig = true; }
     if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; motorNeedsConfig = true; }
     if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; motorNeedsConfig = true; }
 
@@ -395,4 +406,29 @@ public class Pivot extends SubsystemBase {
     NT_BrakeEnabled.set(true);
     m_PivotMotor.setControl(new StaticBrake());
   }  
+
+  private final TorqueCurrentFOC m_torqueCurrentReq = new TorqueCurrentFOC(0.0);
+  
+  private final SysIdRoutine m_pivotSysID =
+   new SysIdRoutine(
+      new SysIdRoutine.Config(
+         null,        // Use default ramp rate (1 V/s)
+         Volts.of(20), // Reduce dynamic step voltage to 4 to prevent brownout
+         null,        // Use default timeout (10 s)
+                      // Log state with Phoenix SignalLogger class
+         (state) -> SignalLogger.writeString("state", state.toString())
+      ),
+      new SysIdRoutine.Mechanism(
+         (volts) -> m_PivotMotor.setControl(m_torqueCurrentReq.withOutput(volts.in(Volts))),
+         null,
+         this
+      )
+   );
+   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_pivotSysID.quasistatic(direction);
+ }
+ 
+ public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_pivotSysID.dynamic(direction);
+ }
 }

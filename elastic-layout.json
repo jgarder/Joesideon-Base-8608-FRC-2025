@@ -284,7 +284,8 @@
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-front",
-              "period": 0.06
+              "period": 0.06,
+              "rotation_turns": 0
             }
           },
           {
@@ -296,7 +297,8 @@
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-back",
-              "period": 0.06
+              "period": 0.06,
+              "rotation_turns": 0
             }
           },
           {
@@ -541,7 +543,7 @@
           {
             "title": "StatorCurrent",
             "x": 1152.0,
-            "y": 256.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -554,8 +556,8 @@
           },
           {
             "title": "RPS",
-            "x": 1152.0,
-            "y": 128.0,
+            "x": 1024.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -568,8 +570,8 @@
           },
           {
             "title": "SetpointRPS",
-            "x": 1280.0,
-            "y": 128.0,
+            "x": 1152.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -1685,7 +1687,21 @@
               "topic": "/AlphaBots/Pivot/A Gain",
               "period": 0.06,
               "data_type": "double",
-              "show_submit_button": false
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "V Gain",
+            "x": 384.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AlphaBots/Pivot/V Gain",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
             }
           }
         ]

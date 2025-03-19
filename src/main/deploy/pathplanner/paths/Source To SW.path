@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.17,
-        "y": 1.1
+        "x": 1.4424657534246574,
+        "y": 1.079965753424658
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3957151297059822,
-        "y": 1.2074833950980879
+        "x": 1.6681808831306397,
+        "y": 1.1874491485227459
       },
       "isLocked": false,
       "linkedName": null
@@ -45,7 +45,7 @@
     },
     {
       "name": "gotoL4Travel",
-      "waypointRelativePos": 0.3238095238095241,
+      "waypointRelativePos": 0.5499999999999994,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

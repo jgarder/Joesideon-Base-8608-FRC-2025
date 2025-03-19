@@ -15,7 +15,7 @@ public class C_TridentIntake extends Command {
     public final Timer startupdebounceTimer = new Timer();
     private double debounceSecondsNeeded = .30;
     private double dutycycleSpeed = constants.MantaRay.IntakeDutyCycle;
-    private double RearIntakeDutyCyle = constants.RearMotorizedIntake.dutyCyclePercent;
+    //private double RearIntakeDutyCyle = constants.RearMotorizedIntake.dutyCyclePercent;
     public C_TridentIntake(MantaRay incomingss_Trident, RearIntake _ss_RearIntake,double _dutycycleSpeed)
     {
         dutycycleSpeed =_dutycycleSpeed;
@@ -33,7 +33,7 @@ public class C_TridentIntake extends Command {
 
     @Override
     public void initialize() {
-        RearIntakeDutyCyle = constants.RearMotorizedIntake.dutyCyclePercent;
+        //RearIntakeDutyCyle = constants.RearMotorizedIntake.dutyCyclePercent;
         startupdebounceTimer.restart();
         ss_Trident.setUnloaded();
         ss_Trident.setDutyCycle(dutycycleSpeed);

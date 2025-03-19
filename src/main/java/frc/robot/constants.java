@@ -68,7 +68,7 @@ public class constants {
 
     public class MantaRay {
         public static final double IntakeDutyCycle = .4;
-        public static final double intakeAmpLimit = 40;
+        public static final double intakeAmpLimit = 50;
 
         public static final double intakeAmpCutoffThreshold = 20; //20
         public static final double intakeAmpLimittime = 0.06;//.125;
@@ -78,18 +78,18 @@ public class constants {
         public static final double gearRatio = 3*1; //27:1 gear reduction (was60)
         public static final double maxStatorCurrent = 40;
 
-        public static final double kP = 0.5;
-        public static final double kI = 0.0;
+        public static final double kP = 3.0;
+        public static final double kI = 0.3;
         public static final double kD = 0;
 
         public static final double kA = 0;
         public static final double kS = 2.12;
         public static final double kV = 0.047;
        
-        
-        public static double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
-        public static final double IntakeRps = 30;//25; // this is "WantedRPM * 60" to make the RPM into RPS
-        public static double feedforwardsamps = 12.5; //kt = .0198
+        public static double ReversingdutyCyclePercent = .16;
+       // public static double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
+        public static  double IntakeRps = 24;//25; // this is "WantedRPM * 60" to make the RPM into RPS
+        //public static double feedforwardsamps = 12.5; //kt = .0198
     }
  
     public class Elevator {
@@ -179,8 +179,9 @@ public class constants {
         public static final double kD = 83;//80.0;
 
         public static final double kA = 0.0;
-        public static final double kS = 0.0;
-        public static final double kG = -20;
+        public static final double kV = 0.0;
+        public static final double kS = 2.5;
+        public static final double kG = -21;
 
         public static final double Accel = 30.0;//9.0;//10.0;
         public static final double Jerk = 0;//400.0;
@@ -196,7 +197,7 @@ public class constants {
     }
 
     public class PlasmaExtension {
-        //CURRENTLY EACH "1" POSITION is .25" approx.
+        //CURRENTLY EACH "1" POSITION is .33" approx more etenxsion.
         public static double LiveOffset = 1.0;//-2.0; 
         //0.7407407
         public static final double gearRatio = 4*5;//3*3*3; //27:1 gear reduction (was60)
@@ -204,7 +205,7 @@ public class constants {
         public static final double maxStatorCurrent = 40;
         public static final double maxposition = 36.29;//117;
         public static final double minposition = 0;
-        public static final double kP = 1;
+        public static final double kP = .37;//1.0
         public static final double kI = 0.0;
         public static final double kD = 0;
         public static final double MoveTolerance = .3;//.5;
