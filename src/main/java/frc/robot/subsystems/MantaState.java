@@ -8,24 +8,19 @@ import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
-import com.ctre.phoenix.led.CANdle;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.networktables.StructEntry;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants;
-import frc.robot.AlphaBots.AprilTag;
-import frc.robot.AlphaBots.AprilTag.TagType;
 import frc.robot.AlphaBots.NT;
+import frc.robot.AlphaBots.AprilTagSystem.AprilTag;
+import frc.robot.AlphaBots.AprilTagSystem.AprilTag.TagType;
+import frc.robot.AlphaBots.AprilTagSystem.PoseFinder;
 import frc.robot.generated.TunerConstants;
 
 public class MantaState extends SubsystemBase {
@@ -168,7 +163,7 @@ public class MantaState extends SubsystemBase {
     public BooleanSupplier IsPivotFoldedOut;
     public BooleanSupplier IsPivotFoldedFarOut;
     public BooleanSupplier IsPivotinTravelPosition;
-    public static BooleanSupplier NearestTagIsUpperAlgae = ()->{AprilTag targetTag = AprilTagManager.getClosestTagofTypeToRobotCenterForAlliance(DriveTrain.getState().Pose, TagType.Reef); return targetTag.algaeOnUpper;};
+    public static BooleanSupplier NearestTagIsUpperAlgae = ()->{AprilTag targetTag = PoseFinder.getClosestTagofTypeToRobotCenterForAlliance(DriveTrain.getState().Pose, TagType.Reef); return targetTag.algaeOnUpper;};
 
     public static BooleanSupplier isClimbTime = ()->{return climbTime;};
     //setters

@@ -43,6 +43,7 @@ import frc.robot.commands.C_PivotToPosition;
 import frc.robot.commands.C_TridentIntake;
 import frc.robot.AlphaBots.LimeLightPoseFilter;
 import frc.robot.AlphaBots.Tools;
+import frc.robot.AlphaBots.AprilTagSystem.SelectCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AprilTagManager;
 import frc.robot.subsystems.ArmExtension;
@@ -109,7 +110,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         bindNamedCommands();
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        autoChooser = AutoBuilder.buildAutoChooser("");
         SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();
         
@@ -302,7 +303,7 @@ public class RobotContainer {
     }
 
     private SequentialCommandGroup GetClosestAlgae() {
-        return ATMan.C_ReefCenterAlgaeSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
+        return SelectCommands.C_ReefCenterAlgaeSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
         .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))//.withTimeout(2)
         .andThen(AlgaeReefIntake(),gotoMinTravel());
     }
@@ -393,7 +394,7 @@ public class RobotContainer {
             //joystick.x().whileTrue(AprilTagManager.C_OnTheFlyWaypointAlign(new Pose2d(1.19,6.93,Rotation2d.fromDegrees(-53))));
         }
         
-        joystick.y().onTrue(ATMan.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
+        joystick.y().onTrue(SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
             .alongWith(GotoBargePosition())
             .andThen(TridentBargeAlgaeBumpOut())
             .finallyDo(traveltopark()));
@@ -405,7 +406,7 @@ public class RobotContainer {
         
         //processor score
         joystick.rightTrigger().and(joystick.x()).onTrue(
-            ATMan.C_ProcessorSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
+            SelectCommands.C_ProcessorSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(
                 new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
                 new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.processorPivot),
@@ -446,7 +447,7 @@ public class RobotContainer {
             .andThen(PivotIntoReefL2(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(ATMan.C_ReefL1CenterSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
+            .onTrue(SelectCommands.C_ReefL1CenterSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL1Travel())
             .andThen(PivotIntoReefL1(),TridentCoralShootOut(),ParkElevatorAndHead()).finallyDo(traveltopark()));
 
@@ -521,18 +522,18 @@ public class RobotContainer {
     }
     public Command alignReefForCoral()
     {
-        return new ConditionalCommand( ATMan.C_ReefLeftSelectCommand(), ATMan.C_ReefRightSelectCommand(),()->{return OptionalButtonSupplier.getAsInt() == 0;}).asProxy().until(MantaState.getLimeLightBypassed);
+        return new ConditionalCommand( SelectCommands.C_ReefLeftSelectCommand(), SelectCommands.C_ReefRightSelectCommand(),()->{return OptionalButtonSupplier.getAsInt() == 0;}).asProxy().until(MantaState.getLimeLightBypassed);
     }
     public Command Control_AlignClosestScoreL4() {
         return alignReefForCoral().until(MantaState.getLimeLightBypassed)
         .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestLeftScoreL4() {
-        return ATMan.C_ReefLeftSelectCommand().withTimeout(2.5)
+        return SelectCommands.C_ReefLeftSelectCommand().withTimeout(2.5)
         .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestRightScoreL4() {
-        return ATMan.C_ReefRightSelectCommand().withTimeout(2.5)
+        return SelectCommands.C_ReefRightSelectCommand().withTimeout(2.5)
         .alongWith(ScoreL4());
     }
     public Command ScoreL4()
@@ -542,7 +543,7 @@ public class RobotContainer {
     }
     public Command Control_RearIntake()
     {
-        return ATMan.C_SourceSelectCommand().asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
+        return SelectCommands.C_SourceSelectCommand().asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(6)
             .alongWith(RearIntake().andThen(new ParallelCommandGroup(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition),
             new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout))
             )
@@ -551,7 +552,7 @@ public class RobotContainer {
     }
     public Command Control_AutoRearIntake()
     {
-        return ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
+        return SelectCommands.C_SourceSelectCommand().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
         .alongWith(RearIntake()
             .andThen(new ParallelCommandGroup(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition),
             new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout)))
@@ -569,11 +570,11 @@ public class RobotContainer {
 
         //unused below lol
         NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));
-        NamedCommands.registerCommand("AlignprocSource",  ATMan.C_SourceSelectCommand().until(ss_Trident.getisloaded));
+        NamedCommands.registerCommand("AlignprocSource",  SelectCommands.C_SourceSelectCommand().until(ss_Trident.getisloaded));
         NamedCommands.registerCommand("RearIntake", RearIntake()); //new C_ClearRearIntake(RearIntake).asProxy()
         NamedCommands.registerCommand("Spinintake", new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout));
-        NamedCommands.registerCommand("AlignReefLeft",  ATMan.C_ReefLeftSelectCommand().withTimeout(5));
-        NamedCommands.registerCommand("AlignReefRight",  ATMan.C_ReefRightSelectCommand().withTimeout(5));
+        NamedCommands.registerCommand("AlignReefLeft",  SelectCommands.C_ReefLeftSelectCommand().withTimeout(5));
+        NamedCommands.registerCommand("AlignReefRight",  SelectCommands.C_ReefRightSelectCommand().withTimeout(5));
         NamedCommands.registerCommand("gotoL4Travel", gotoL4Travel());
         NamedCommands.registerCommand("PivotIntoReefL4", PivotIntoReefL4());
         NamedCommands.registerCommand("ScoreL4", new SequentialCommandGroup(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()));

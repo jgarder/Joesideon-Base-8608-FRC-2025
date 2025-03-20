@@ -6,6 +6,8 @@ package frc.robot;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.util.Units;
@@ -31,10 +33,12 @@ public class Robot extends LoggedRobot {
   private final boolean kUseLimelight = false;
 
   public Robot() {
+    Pathfinding.setPathfinder(new LocalADStarAK());
     RobotController.setBrownoutVoltage(6.0);//trade battery life for performance, im sure it will be fine.
     akit.startAdvantageKitLogger();//before robot container even boots we log.
     m_robotContainer = new RobotContainer();
     SetupPathplannerLog();
+    PathfindingCommand.warmupCommand().schedule();
   }
 
   @Override
