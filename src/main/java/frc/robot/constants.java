@@ -85,7 +85,7 @@ public class constants {
        
         public static double ReversingdutyCyclePercent = .16;
        // public static double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
-        public static  double IntakeRps = 24;//25; // this is "WantedRPM * 60" to make the RPM into RPS
+        public static  double IntakeRps = 16;//24;//25; // this is "WantedRPM * 60" to make the RPM into RPS
         //public static double feedforwardsamps = 12.5; //kt = .0198
     }
  
