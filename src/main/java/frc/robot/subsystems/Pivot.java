@@ -223,7 +223,7 @@ public class Pivot extends SubsystemBase {
 
     //feedforward
     double a = NT_AGain.getAsDouble();
-    double v = NT_AGain.getAsDouble();
+    double v = NT_VGain.getAsDouble();
     double s = NT_SGain.getAsDouble();
     double g = NT_GGain.getAsDouble();
 

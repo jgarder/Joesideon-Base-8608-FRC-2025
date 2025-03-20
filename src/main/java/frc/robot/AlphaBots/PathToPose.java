@@ -19,7 +19,7 @@ import frc.robot.commands.C_Align;
 
 public class PathToPose {
 
-    public static PathConstraints constraints = new PathConstraints(4.2, 9.0, 2 * Math.PI, 4 * Math.PI);
+    public static PathConstraints constraints = new PathConstraints(5.0, 9.0, 2 * Math.PI, 4 * Math.PI);
 
     public static Command C_OnTheFlyAlign(Pose2d PosePositionGoal){
         //if you want the pose to flip when on red use pathfindToPoseFlipped
@@ -60,8 +60,8 @@ public class PathToPose {
     {
       return new SequentialCommandGroup(
         new PrintCommand("Reverse Straight Aligned To Tag ID " + TagID + "!"),
-        C_OnTheFlyAlign(PoseFinder.getReverseStraightOutLoc(1,config.ontheFlyDistanceFromCorrect)),
-        new C_Align(PoseFinder.getReverseStraightOutLoc(1,0.0))
+        C_OnTheFlyAlign(PoseFinder.getReverseStraightOutLoc(TagID,config.ontheFlyDistanceFromCorrect)),
+        new C_Align(PoseFinder.getReverseStraightOutLoc(TagID,0.0))
       );
     }
 
