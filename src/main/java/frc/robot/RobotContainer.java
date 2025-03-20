@@ -400,7 +400,7 @@ public class RobotContainer {
             .finallyDo(traveltopark()));
 
 
-        joystick.rightTrigger().whileTrue( //.and(joystick.x().negate())
+        joystick.rightTrigger().and(joystick.x().negate()).whileTrue( //
             GetClosestAlgae().finallyDo(traveltopark()));
             //.onFalse(gotoMinTravel());
         

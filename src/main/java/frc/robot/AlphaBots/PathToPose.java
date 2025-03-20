@@ -64,6 +64,19 @@ public class PathToPose {
         new C_Align(PoseFinder.getReverseStraightOutLoc(TagID,0.0))
       );
     }
+    public static SequentialCommandGroup ontheFlyThenPidReefSideAlign(int TagID,boolean positiveTrueLeft)
+    {
+      return PathToPose.ontheFlyThenPidReefSideAlign(TagID, config.ontheFlyDistanceFromCorrect, positiveTrueLeft);
+    }
+
+    public static SequentialCommandGroup ontheFlyThenPidReefSideAlign(int TagID, double OntheFlyPadding,boolean positiveTrueLeft)
+    {
+      return new SequentialCommandGroup(
+        new PrintCommand("Reef Aligned (LeftSide = "+ positiveTrueLeft + ") To Tag ID " + TagID + "!"),
+        C_OnTheFlyAlign(PoseFinder.getOffSet90Loc(TagID,config.ontheFlyDistanceFromCorrect,config.ReefWidthCenterOffset,positiveTrueLeft)),
+        new C_Align(PoseFinder.getOffSet90Loc(TagID,0.0,config.ReefWidthCenterOffset,positiveTrueLeft))
+      );
+    }
 
     
     

@@ -88,34 +88,22 @@ public class SelectCommands {
       return new SelectCommand<>(
               // Maps selector values to commands
               Map.ofEntries(
-                  Map.entry(6, new PrintCommand("Command 6 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(6,0.0,config.ReefWidthCenterOffset,true)))),
+                  Map.entry(6, PathToPose.ontheFlyThenPidReefSideAlign(6,true)),
     
-                  Map.entry(7, new PrintCommand("Command 7 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(7,0,config.ReefWidthCenterOffset,true)))),
+                  Map.entry(7, PathToPose.ontheFlyThenPidReefSideAlign(7,true)),
                   
-                  Map.entry(8, new PrintCommand("Command 8 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(8,0,config.ReefWidthCenterOffset,true)))),
+                  Map.entry(8, PathToPose.ontheFlyThenPidReefSideAlign(8,true)),
     
-                  Map.entry(9, new PrintCommand("Command 9 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(9,0,config.ReefWidthCenterOffset,true)))),
-                  Map.entry(10, new PrintCommand("Command 10 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(10,0,config.ReefWidthCenterOffset,true)))),
-                  Map.entry(11, new PrintCommand("Command 11 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(11,0,config.ReefWidthCenterOffset,true)))),
+                  Map.entry(9, PathToPose.ontheFlyThenPidReefSideAlign(9,true)),
+                  Map.entry(10, PathToPose.ontheFlyThenPidReefSideAlign(10,true)),
+                  Map.entry(11, PathToPose.ontheFlyThenPidReefSideAlign(11,true)),
     
-                  Map.entry(17, new PrintCommand("Command 17 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(17,0,config.ReefWidthCenterOffset,true)))),
-                  Map.entry(18, new PrintCommand("Command 18 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(18,0,config.ReefWidthCenterOffset,true)))),
-                  Map.entry(19, new PrintCommand("Command 19 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(19,0,config.ReefWidthCenterOffset,true)))),
-                  Map.entry(20, new PrintCommand("Command 20 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(20,0,config.ReefWidthCenterOffset,true)))),
-                  Map.entry(21, new PrintCommand("Command 21 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(21,0,config.ReefWidthCenterOffset,true)))),
-                  Map.entry(22, new PrintCommand("Command 22 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(22,0,config.ReefWidthCenterOffset,true))))
+                  Map.entry(17, PathToPose.ontheFlyThenPidReefSideAlign(17,true)),
+                  Map.entry(18, PathToPose.ontheFlyThenPidReefSideAlign(18,true)),
+                  Map.entry(19, PathToPose.ontheFlyThenPidReefSideAlign(19,true)),
+                  Map.entry(20, PathToPose.ontheFlyThenPidReefSideAlign(20,true)),
+                  Map.entry(21, PathToPose.ontheFlyThenPidReefSideAlign(21,true)),
+                  Map.entry(22, PathToPose.ontheFlyThenPidReefSideAlign(22,true))
                   
                   ),
                   
@@ -128,34 +116,19 @@ public class SelectCommands {
           new SelectCommand<>(
               // Maps selector values to commands
               Map.ofEntries(
-                  Map.entry(6, new PrintCommand("Command 6 Right was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(6,0.0,config.ReefWidthCenterOffset,false)))),
+                  Map.entry(6, PathToPose.ontheFlyThenPidReefSideAlign(6,false)),
+                  Map.entry(7, PathToPose.ontheFlyThenPidReefSideAlign(7,false)),
+                  Map.entry(8, PathToPose.ontheFlyThenPidReefSideAlign(8,false)),
+                  Map.entry(9, PathToPose.ontheFlyThenPidReefSideAlign(9,false)),
+                  Map.entry(10, PathToPose.ontheFlyThenPidReefSideAlign(10,false)),
+                  Map.entry(11, PathToPose.ontheFlyThenPidReefSideAlign(11,false)),
     
-                  Map.entry(7, new PrintCommand("Command 7 Right was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(7,0,config.ReefWidthCenterOffset,false)))),
-                  
-                  Map.entry(8, new PrintCommand("Command 8 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(8,0,config.ReefWidthCenterOffset,false)))),
-    
-                  Map.entry(9, new PrintCommand("Command 9 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(9,0,config.ReefWidthCenterOffset,false)))),
-                  Map.entry(10, new PrintCommand("Command 10 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(10,0,config.ReefWidthCenterOffset,false)))),
-                  Map.entry(11, new PrintCommand("Command 11 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(11,0,config.ReefWidthCenterOffset,false)))),
-    
-                  Map.entry(17, new PrintCommand("Command 17 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(17,0,config.ReefWidthCenterOffset,false)))),
-                  Map.entry(18, new PrintCommand("Command 18 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(18,0,config.ReefWidthCenterOffset,false)))),
-                  Map.entry(19, new PrintCommand("Command 19 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(19,0,config.ReefWidthCenterOffset,false)))),
-                  Map.entry(20, new PrintCommand("Command 20 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(20,0,config.ReefWidthCenterOffset,false)))),
-                  Map.entry(21, new PrintCommand("Command 21 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(21,0,config.ReefWidthCenterOffset,false)))),
-                  Map.entry(22, new PrintCommand("Command 22 was selected!")
-                  .alongWith(new C_Align(PoseFinder.getOffSet90Loc(22,0,config.ReefWidthCenterOffset,false))))
+                  Map.entry(17, PathToPose.ontheFlyThenPidReefSideAlign(17,false)),
+                  Map.entry(18, PathToPose.ontheFlyThenPidReefSideAlign(18,false)),
+                  Map.entry(19, PathToPose.ontheFlyThenPidReefSideAlign(19,false)),
+                  Map.entry(20, PathToPose.ontheFlyThenPidReefSideAlign(20,false)),
+                  Map.entry(21, PathToPose.ontheFlyThenPidReefSideAlign(21,false)),
+                  Map.entry(22, PathToPose.ontheFlyThenPidReefSideAlign(22,false))
                   
                   ),
                   
