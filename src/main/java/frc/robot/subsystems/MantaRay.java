@@ -199,6 +199,11 @@ public class MantaRay extends SubsystemBase {
             .withSlot(0)
         );
     }
+    public Command bumpout(double dutycycle)
+    {
+        return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(dutycycle));});
+        
+    }
 
     public Command bumpout()
     {

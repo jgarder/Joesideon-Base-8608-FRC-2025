@@ -152,7 +152,7 @@ public class constants {
         public static final double TravelPosition = -.13;//-.160;//-.120;//.0319;//3.75;
 
         public static final double AlgaeReefPickup = -0.01;
-        public static final double processorPivot = -.07;
+        public static final double processorPivot = -.050;
         public static final double GroundPickupPosition = -0.00;//12.0;
 
 
@@ -172,15 +172,15 @@ public class constants {
         public static final double maxStatorCurrent = 60;
 
         public static final double kP = 320;//350;//270.0;
-        public static final double kI = 200;//160;//60.0;
-        public static final double kD = 90;//80.0;
+        public static final double kI = 400;//160;//60.0;
+        public static final double kD = 83;//80.0;
 
         public static final double kA = 0.0;
-        public static final double kV = 17.0;
-        public static final double kS = 2.1;
+        public static final double kV = 0.0;
+        public static final double kS = 2.5;
         public static final double kG = -21;
 
-        public static final double Accel = 10.0;//9.0;//10.0;
+        public static final double Accel = 30.0;//9.0;//10.0;
         public static final double Jerk = 0;//400.0;
         public static final double Cruise = 120;//100.0;
         public static final double SideScore = -0.05;

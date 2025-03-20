@@ -151,9 +151,9 @@ public class RobotContainer {
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AlgaeReefPickup)
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
             .alongWith(new C_TridentIntake(ss_Trident,RearIntake).withTimeout(5))
-            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion,true),
-                new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4)
-            .andThen(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion,true)
+            .alongWith(new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
             );
     }
     public Command GotoTravelPostion()
@@ -247,10 +247,17 @@ public class RobotContainer {
         .andThen(new WaitCommand(.5))
         .andThen(ss_Trident.Stop());
     }
-    public Command TridentAlgaeBumpOut()
+    public Command TridentRunReverse()
     {
         return ss_Trident.bumpout()
         .andThen(new WaitCommand(2))
+        .andThen(ss_Trident.Stop());
+    }
+    public double processorAlgaeScoringDutyCycle = -.35;
+    public Command TridentAlgaeBumpOut()
+    {
+        return ss_Trident.bumpout(processorAlgaeScoringDutyCycle)
+        .andThen(new WaitCommand(1))
         .andThen(ss_Trident.Stop());
     }
     public Command TridentBargeAlgaeBumpOut()
@@ -287,7 +294,8 @@ public class RobotContainer {
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
             new C_TridentIntake(ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
-            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension,true))
+            new SequentialCommandGroup(new WaitCommand(.25),new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension,true))
+            )
         .finallyDo(groundIntakeReset());
     }
 
@@ -382,7 +390,7 @@ public class RobotContainer {
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
-        joystick.a().and(joystick.x()).whileTrue(TridentAlgaeBumpOut().alongWith(new InstantCommand(()->{RearIntake.GotoDutyCycle(-constants.RearMotorizedIntake.ReversingdutyCyclePercent);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
+        joystick.a().and(joystick.x()).whileTrue(TridentRunReverse().alongWith(new InstantCommand(()->{RearIntake.GotoDutyCycle(-constants.RearMotorizedIntake.ReversingdutyCyclePercent);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
 
         //limelight bypass
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
@@ -406,13 +414,13 @@ public class RobotContainer {
         
         //processor score
         joystick.rightTrigger().and(joystick.x()).onTrue(
-            SelectCommands.C_ProcessorSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
+            new InstantCommand(()->{})//SelectCommands.C_ProcessorSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(
                 new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
                 new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.processorPivot),
                 new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.processorExtension,true)
                 )
-            .andThen(TridentAlgaeBumpOut().withTimeout(.5).finallyDo(()->{ss_Trident.HoldPosition(); traveltopark();}))
+            //.andThen(TridentAlgaeBumpOut().withTimeout(.5).finallyDo(()->{ss_Trident.HoldPosition(); traveltopark();}))
             
         );
 
