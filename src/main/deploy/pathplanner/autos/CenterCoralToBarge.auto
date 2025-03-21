@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "STARTToCoralRight"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoclosestRightScoreL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GrabClosestAlgae"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ParkElevatorAndHead"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToBarge"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootClosestBarge"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

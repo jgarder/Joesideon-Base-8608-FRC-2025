@@ -570,6 +570,13 @@ public class RobotContainer {
         return new ParallelCommandGroup(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition),
         new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout));
     }
+
+    public Command control_AutoBarge()
+    {
+        return SelectCommands.C_BargeSelectCommand(getYAxis).until(MantaState.getLimeLightBypassed).withTimeout(3)
+            .alongWith(GotoBargePosition())
+            .andThen(TridentBargeAlgaeBumpOut());
+    }
     public void bindNamedCommands()
     {
         // Register Named Commands
@@ -580,6 +587,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("ClearRearIntake", new C_ClearRearIntake(RearIntake));
         NamedCommands.registerCommand("ParkElevatorAndHead", ParkElevatorAndHead().withTimeout(3));
         NamedCommands.registerCommand("PivotPullIntake", control_PivotPullIntakeCommand().withTimeout(1));
+        NamedCommands.registerCommand("GrabClosestAlgae", GetClosestAlgae());
+        NamedCommands.registerCommand("ShootClosestBarge", control_AutoBarge());
         //unused below lol
         NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));
         NamedCommands.registerCommand("AlignprocSource",  SelectCommands.C_SourceSelectCommand().until(ss_Trident.getisloaded));
