@@ -60,7 +60,7 @@ public class PathToPose {
     {
       return new SequentialCommandGroup(
         new PrintCommand("Reverse Straight Aligned To Tag ID " + TagID + "!"),
-        C_OnTheFlyAlign(PoseFinder.getReverseStraightOutLoc(TagID,config.ontheFlyDistanceFromCorrect)),
+        //C_OnTheFlyAlign(PoseFinder.getReverseStraightOutLoc(TagID,config.ontheFlyDistanceFromCorrect)),
         new C_Align(PoseFinder.getReverseStraightOutLoc(TagID,0.0))
       );
     }
@@ -73,7 +73,7 @@ public class PathToPose {
     {
       return new SequentialCommandGroup(
         new PrintCommand("Reef Aligned (LeftSide = "+ positiveTrueLeft + ") To Tag ID " + TagID + "!"),
-        C_OnTheFlyAlign(PoseFinder.getOffSet90Loc(TagID,config.ontheFlyDistanceFromCorrect,config.ReefWidthCenterOffset,positiveTrueLeft)),
+        //C_OnTheFlyAlign(PoseFinder.getOffSet90Loc(TagID,config.ontheFlyDistanceFromCorrect,config.ReefWidthCenterOffset,positiveTrueLeft)),
         new C_Align(PoseFinder.getOffSet90Loc(TagID,0.0,config.ReefWidthCenterOffset,positiveTrueLeft))
       );
     }
