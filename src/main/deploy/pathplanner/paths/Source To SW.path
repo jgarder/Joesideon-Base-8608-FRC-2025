@@ -44,6 +44,17 @@
       }
     },
     {
+      "name": "PivotPullIntake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "PivotPullIntake"
+        }
+      }
+    },
+    {
       "name": "gotoL4Travel",
       "waypointRelativePos": 0.5499999999999994,
       "endWaypointRelativePos": null,
