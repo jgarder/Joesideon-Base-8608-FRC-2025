@@ -162,7 +162,9 @@ public class RobotContainer {
             .alongWith(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.parkPostion,true));//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
     }
     private SequentialCommandGroup GotoBargePosition() {
-        return gotoL4Travel().andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l4Position).alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition).withTimeout(.50)).andThen(
+            new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition).alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.BargePosition))     
+            );
     }
     // BooleanSupplier jake = ()->{return ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.l1Position;};
     // BooleanSupplier jake2 = ()->{return ss_Elevator.m_ElevatorMotor1.getVelocity().getValueAsDouble() < 100;};

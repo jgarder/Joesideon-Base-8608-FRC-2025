@@ -150,7 +150,7 @@ public class constants {
         public static final double ParkPosition = minposition;
         public static final double rearintakePos = minposition;//-0.242;//minposition;
         public static final double TravelPosition = -.13;//-.160;//-.120;//.0319;//3.75;
-
+        public static final double BargePosition = -.17;
         public static final double AlgaeReefPickup = -0.01;
         public static final double processorPivot = -.050;
         public static final double GroundPickupPosition = -0.00;//12.0;
