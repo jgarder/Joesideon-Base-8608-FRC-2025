@@ -566,10 +566,21 @@ public class RobotContainer {
     public Command Control_AutoRearIntake()
     {
         return SelectCommands.C_SourceSelectCommand().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(3)
-        .alongWith(RearIntake()
-            .andThen(new ParallelCommandGroup(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition),
-            new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout)))
+        .alongWith(
+            RearIntake()//All post commands are in pathplanner!
         );
+    }
+    public Command control_PivotPullIntakeCommand()
+    {
+        return new ParallelCommandGroup(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition),
+        new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout));
+    }
+
+    public Command control_AutoBarge()
+    {
+        return SelectCommands.C_BargeSelectCommand(getYAxis).until(MantaState.getLimeLightBypassed).withTimeout(3)
+            .alongWith(GotoBargePosition())
+            .andThen(TridentBargeAlgaeBumpOut());
     }
     public void bindNamedCommands()
     {
@@ -580,7 +591,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("DoclosestRightScoreL4", Control_AutonAlignClosestRightScoreL4());
         NamedCommands.registerCommand("ClearRearIntake", new C_ClearRearIntake(RearIntake));
         NamedCommands.registerCommand("ParkElevatorAndHead", ParkElevatorAndHead().withTimeout(3));
-
+        NamedCommands.registerCommand("PivotPullIntake", control_PivotPullIntakeCommand().withTimeout(1));
+        NamedCommands.registerCommand("GrabClosestAlgae", GetClosestAlgae());
+        NamedCommands.registerCommand("ShootClosestBarge", control_AutoBarge());
         //unused below lol
         NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));
         NamedCommands.registerCommand("AlignprocSource",  SelectCommands.C_SourceSelectCommand().until(ss_Trident.getisloaded));
