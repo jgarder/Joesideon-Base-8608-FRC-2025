@@ -11,7 +11,7 @@ public class constants {
         public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.9);//.6;
         public static final double minRZErrorToCorrect = .9;//1;//.45;//0.5;//1;//2;//1.25;
 
-        public static  double k_PoseX_P = 2.4;//3.0;//2.1;//4;
+        public static  double k_PoseX_P = 2.6;//3.0;//2.1;//4;
         public static  double k_PoseX_I = 0.1;//.6;//0.0;//0.000001;//0.02;
         public static  double k_PoseX_D = 0.0;//.0;//0.06;
 
@@ -195,7 +195,7 @@ public class constants {
 
     public class PlasmaExtension {
         //CURRENTLY EACH "1" POSITION is .33" approx more etenxsion.
-        public static double LiveOffset = 1.0;//-2.0; 
+        public static double LiveOffset = 2.25;//-2.0; 
         //0.7407407
         public static final double gearRatio = 4*5;//3*3*3; //27:1 gear reduction (was60)
   
@@ -213,7 +213,7 @@ public class constants {
         public static final double rearintakePos = 0.0;//0.37;//.5;
         public static final double l1ReadyPosition =  25.18;//34.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
         public static final double l2ReadyPosition = 28.14;//38;//uses LiveOffset
-        public static final double l3ReadyPosition =  30.36;//41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
+        public static final double l3ReadyPosition =  29.0;//41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
 
         public static final double l1ScorePosition = 15.55;//21.0;//uses LiveOffset
         public static final double l2ScorePosition = 0;//uses LiveOffset

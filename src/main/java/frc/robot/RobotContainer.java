@@ -402,10 +402,13 @@ public class RobotContainer {
             //joystick.x().whileTrue(AprilTagManager.C_OnTheFlyWaypointAlign(new Pose2d(1.19,6.93,Rotation2d.fromDegrees(-53))));
         }
         
-        joystick.y().onTrue(SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
-            .alongWith(GotoBargePosition())
-            .andThen(TridentBargeAlgaeBumpOut())
-            .finallyDo(traveltopark()));
+        joystick.y().onTrue(
+            GotoBargePosition()
+        );
+            // SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
+            // .alongWith(GotoBargePosition())
+            // .andThen(TridentBargeAlgaeBumpOut())
+            // .finallyDo(traveltopark()));
 
 
         joystick.rightTrigger().and(joystick.x().negate()).whileTrue( //

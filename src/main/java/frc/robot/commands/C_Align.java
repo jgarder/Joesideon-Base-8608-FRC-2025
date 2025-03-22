@@ -245,6 +245,11 @@ public class C_Align extends Command{
         //near the final positon x
         boolean Xok = IsXInTarget();
         boolean Yok = IsYInTarget();
+        if(yAlignOverride != null)
+        {
+          Yok=true;
+        }
+        
         boolean Zok = isRotInTarget();
 
         MantaState.NT_Xok.set(Xok);
