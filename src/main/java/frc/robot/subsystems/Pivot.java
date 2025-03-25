@@ -33,6 +33,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.BooleanTopic;
@@ -142,7 +143,7 @@ public class Pivot extends SubsystemBase {
   public TalonFXConfiguration buildMotorConfig(){
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
 
-    _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
+    _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
     //_configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     _configuration.Slot1.kP = constants.PlasmaPivot.kP;
@@ -187,7 +188,7 @@ public class Pivot extends SubsystemBase {
       //Setting this to 0 makes the absolute position always negative [-1, 0) 
       cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
       
-      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
       cc_cfg.MagnetSensor.MagnetOffset = constants.PlasmaPivot.absoMagnetOffset;// ;
       pivotAbsoluteEncoder.getConfigurator().apply(cc_cfg);
 
@@ -258,7 +259,7 @@ public class Pivot extends SubsystemBase {
       if(MantaState.ss_Elevator.currentState == POSITION.parked){GotoPosition(_requestedPosition);}
       else
       {
-          if(_requestedPosition >= constants.PlasmaPivot.TravelPosition)
+          if(_requestedPosition <= constants.PlasmaPivot.TravelPosition)
             {
               //check if pivot is in a safe travel position
              
@@ -274,90 +275,90 @@ public class Pivot extends SubsystemBase {
   }
  
 
-   public void doTravelIfInCorrectPosition(double _requestedPosition)
-  {
-    if (setPointPosition != _requestedPosition) {
+  //  public void doTravelIfInCorrectPosition(double _requestedPosition)
+  // {
+  //   if (setPointPosition != _requestedPosition) {
       
-      //if we are above the CannotFoldBelow position
-      if(elevatorposition.getAsDouble() > constants.Elevator.CannotPivotParkBelowElevatorPosition)
-      {
-        //if we are going below the cannot fold position
-        if(_requestedPosition >= constants.PlasmaPivot.TravelPosition)
-        {
-          //check if pivot is in a safe travel position
-          if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
-          {
-             //if/when we are folded out, set position to requested position
-            //safe to goto requestion position
-            GotoPosition(_requestedPosition);
-          }
-          else{
-            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-            //ONLY safe to goto CannotFoldBelowPosition
-            GotoPosition(constants.PlasmaPivot.TravelPosition);
-          }
-        }
-        else{
-          //if we are above the safe zone and staying above the safe zone then request the new position. 
-          GotoPosition(_requestedPosition);
-        }
-      }   //if we are below the CannotFoldabove position
-      else if(elevatorposition.getAsDouble() < constants.Elevator.CannotPivotParkAboveElevatorPosition)
-      {
-        //if we are going above the cannot fold position
-        if(_requestedPosition < constants.Elevator.CannotPivotParkAboveElevatorPosition)
-        {
-          //check if pivot is in a safe travel position
-          if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
-          {
-              //if/when we are folded out, set position to requested position
-            //safe to goto requestion position
-            GotoPosition(_requestedPosition);
-          }
-          else{
-            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-            //ONLY safe to goto CannotFoldBelowPosition
-            GotoPosition(constants.Elevator.CannotPivotParkAboveElevatorPosition);
-          }
-        }
-        else{
-          //if we are below the safe zone and going below the safe zone then request the new position. 
-          GotoPosition(_requestedPosition);
-        }
-      }//if we are not above the nogo and we are not below the nogo we are in the nogo. make sure we are in travel position and goto the called position
-      else 
-      {
-        //check if pivot is in a safe travel position
-        if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
-        {
-            //if/when we are folded out, set position to requested position
-          //safe to goto requestion position
-          GotoPosition(_requestedPosition);
-        }
-        else{
-          //if not IsPivotinTravelPosition, dont move we are in the No-go zone already. 
-        }
-      }
-    }// else if we are close to parked and we are requesting a park. then just brake mode. 
-    else if ((setPointPosition < constants.Elevator.ElevatorBrakeParkTolerance) 
-          & (_requestedPosition < constants.Elevator.ElevatorBrakeParkTolerance)
-          &  m_PivotMotor.getVelocity().getValueAsDouble() < 100
-          & Tools.isPosAtSetpoint(currentPosition, constants.Elevator.minElevatorHeight, constants.Elevator.ElevatorBrakeParkTolerance))
-    {
-      //System.out.println("elevator Braking");
+  //     //if we are above the CannotFoldBelow position
+  //     if(elevatorposition.getAsDouble() > constants.Elevator.CannotPivotParkBelowElevatorPosition)
+  //     {
+  //       //if we are going below the cannot fold position
+  //       if(_requestedPosition >= constants.PlasmaPivot.TravelPosition)
+  //       {
+  //         //check if pivot is in a safe travel position
+  //         if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
+  //         {
+  //            //if/when we are folded out, set position to requested position
+  //           //safe to goto requestion position
+  //           GotoPosition(_requestedPosition);
+  //         }
+  //         else{
+  //           //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
+  //           //ONLY safe to goto CannotFoldBelowPosition
+  //           GotoPosition(constants.PlasmaPivot.TravelPosition);
+  //         }
+  //       }
+  //       else{
+  //         //if we are above the safe zone and staying above the safe zone then request the new position. 
+  //         GotoPosition(_requestedPosition);
+  //       }
+  //     }   //if we are below the CannotFoldabove position
+  //     else if(elevatorposition.getAsDouble() < constants.Elevator.CannotPivotParkAboveElevatorPosition)
+  //     {
+  //       //if we are going above the cannot fold position
+  //       if(_requestedPosition < constants.Elevator.CannotPivotParkAboveElevatorPosition)
+  //       {
+  //         //check if pivot is in a safe travel position
+  //         if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
+  //         {
+  //             //if/when we are folded out, set position to requested position
+  //           //safe to goto requestion position
+  //           GotoPosition(_requestedPosition);
+  //         }
+  //         else{
+  //           //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
+  //           //ONLY safe to goto CannotFoldBelowPosition
+  //           GotoPosition(constants.Elevator.CannotPivotParkAboveElevatorPosition);
+  //         }
+  //       }
+  //       else{
+  //         //if we are below the safe zone and going below the safe zone then request the new position. 
+  //         GotoPosition(_requestedPosition);
+  //       }
+  //     }//if we are not above the nogo and we are not below the nogo we are in the nogo. make sure we are in travel position and goto the called position
+  //     else 
+  //     {
+  //       //check if pivot is in a safe travel position
+  //       if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
+  //       {
+  //           //if/when we are folded out, set position to requested position
+  //         //safe to goto requestion position
+  //         GotoPosition(_requestedPosition);
+  //       }
+  //       else{
+  //         //if not IsPivotinTravelPosition, dont move we are in the No-go zone already. 
+  //       }
+  //     }
+  //   }// else if we are close to parked and we are requesting a park. then just brake mode. 
+  //   else if ((setPointPosition < constants.Elevator.ElevatorBrakeParkTolerance) 
+  //         & (_requestedPosition < constants.Elevator.ElevatorBrakeParkTolerance)
+  //         &  Math.abs(m_PivotMotor.getVelocity().getValueAsDouble()) < 100
+  //         & Tools.isPosAtSetpoint(currentPosition, constants.Elevator.minElevatorHeight, constants.Elevator.ElevatorBrakeParkTolerance))
+  //   {
+  //     //System.out.println("elevator Braking");
       
-      //currentState = POSITION.parked;
-      BRAKE();
-    }
-  }
+  //     //currentState = POSITION.parked;
+  //     BRAKE();
+  //   }
+  // }
   //is the elevator height low enough that we can fit under the stafe 1 cross bar when retracting (does not account for extension)
   //public BooleanSupplier CanPivotFoldUp = ()->{return getPosition() < constants.PlasmaPivot.elevatorheightToFoldUp ? true:false;}; 
   //public BooleanSupplier IsOutPastPastStage1 = ()->{return getPosition() > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
   
-  public BooleanSupplier IsPivotFoldedOut = ()->{return currentPosition > constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
-  public BooleanSupplier IsPivotAwayFromReef = ()->{return currentPosition < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoReef ? true:false;};
+  public BooleanSupplier IsPivotFoldedOut = ()->{return currentPosition < constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
+  public BooleanSupplier IsPivotAwayFromReef = ()->{return currentPosition > constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoReef ? true:false;};
 
-  public BooleanSupplier IsPivotFoldedFarOut = ()->{return currentPosition < constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};
+  public BooleanSupplier IsPivotFoldedFarOut = ()->{return currentPosition > constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};
   public BooleanSupplier IsPivotinTravelPosition = ()->{return IsPivotFoldedOut.getAsBoolean() & IsPivotAwayFromReef.getAsBoolean();};
   public BooleanSupplier IsPivotParked = ()->{return frc.robot.AlphaBots.Tools.isPosAtSetpoint(getPosition(),constants.PlasmaPivot.ParkPosition,constants.PlasmaPivot.MoveTolerance);};
 
@@ -393,7 +394,7 @@ public class Pivot extends SubsystemBase {
       requestedPosition = wantedposition;
     }
 
-  public void GotoPosition(double wantedposition){ 
+  private void GotoPosition(double wantedposition){ 
     NT_BrakeEnabled.set(false);
     setPointPosition = wantedposition;
     NT_SetpointPosition.set(setPointPosition);

@@ -201,12 +201,13 @@ public class RobotContainer {
         return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition)
                 .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l4ScorePosition));
     }
+    
     public Command CoralDropScoreL4()
     {
         return new C_DropElevateToScore(ss_Elevator)
         .deadlineFor(TridentCoralBumpOut()
         .alongWith(
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition +.04)
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition + constants.PlasmaPivot.L4CoralDropPivot)
             )
             .finallyDo(()->{ss_Trident.setDutyCycle(0);}));
         //
@@ -390,9 +391,9 @@ public class RobotContainer {
         // joystick.rightStick()
         // .whileTrue(new C_Align(test, true));
 
-        joystick.rightStick()
-            .onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition))
-            .onFalse(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
+        // joystick.rightStick()
+        //     .onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition))
+        //     .onFalse(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
@@ -408,10 +409,14 @@ public class RobotContainer {
             //joystick.x().whileTrue(AprilTagManager.C_OnTheFlyWaypointAlign(new Pose2d(1.19,6.93,Rotation2d.fromDegrees(-53))));
         }
         
-        joystick.y().onTrue(SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
-            .alongWith(GotoBargePosition())
-            .andThen(TridentBargeAlgaeBumpOut())
-            .finallyDo(traveltopark()));
+        joystick.y().onTrue(
+            //SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
+            //.alongWith(
+                GotoBargePosition()
+            //    )
+            //.andThen(TridentBargeAlgaeBumpOut())
+            //.finallyDo(traveltopark())
+            );
 
 
         joystick.rightTrigger().and(joystick.x().negate()).whileTrue( //

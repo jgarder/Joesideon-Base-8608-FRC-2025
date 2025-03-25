@@ -136,38 +136,39 @@ public class constants {
     public class PlasmaPivot {
 
         public static final double gearRatio = 5*9*(52/26);//is now 5:1 on 9:1 on 26T driving gear to 52T driven gear - 90:1 gear ratio.
-        public static final double absoMagnetOffset = 0.4716796875;//
+        public static final double absoMagnetOffset = -0.480712890625;//0.4716796875;//
        
-        public static final double minPositionToBeSafeFromStage1Crossbar = -.192;//.03;////3.55; //cant be folded up too much when elevator goes up or else head crashes.
-        public static final double maxPositionToBeSafeFromSmashingintoReef = -.107;//0.060;//7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
-        public static final double maxPositionToBeSafeFromSmashingintoSelf = -.192;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
+        public static final double minPositionToBeSafeFromStage1Crossbar = .192;//.03;////3.55; //cant be folded up too much when elevator goes up or else head crashes.
+        public static final double maxPositionToBeSafeFromSmashingintoReef = .107;//0.060;//7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
+        public static final double maxPositionToBeSafeFromSmashingintoSelf = .192;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
         
         public static final double MoveTolerance = .015;//.003;
         public static final double MovementDebounceTime = .02;//.1;
-        public static final double maxposition = 0.06;
-        public static final double minposition = -0.25;//-0.247;
+        public static final double maxposition = 0.245;
+        public static final double minposition = -0.06;//-0.247;
         public static final double AddedOffsetToMinPositionToHold = 0.01;
-        public static final double ParkPosition = minposition;
-        public static final double rearintakePos = minposition;//-0.242;//minposition;
-        public static final double TravelPosition = -.13;//-.160;//-.120;//.0319;//3.75;
+        public static final double ParkPosition = maxposition;
+        public static final double rearintakePos = maxposition;//-0.242;//minposition;
+        public static final double TravelPosition = .13;//-.160;//-.120;//.0319;//3.75;
 
-        public static final double AlgaeReefPickup = -0.01;
-        public static final double processorPivot = -.050;
-        public static final double GroundPickupPosition = -0.00;//12.0;
+        public static final double AlgaeReefPickup = 0.01;
+        public static final double processorPivot = .050;
+        public static final double GroundPickupPosition = 0.00;//12.0;
 
 
         public static final double CoralGroundPickup = 0.06;
 
-        public static final double l1ReadyPosition = -.02;
-        public static final double l2ReadyPosition = -.117;
-        public static final double l3ReadyPosition = -.107;
+        public static final double l1ReadyPosition = .02;
+        public static final double l2ReadyPosition = .117;
+        public static final double l3ReadyPosition = .107;
 
-        public static final double l1ScorePosition = l3ReadyPosition + .04;
+        public static final double l1ScorePosition = l3ReadyPosition + -.04;
 
        
-        public static final double l2ScorePosition = l2ReadyPosition + .04;
+        public static final double l2ScorePosition = l2ReadyPosition + -.04;
 
         public static final double l4ReadyPosition = l3ReadyPosition;
+        public static final double L4CoralDropPivot = -.04; //when scoring l4 how should the pivot change. 
 
         public static final double maxStatorCurrent = 60;
 
@@ -178,7 +179,7 @@ public class constants {
         public static final double kA = 0.0;
         public static final double kV = 0.0;
         public static final double kS = 0.0;//2.5;
-        public static final double kG = -0.6;//-21;
+        public static final double kG = 0.15;//0.6;//-21;
 
         public static final double Accel = 30.0;//9.0;//10.0;
         public static final double Jerk = 0;//400.0;
