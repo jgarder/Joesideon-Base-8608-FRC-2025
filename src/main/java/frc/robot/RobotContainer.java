@@ -90,7 +90,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    //private final CommandXboxController Testjoystick = new CommandXboxController(1);
+    private final CommandXboxController Testjoystick = new CommandXboxController(1);
 
     private final IntSupplier OptionalButtonSupplier = ()-> {
         if(joystick.x().getAsBoolean())
@@ -326,7 +326,13 @@ public class RobotContainer {
 
         //TEST CONFIGURATIONS
         // Testjoystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));// reset the field-centric heading on start button press
-        
+        Testjoystick.a().and(joystick.x().negate()).onTrue(gotoL2Travel()
+        .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
+        );
+        Testjoystick.b().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
+        Testjoystick.y().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
+        Testjoystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+            .onTrue(ParkElevatorAndHead());
         // Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
         // Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
         // Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());

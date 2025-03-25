@@ -12,7 +12,10 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
@@ -395,9 +398,13 @@ public class Pivot extends SubsystemBase {
     setPointPosition = wantedposition;
     NT_SetpointPosition.set(setPointPosition);
 
+    // m_PivotMotor.setControl( 
+    //   new MotionMagicTorqueCurrentFOC(wantedposition)
+    //   .withSlot(1)
+  
+    // );
     m_PivotMotor.setControl( 
-      new MotionMagicTorqueCurrentFOC(wantedposition)
-      .withSlot(1)
+      PivotRequest.withPosition(wantedposition)
   
     );
   }
@@ -406,7 +413,15 @@ public class Pivot extends SubsystemBase {
     NT_BrakeEnabled.set(true);
     m_PivotMotor.setControl(new StaticBrake());
   }  
+  //Kraken x60 FOC kT = 19.81;  From https://ctre.download/files/datasheet/Motor%20Performance%20Analysis%20Report.pdf
+  //private MotionMagicTorqueCurrentFOC PivotRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
+  
+  private MotionMagicVoltage PivotRequest = new MotionMagicVoltage(0).withSlot(1).withFeedForward(0);
+  //private MotionMagicExpoTorqueCurrentFOC
 
+
+
+  ///////
   private final TorqueCurrentFOC m_torqueCurrentReq = new TorqueCurrentFOC(0.0);
   
   private final SysIdRoutine m_pivotSysID =
@@ -431,4 +446,6 @@ public class Pivot extends SubsystemBase {
  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_pivotSysID.dynamic(direction);
  }
+
+ //////////////
 }
