@@ -13,7 +13,7 @@ public class C_TridentIntake extends Command {
     RearIntake ss_RearIntake;
     boolean isloaded = false;
     public final Timer startupdebounceTimer = new Timer();
-    private double debounceSecondsNeeded = .30;
+    private double debounceSecondsNeeded = .50;
     private double dutycycleSpeed = constants.MantaRay.IntakeDutyCycle;
     //private double RearIntakeDutyCyle = constants.RearMotorizedIntake.dutyCyclePercent;
     public C_TridentIntake(MantaRay incomingss_Trident, RearIntake _ss_RearIntake,double _dutycycleSpeed)
@@ -35,10 +35,12 @@ public class C_TridentIntake extends Command {
     public void initialize() {
         //RearIntakeDutyCyle = constants.RearMotorizedIntake.dutyCyclePercent;
         startupdebounceTimer.restart();
+        
         ss_Trident.setUnloaded();
         ss_Trident.setDutyCycle(dutycycleSpeed);
         //ss_RearIntake.GotoDutyCycle(RearIntakeDutyCyle);
         ss_RearIntake.GotoVelocity(constants.RearMotorizedIntake.IntakeRps);
+        ss_Trident.intakedebounceTimer.restart();
     }
     
     @Override
@@ -47,9 +49,9 @@ public class C_TridentIntake extends Command {
     //is called once per periodic and will run the end command when true is returned. 
     @Override
     public boolean isFinished(){
-        
-        if(startupdebounceTimer.get()<debounceSecondsNeeded){return false;}
         boolean isloaded = ss_Trident.isLoaded();
+        if(startupdebounceTimer.get()<debounceSecondsNeeded){return false;}
+        
         
         // if(isloaded)
         // {

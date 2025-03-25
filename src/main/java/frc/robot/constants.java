@@ -67,8 +67,8 @@ public class constants {
         public static final double IntakeDutyCycle = .4;
         public static final double intakeAmpLimit = 50;
 
-        public static final double intakeAmpCutoffThreshold = 20; //20
-        public static final double intakeAmpLimittime = 0.06;//.125;
+        public static final double intakeAmpCutoffThreshold = 24; //20
+        public static final double intakeAmpLimittime = 0.125;//.125;
     }
 
     public class RearMotorizedIntake {
@@ -121,8 +121,8 @@ public class constants {
         public static final double CannotPivotParkBelowElevatorPosition = 18;//when elevator is above this, pivot must be in travel position for elevator to go below this number
         public static final double CannotPivotParkAboveElevatorPosition = 2.0;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
         
-        public static final double groundPickup = 5.2;
-
+        public static final double groundPickup = minElevatorHeight;
+        public static final double AngledgroundPickup = 4.5;
         public static final double ProcessorPos = 4.0;
         public static final double l1Position = 5.5;
         public static final double l2Position = 9.0;
@@ -138,23 +138,24 @@ public class constants {
         public static final double gearRatio = 5*9*(52/26);//is now 5:1 on 9:1 on 26T driving gear to 52T driven gear - 90:1 gear ratio.
         public static final double absoMagnetOffset = -0.480712890625;//0.4716796875;//
        
-        public static final double minPositionToBeSafeFromStage1Crossbar = .192;//.03;////3.55; //cant be folded up too much when elevator goes up or else head crashes.
+        public static final double minPositionToBeSafeFromStage1Crossbar = .18;//.03;////3.55; //cant be folded up too much when elevator goes up or else head crashes.
         public static final double maxPositionToBeSafeFromSmashingintoReef = .107;//0.060;//7.1;// cant be pointing down too much when elevator goes down or else head crashes. 
-        public static final double maxPositionToBeSafeFromSmashingintoSelf = .192;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
+        //public static final double maxPositionToBeSafeFromSmashingintoSelf = .192;//.119;//14;// cant be pointing down too much when elevator goes down or else head crashes. 
         
         public static final double MoveTolerance = .015;//.003;
         public static final double MovementDebounceTime = .02;//.1;
-        public static final double maxposition = 0.245;
+        public static final double maxposition = 0.243;
         public static final double minposition = -0.06;//-0.247;
         public static final double AddedOffsetToMinPositionToHold = 0.01;
         public static final double ParkPosition = maxposition;
         public static final double rearintakePos = maxposition;//-0.242;//minposition;
-        public static final double TravelPosition = .13;//-.160;//-.120;//.0319;//3.75;
-
+        public static final double SafteyFromWobbleAmount = -.05;
+        public static final double TravelPosition = minPositionToBeSafeFromStage1Crossbar + SafteyFromWobbleAmount; //.13;//-.160;//-.120;//.0319;//3.75;
+        
         public static final double AlgaeReefPickup = 0.01;
         public static final double processorPivot = .050;
         public static final double GroundPickupPosition = 0.00;//12.0;
-
+        public static final double BargePosition = .18;
 
         public static final double CoralGroundPickup = 0.06;
 
@@ -167,14 +168,17 @@ public class constants {
        
         public static final double l2ScorePosition = l2ReadyPosition + -.04;
 
-        public static final double l4ReadyPosition = l3ReadyPosition;
-        public static final double L4CoralDropPivot = -.04; //when scoring l4 how should the pivot change. 
+        public static final double l4ReadyPosition = l3ReadyPosition +.04;
+        public static final double SideScorePosition = 0.05;
+        public static final double L4CoralDropPivotAmount = -.04; //when scoring l4 how should the pivot change. 
+        
+        
 
         public static final double maxStatorCurrent = 60;
 
         public static final double kP = 100;//320;//350;//270.0;
         public static final double kI = 4.0;//400;//160;//60.0;
-        public static final double kD = 7.0;//83;//80.0;
+        public static final double kD = 20.0;//83;//80.0;
 
         public static final double kA = 0.0;
         public static final double kV = 0.0;
@@ -184,8 +188,7 @@ public class constants {
         public static final double Accel = 30.0;//9.0;//10.0;
         public static final double Jerk = 0;//400.0;
         public static final double Cruise = 120;//100.0;
-        public static final double SideScore = -0.05;
-        public static final double BargePosition = 0;
+  
         
         
 

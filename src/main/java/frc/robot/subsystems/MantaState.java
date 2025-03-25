@@ -118,7 +118,7 @@ public class MantaState extends SubsystemBase {
 
       ss_Pivot = ssPivot;
       IsPivotFoldedOut = ss_Pivot.IsPivotFoldedOut;
-      IsPivotFoldedFarOut = ss_Pivot.IsPivotFoldedFarOut;
+      //IsPivotFoldedFarOut = ss_Pivot.IsPivotFoldedFarOut;
       IsPivotinTravelPosition = ss_Pivot.IsPivotinTravelPosition;
       instance = this;
 
@@ -161,7 +161,7 @@ public class MantaState extends SubsystemBase {
     public static BooleanSupplier getAltControlModeDisabled = ()->{return !AltControlModeEnabled;};
     public static BooleanSupplier getLimeLightBypassed = ()->{return LimeLightBypassed;};
     public BooleanSupplier IsPivotFoldedOut;
-    public BooleanSupplier IsPivotFoldedFarOut;
+    //public BooleanSupplier IsPivotFoldedFarOut;
     public BooleanSupplier IsPivotinTravelPosition;
     public static BooleanSupplier NearestTagIsUpperAlgae = ()->{AprilTag targetTag = PoseFinder.getClosestTagofTypeToRobotCenterForAlliance(DriveTrain.getState().Pose, TagType.Reef); return targetTag.algaeOnUpper;};
 

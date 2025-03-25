@@ -119,6 +119,11 @@ public class MantaRay extends SubsystemBase {
       _isloaded = false;
       MantaState.NT_IsLoaded.set(_isloaded);
     }
+    public void stopDebouncer()
+    {
+      intakedebounceTimer.stop();
+      intakedebounceTimer.reset();
+    }
 
     private boolean _isloaded = false;
     public BooleanSupplier getisloaded = ()->{return _isloaded;};
@@ -146,8 +151,7 @@ public class MantaRay extends SubsystemBase {
             {
                 System.out.println("ISLOADED NOW");
                 //alert.set(true);
-                intakedebounceTimer.stop();
-                intakedebounceTimer.reset();
+                stopDebouncer();
                 _isloaded = true;
                 MantaState.NT_IsLoaded.set(_isloaded);
                 return true;

@@ -162,7 +162,11 @@ public class RobotContainer {
             .alongWith(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.parkPostion,true));//ss_Pivot.C_GotoPositon(constants.PlasmaPivot.TravelPosition);
     }
     private SequentialCommandGroup GotoBargePosition() {
-        return ss_Elevator.GotoPositonCommand(constants.Elevator.l4Position).alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition).withTimeout(.50)).andThen(
+        return ss_Elevator.GotoPositonCommand(constants.Elevator.l4Position)
+        .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.TravelPosition).withTimeout(.25),
+        new InstantCommand(()->{isbargeing = true;})
+        )
+        .andThen(
             new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition).alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.BargePosition))     
             );
     }
@@ -209,7 +213,7 @@ public class RobotContainer {
         return new C_DropElevateToScore(ss_Elevator)
         .deadlineFor(TridentCoralBumpOut()
         .alongWith(
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition + constants.PlasmaPivot.L4CoralDropPivot)
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition + constants.PlasmaPivot.L4CoralDropPivotAmount)
             )
             .finallyDo(()->{ss_Trident.setDutyCycle(0);}));
         //
@@ -221,7 +225,7 @@ public class RobotContainer {
     public Command CoralDropScoreL2()
     {
         return new C_DropElevateToScore(ss_Elevator)
-            .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.SideScore))//.withTimeout(1)
+            .alongWith(new C_PivotToPosition(ss_Pivot,constants.PlasmaPivot.SideScorePosition))//.withTimeout(1)
             .deadlineFor(TridentCoralBumpOut()//.withTimeout(2)
             .finallyDo(()->{ss_Trident.setDutyCycle(0);}));
                                     //.setDutyCycle(0)
@@ -263,10 +267,11 @@ public class RobotContainer {
         .andThen(new WaitCommand(1))
         .andThen(ss_Trident.Stop());
     }
+    public double BargeAlgaeScoringDutyCycle = -.75;
     public Command TridentBargeAlgaeBumpOut()
     {
-        return ss_Trident.bumpout()
-        .andThen(new WaitCommand(.25))
+        return ss_Trident.bumpout(BargeAlgaeScoringDutyCycle)
+        .andThen(new WaitCommand(.5))
         .finallyDo(()->{ss_Trident.HoldPosition();});
         //.andThen(ss_Trident.Stop());
     }
@@ -294,18 +299,37 @@ public class RobotContainer {
     //fixed the robot spitting out coral, ground intake should work well for both now
     public Command GroundIntake(){
         return new ParallelCommandGroup(
-            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
-            new C_TridentIntake(ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout),
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.groundPickup),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
-            new SequentialCommandGroup(new WaitCommand(.25),new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension,true))
+            new SequentialCommandGroup(
+                new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.climbExtension),
+            new WaitCommand(.1),//small delay to stop motor from smasshing into rear intake. might not be needed when motor is 90 in future. 
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension,true),
+            new WaitCommand(.1),//small delay to debounce the head moving and causing high amps. 
+            new C_TridentIntake(ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout)
+            )
+            )
+        .finallyDo(groundIntakeReset());
+    }
+    public Command GroundIntakeAngled(){
+        return new ParallelCommandGroup(
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.AngledgroundPickup),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.minposition),
+            new SequentialCommandGroup(
+                new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.climbExtension),
+            new WaitCommand(.1),//small delay to stop motor from smasshing into rear intake. might not be needed when motor is 90 in future. 
+            new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.maxposition,true),
+            new WaitCommand(.1),//small delay to debounce the head moving and causing high amps. 
+            new C_TridentIntake(ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout)
+            )
             )
         .finallyDo(groundIntakeReset());
     }
 
     public Runnable groundIntakeReset(){
         return ()->{
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition).andThen(GotoTravelPostion()).schedule();
-            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight).schedule();};
+            GotoTravelPostion().alongWith(new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight)).schedule();
+        };
     }
 
     public Runnable traveltopark()
@@ -321,6 +345,7 @@ public class RobotContainer {
 
 
     ///////////////
+    private boolean isbargeing = false;
     private double testchoice = 0;
     DoubleSupplier gettestchoice = ()->{return testchoice;};
     private DoubleSupplier getYAxis = ()->{ return joystick.getLeftX();};
@@ -399,7 +424,7 @@ public class RobotContainer {
 
         joystick.a().and(joystick.x().negate()).whileTrue(DebugIntake());
         //Algae 
-        joystick.a().and(joystick.x()).whileTrue(TridentRunReverse().alongWith(new InstantCommand(()->{RearIntake.GotoDutyCycle(-constants.RearMotorizedIntake.ReversingdutyCyclePercent);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
+        joystick.a().and(joystick.x()).whileTrue(TridentBargeAlgaeBumpOut().alongWith(new InstantCommand(()->{RearIntake.GotoDutyCycle(-constants.RearMotorizedIntake.ReversingdutyCyclePercent);})).finallyDo(()->{ss_Trident.HoldPosition(); RearIntake.COAST();}));
 
         //limelight bypass
         joystick.b().onTrue(new InstantCommand(()->{MantaState.setLimeLightBypassed(true);})).onFalse(new InstantCommand(()->{MantaState.setLimeLightBypassed(false);}));
@@ -443,10 +468,10 @@ public class RobotContainer {
         joystick.leftTrigger().and(joystick.x().negate()).whileTrue(GroundIntake());
 
         //score algae in amp
-        joystick.leftTrigger().and(joystick.x()).whileTrue(new InstantCommand(()->{}));
+        joystick.leftTrigger().and(joystick.x()).toggleOnTrue(GroundIntakeAngled());
 
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(ParkElevatorAndHead());
+            .onTrue(ParkElevatorAndHead().alongWith(new InstantCommand(()->{isbargeing = false;})));
     
 
         //Faster

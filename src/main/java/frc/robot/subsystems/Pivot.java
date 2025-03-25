@@ -216,7 +216,7 @@ public class Pivot extends SubsystemBase {
 
 
     NT_FoldedOut.set(IsPivotFoldedOut.getAsBoolean());
-    NT_FoldedUpEnough.set(IsPivotFoldedFarOut.getAsBoolean());
+    //NT_FoldedUpEnough.set(IsPivotFoldedFarOut.getAsBoolean());
     NT_FoldedUpFromReef.set(IsPivotAwayFromReef.getAsBoolean());
     NT_ElevatorTravelPosition.set(IsPivotinTravelPosition.getAsBoolean());
 
@@ -257,9 +257,13 @@ public class Pivot extends SubsystemBase {
   {
     if (setPointPosition != _requestedPosition) {
       if(MantaState.ss_Elevator.currentState == POSITION.parked){GotoPosition(_requestedPosition);}
+      // else if (MantaState.ss_Elevator.GetRequestedPostion() > constants.Elevator.)
+      // {
+
+      // }
       else
       {
-          if(_requestedPosition <= constants.PlasmaPivot.TravelPosition)
+          if(_requestedPosition <= constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar)
             {
               //check if pivot is in a safe travel position
              
@@ -358,7 +362,7 @@ public class Pivot extends SubsystemBase {
   public BooleanSupplier IsPivotFoldedOut = ()->{return currentPosition < constants.PlasmaPivot.minPositionToBeSafeFromStage1Crossbar ? true:false;};
   public BooleanSupplier IsPivotAwayFromReef = ()->{return currentPosition > constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoReef ? true:false;};
 
-  public BooleanSupplier IsPivotFoldedFarOut = ()->{return currentPosition > constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};
+  //public BooleanSupplier IsPivotFoldedFarOut = ()->{return currentPosition > constants.PlasmaPivot.maxPositionToBeSafeFromSmashingintoSelf ? true:false;};
   public BooleanSupplier IsPivotinTravelPosition = ()->{return IsPivotFoldedOut.getAsBoolean() & IsPivotAwayFromReef.getAsBoolean();};
   public BooleanSupplier IsPivotParked = ()->{return frc.robot.AlphaBots.Tools.isPosAtSetpoint(getPosition(),constants.PlasmaPivot.ParkPosition,constants.PlasmaPivot.MoveTolerance);};
 
