@@ -21,6 +21,17 @@ public class PoseFinder {
         return new AprilTag(0, "NotFound", new Pose2d(), 0,Alliance.Blue);
     }
 
+    public static Double getDistanceToTagID(Pose2d RobotLoc,int _ID)
+    {
+      //get tag by ID
+      AprilTag AprilTagByID = getTagbyID(_ID);
+      //Calculate Robot Center to Tag.
+      double distToThisTag = Tools.getdistancetopose(RobotLoc, AprilTagByID.Pose);
+      //return thie distance to caller
+      System.out.println("Distance to tag ID:"+_ID+" is distance : "+distToThisTag );
+      return distToThisTag;
+    }
+
     public static AprilTag getClosestTagToRobotCenter(Pose2d RobotLoc)
     {
       double closestSoFar = 99999;
