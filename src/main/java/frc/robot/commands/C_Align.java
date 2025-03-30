@@ -62,40 +62,6 @@ public class C_Align extends Command{
     public C_Align(Pose2d PosePositionGoal){
         SetupAlign(PosePositionGoal);
     }
-    public C_Align(Pose2d PosePositionGoal, boolean onthefly){
-      CommandScheduler.getInstance().removeComposedCommand(this);//wishing
-      this.beforeStarting(C_OnTheFlyAlign(PosePositionGoal));//wishing
-
-      //exists just to seperate the two constructors
-      @SuppressWarnings("unused")
-      boolean ontheFly = onthefly;
-    }
-
-
-    private Command C_OnTheFlyAlign(Pose2d PosePositionGoal){
-      TargetPose = PosePositionGoal;
-      // List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-      //         //new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
-      //         new Pose2d(5, 5, Rotation2d.fromDegrees(0)),
-      //         new Pose2d(3, 5, Rotation2d.fromDegrees(0))
-      // );
-
-      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-
-      Command pathfindingCommand = AutoBuilder.pathfindToPose(
-        TargetPose,
-        constraints,
-        0.0);
-      // PathPlannerPath path = new PathPlannerPath(
-      //   waypoints,
-      //   constraints,
-      //   null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
-      //   new GoalEndState(0.0, TargetPose.getRotation()) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect
-      //   );
-      //   path.preventFlipping = true;
-      //   return AutoBuilder.followPath(path);
-      return pathfindingCommand;
-    }
 
 
     private void SetupAlign(Pose2d PosePositionGoal) {

@@ -11,10 +11,13 @@ import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.AlphaBots.AprilTagSystem.PoseFinder;
 import frc.robot.AlphaBots.AprilTagSystem.config;
 import frc.robot.commands.C_Align;
@@ -60,12 +63,16 @@ public class PathToPose {
     {
       return PathToPose.ontheFlyThenPidReverseStraightAlign(TagID, config.ontheFlyDistanceFromCorrect);
     }
-
+    public static double DoNotPathPlannInRangemeters = Units.inchesToMeters(48);
+    public static double PathplannerSpeedSettleTimerSeconds = 0.0;
+    
     public static SequentialCommandGroup ontheFlyThenPidReverseStraightAlign(int TagID, double OntheFlyPadding)
     {
       return new SequentialCommandGroup(
         new PrintCommand("Reverse Straight Aligned To Tag ID " + TagID + "!"),
-        new DeferredCommand(()->{return C_OnTheFlyWaypointAlign(PoseFinder.getReverseStraightOutLoc(TagID,config.ontheFlyDistanceFromCorrect));},Set.of(MantaState.DriveTrain)),
+        new DeferredCommand(()->{return C_OnTheFlyWaypointAlign(PoseFinder.getReverseStraightOutLoc(TagID,config.ontheFlyDistanceFromCorrect)).andThen(new WaitCommand(PathplannerSpeedSettleTimerSeconds));},Set.of(MantaState.DriveTrain))
+            .unless(()->{return PoseFinder.getDistanceToTagID(MantaState.DriveTrain.getState().Pose, TagID) < DoNotPathPlannInRangemeters;})
+            .unless(()->{return DriverStation.isAutonomous();}),
         new C_Align(PoseFinder.getReverseStraightOutLoc(TagID,0.0))
       );
     }
@@ -78,7 +85,8 @@ public class PathToPose {
     {
       return new SequentialCommandGroup(
         new PrintCommand("Reef Aligned (LeftSide = "+ positiveTrueLeft + ") To Tag ID " + TagID + "!"),
-        //new DeferredCommand(()->{return C_OnTheFlyWaypointAlign(PoseFinder.getOffSet90Loc(TagID,config.ontheFlyDistanceFromCorrect,config.ReefWidthCenterOffset,positiveTrueLeft));},Set.of(MantaState.DriveTrain)),
+        new DeferredCommand(()->{return C_OnTheFlyWaypointAlign(PoseFinder.getOffSet90Loc(TagID,config.ontheFlyDistanceFromCorrect,config.ReefWidthCenterOffset,positiveTrueLeft)).andThen(new WaitCommand(PathplannerSpeedSettleTimerSeconds));},Set.of(MantaState.DriveTrain))
+            .unless(()->{return PoseFinder.getDistanceToTagID(MantaState.DriveTrain.getState().Pose, TagID) < DoNotPathPlannInRangemeters;}),
         new C_Align(PoseFinder.getOffSet90Loc(TagID,0.0,config.ReefWidthCenterOffset,positiveTrueLeft))
       );
     }

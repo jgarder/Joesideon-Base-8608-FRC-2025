@@ -144,7 +144,7 @@ public class constants {
         
         public static final double MoveTolerance = .015;//.003;
         public static final double MovementDebounceTime = .02;//.1;
-        public static final double maxposition = 0.243;
+        public static final double maxposition = 0.241;
         public static final double minposition = -0.06;//-0.247;
         public static final double AddedOffsetToMinPositionToHold = 0.01;
         public static final double ParkPosition = maxposition;
