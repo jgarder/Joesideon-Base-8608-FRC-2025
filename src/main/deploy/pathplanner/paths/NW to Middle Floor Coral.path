@@ -1,0 +1,95 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.6990359042553194,
+        "y": 5.355252659574468
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.8938829787234046,
+        "y": 6.172074468085105
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.213563829787234,
+        "y": 4.2700465425531915
+      },
+      "prevControl": {
+        "x": 1.5636303191489362,
+        "y": 4.643450797872341
+      },
+      "nextControl": {
+        "x": 1.0425785475669018,
+        "y": 4.087662241518171
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.2404255319148936,
+        "y": 4.106682180851063
+      },
+      "prevControl": {
+        "x": 1.3769281914893616,
+        "y": 3.6165890957446805
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.6620046620046626,
+      "maxWaypointRelativePos": 1.6083916083916072,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 240.0,
+        "maxAngularAcceleration": 240.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 1.219,
+        "y": 4.026
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.20046620046620017,
+      "maxWaypointRelativePos": 1.2400932400932405,
+      "name": "Point Towards Coral"
+    }
+  ],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.2,
+    "maxAcceleration": 10.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "FloorCoral 4 coral Pickups",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -58.495733280795825
+  },
+  "useDefaultConstraints": true
+}

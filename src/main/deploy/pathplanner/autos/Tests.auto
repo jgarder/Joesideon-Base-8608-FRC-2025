@@ -7,19 +7,44 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Se To Source"
+            "pathName": "(Test)Start to NW"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "DoclosestSourceIntake"
+            "name": "DoclosestRightScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "NW to Middle Floor Coral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GroundIntakeCoral"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle Floor Coral to W"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "DoclosestLeftScoreL4"
           }
         }
       ]
