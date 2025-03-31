@@ -90,7 +90,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    //private final CommandXboxController Testjoystick = new CommandXboxController(1);
+    private final CommandXboxController Testjoystick = new CommandXboxController(1);
 
     private final IntSupplier OptionalButtonSupplier = ()-> {
         if(joystick.x().getAsBoolean())
@@ -153,6 +153,17 @@ public class RobotContainer {
             .alongWith(new C_TridentIntake(ss_Trident,RearIntake).withTimeout(5))
             .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion,true)
             .alongWith(new C_TridentIntake(ss_Trident,RearIntake).asProxy().withTimeout(.4),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
+            );
+    }
+    public Command Auto_AlgaeReefIntake()
+    {
+        return
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AlgaeReefPickup)
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.ReefAlgaePickupExtension))
+            .alongWith(new C_TridentIntake(ss_Trident,RearIntake).withTimeout(5))
+            .andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.parkPostion,true)
+            .alongWith(new C_TridentIntake(ss_Trident,RearIntake).withTimeout(.4),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition))
             );
     }
@@ -267,7 +278,7 @@ public class RobotContainer {
         .andThen(new WaitCommand(1))
         .andThen(ss_Trident.Stop());
     }
-    public double BargeAlgaeScoringDutyCycle = -.75;
+    public double BargeAlgaeScoringDutyCycle = -1.0;//-.75;
     public Command TridentBargeAlgaeBumpOut()
     {
         return ss_Trident.bumpout(BargeAlgaeScoringDutyCycle)
@@ -353,6 +364,11 @@ public class RobotContainer {
         .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))//.withTimeout(2)
         .andThen(AlgaeReefIntake(),gotoMinTravel());
     }
+    private SequentialCommandGroup Auto_GetClosestAlgae() {
+        return SelectCommands.C_ReefCenterAlgaeSelectCommand().withTimeout(1.5)
+        .alongWith(new ConditionalCommand(gotoUpperAlgaeTravel(),gotoLowerAlgaeTravel(),MantaState.NearestTagIsUpperAlgae))//.withTimeout(2)
+        .andThen(Auto_AlgaeReefIntake(),gotoMinTravel());
+    }
 
 
     ///////////////
@@ -372,6 +388,7 @@ public class RobotContainer {
         // Testjoystick.y().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
         // Testjoystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
         //     .onTrue(ParkElevatorAndHead());
+        Testjoystick.a().onTrue(alignReefForCoral().until(MantaState.getLimeLightBypassed));
         // Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
         // Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
         // Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());
@@ -448,12 +465,12 @@ public class RobotContainer {
         }
         
         joystick.y().onTrue(
-            //SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
-            //.alongWith(
+            SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
+            .alongWith(
                 GotoBargePosition()
-            //    )
-            //.andThen(TridentBargeAlgaeBumpOut())
-            //.finallyDo(traveltopark())
+                )
+            .andThen(TridentBargeAlgaeBumpOut())
+            .finallyDo(traveltopark())
             );
 
 
@@ -587,14 +604,12 @@ public class RobotContainer {
         .andThen(PivotIntoReefL4(),CoralDropScoreL4().withTimeout(.25));
     }
     public Command Control_AutonAlignClosestLeftScoreL4() {
-        return SelectCommands.C_ReefLeftSelectCommand().withTimeout(2.5)
-        .alongWith(gotoL4Travel().andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l4ScorePosition)))
-        .andThen(PivotIntoReefL4(),CoralDropScoreL4().withTimeout(.25));
+        return SelectCommands.C_ReefLeftSelectCommand().withTimeout(1.5)
+        .alongWith(ScoreL4());
     }
     public Command Control_AutonAlignClosestRightScoreL4() {
-        return SelectCommands.C_ReefRightSelectCommand().withTimeout(2.5)
-        .alongWith(gotoL4Travel().andThen(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l4ScorePosition)))
-        .andThen(PivotIntoReefL4(),CoralDropScoreL4().withTimeout(.25));
+        return SelectCommands.C_ReefRightSelectCommand().withTimeout(1.5)
+        .alongWith(ScoreL4());
     }
     public Command ScoreL4()
     {
@@ -639,13 +654,16 @@ public class RobotContainer {
         NamedCommands.registerCommand("ClearRearIntake", new C_ClearRearIntake(RearIntake));
         NamedCommands.registerCommand("ParkElevatorAndHead", ParkElevatorAndHead().withTimeout(3));
         NamedCommands.registerCommand("PivotPullIntake", control_PivotPullIntakeCommand().withTimeout(1));
-        NamedCommands.registerCommand("GrabClosestAlgae", GetClosestAlgae());
+        NamedCommands.registerCommand("GrabClosestAlgae", Auto_GetClosestAlgae());
         NamedCommands.registerCommand("ShootClosestBarge", control_AutoBarge());
+        NamedCommands.registerCommand("GotoAlgaeTravel", GotoTravelPostion().alongWith(new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight)).withTimeout(1));
+        
+        NamedCommands.registerCommand("Spinintake", new C_TridentIntake(1,ss_Trident,RearIntake).withTimeout(2));
         //unused below lol
         NamedCommands.registerCommand("Test", new InstantCommand(()->{System.out.println("running test command");}));
         NamedCommands.registerCommand("AlignprocSource",  SelectCommands.C_SourceSelectCommand().until(ss_Trident.getisloaded));
         NamedCommands.registerCommand("RearIntake", RearIntake()); //new C_ClearRearIntake(RearIntake).asProxy()
-        NamedCommands.registerCommand("Spinintake", new C_TridentIntake(ss_Trident,RearIntake).withTimeout(intaketimeout));
+       
         NamedCommands.registerCommand("AlignReefLeft",  SelectCommands.C_ReefLeftSelectCommand().withTimeout(5));
         NamedCommands.registerCommand("AlignReefRight",  SelectCommands.C_ReefRightSelectCommand().withTimeout(5));
         NamedCommands.registerCommand("gotoL4Travel", gotoL4Travel());

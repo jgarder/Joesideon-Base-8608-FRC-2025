@@ -23,25 +23,9 @@
         "x": 1.5519614361717302,
         "y": 4.456748670207102
       },
-      "nextControl": {
-        "x": 1.0730541003845653,
-        "y": 3.804544430965955
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.6605053191504533,
-        "y": 4.165026595739018
-      },
-      "prevControl": {
-        "x": 1.9603723404270492,
-        "y": 3.93164893616455
-      },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterPickedUp"
     }
   ],
   "rotationTargets": [],
@@ -49,7 +33,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0.6013986013986012,
-      "maxWaypointRelativePos": 1.1095571095571082,
+      "maxWaypointRelativePos": 1,
       "constraints": {
         "maxVelocity": 1.3,
         "maxAcceleration": 5.0,
@@ -75,7 +59,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.2,
-    "maxAcceleration": 10.0,
+    "maxAcceleration": 11.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,
@@ -83,7 +67,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -58.495733280795825
   },
   "reversed": false,
   "folder": "FloorCoral 4 coral Pickups",

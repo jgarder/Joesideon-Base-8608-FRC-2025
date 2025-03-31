@@ -11,7 +11,7 @@ public class constants {
         public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.9);//.6;
         public static final double minRZErrorToCorrect = .9;//1;//.45;//0.5;//1;//2;//1.25;
 
-        public static  double k_PoseX_P = 2.6;//3.0;//2.1;//4;
+        public static  double k_PoseX_P = 3.0;//2.6;//3.0;//2.1;//4;
         public static  double k_PoseX_I = 0.1;//.6;//0.0;//0.000001;//0.02;
         public static  double k_PoseX_D = 0.0;//.0;//0.06;
 
@@ -85,7 +85,7 @@ public class constants {
        
         public static double ReversingdutyCyclePercent = .16;
        // public static double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
-        public static  double IntakeRps = 15;//24;//25; // this is "WantedRPM * 60" to make the RPM into RPS
+        public static  double IntakeRps = 19;//24;//25; // this is "WantedRPM * 60" to make the RPM into RPS
         //public static double feedforwardsamps = 12.5; //kt = .0198
     }
  
@@ -155,7 +155,7 @@ public class constants {
         public static final double AlgaeReefPickup = 0.01;
         public static final double processorPivot = .050;
         public static final double GroundPickupPosition = 0.00;//12.0;
-        public static final double BargePosition = .18;
+        public static final double BargePosition = .17;
 
         public static final double CoralGroundPickup = 0.06;
 
@@ -185,8 +185,8 @@ public class constants {
         public static final double kS = 0.0;//2.5;
         public static final double kG = 0.15;//0.6;//-21;
 
-        public static final double Accel = 25;//30.0;        //9.0;//10.0;
-        public static final double Jerk = 120;//0;        //400.0;
+        public static final double Accel = 30;//30.0;        //9.0;//10.0;
+        public static final double Jerk = 0;//120;//0;        //400.0;
         public static final double Cruise = 120;//100.0;
   
         
@@ -200,7 +200,7 @@ public class constants {
 
     public class PlasmaExtension {
         //CURRENTLY EACH "1" POSITION is .33" approx more etenxsion.
-        public static double LiveOffset = 2.25;//-2.0; 
+        public static double LiveOffset = 3.25;//-2.0; 
         //0.7407407
         public static final double gearRatio = 4*5;//3*3*3; //27:1 gear reduction (was60)
   

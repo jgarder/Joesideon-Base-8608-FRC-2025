@@ -30,6 +30,13 @@ public class C_TridentIntake extends Command {
         addRequirements(incomingss_Trident);
         addRequirements(ss_RearIntake);
     }
+    public C_TridentIntake(double debounceTime,MantaRay incomingss_Trident, RearIntake _ss_RearIntake){
+        debounceSecondsNeeded = debounceTime;
+        ss_Trident = incomingss_Trident;
+        ss_RearIntake = _ss_RearIntake;
+        addRequirements(incomingss_Trident);
+        addRequirements(ss_RearIntake);
+    }
 
     @Override
     public void initialize() {

@@ -91,19 +91,45 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "NW to Middle Floor Coral"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "NW to Middle Floor Coral"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GroundIntakeCoral"
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "named",
+                "type": "parallel",
                 "data": {
-                  "name": "GroundIntakeCoral"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Middle Floor Coral TO WLeft"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "gotoL4Travel"
+                      }
+                    }
+                  ]
                 }
               }
             ]

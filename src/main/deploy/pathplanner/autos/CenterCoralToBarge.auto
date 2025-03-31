@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "Start To EastRight"
           }
         },
         {
@@ -23,21 +23,59 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ParkElevatorAndHead"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterToBarge"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CenterToBarge"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spinintake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GotoAlgaeTravel"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
             "name": "ShootClosestBarge"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Barge to NE"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GotoAlgaeTravel"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GrabClosestAlgae"
           }
         }
       ]
