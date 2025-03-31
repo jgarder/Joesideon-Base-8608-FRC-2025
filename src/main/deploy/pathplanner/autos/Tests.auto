@@ -36,15 +36,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Middle Floor Coral to W"
+            "name": "DoclosestLeftScoreL4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "DoclosestLeftScoreL4"
+            "name": "ParkElevatorAndHead"
           }
         }
       ]

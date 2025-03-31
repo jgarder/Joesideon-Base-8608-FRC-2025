@@ -296,7 +296,6 @@ public class RobotContainer {
     double groundintakedutycycle = 1.0; 
 
     
-    //fixed the robot spitting out coral, ground intake should work well for both now
     public Command GroundIntake(){
         return new ParallelCommandGroup(
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.groundPickup),
@@ -310,6 +309,18 @@ public class RobotContainer {
             )
             )
         .finallyDo(groundIntakeReset());
+    }
+    public Command AutoGroundIntake(){
+        return new ParallelCommandGroup(
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.groundPickup),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
+            new SequentialCommandGroup(
+                new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.climbExtension),
+                new WaitCommand(.1),//small delay to stop motor from smasshing into rear intake. might not be needed when motor is 90 in future. 
+                new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension,true),
+                new WaitCommand(.1),//small delay to debounce the head moving and causing high amps. 
+                new C_TridentIntake(ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout))
+            );
     }
     public Command GroundIntakeAngled(){
         return new ParallelCommandGroup(
@@ -642,10 +653,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("ScoreL4", new SequentialCommandGroup(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()));
 
 
-        NamedCommands.registerCommand("GroundIntakeCoral", GroundIntake().withTimeout(4.5));
+        NamedCommands.registerCommand("GroundIntakeCoral", AutoGroundIntake());//.until(ss_Trident.getisloaded).andThen(ParkElevatorAndHead()));
     }
 
-    
-
-    
 }

@@ -67,7 +67,7 @@ public class constants {
         public static final double IntakeDutyCycle = .4;
         public static final double intakeAmpLimit = 50;
 
-        public static final double intakeAmpCutoffThreshold = 24; //20
+        public static final double intakeAmpCutoffThreshold = 28; //20
         public static final double intakeAmpLimittime = 0.125;//.125;
     }
 

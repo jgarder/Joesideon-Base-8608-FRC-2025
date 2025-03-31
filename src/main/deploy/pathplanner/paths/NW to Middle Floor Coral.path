@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6990359042553194,
-        "y": 5.355252659574468
+        "x": 3.5240026595744682,
+        "y": 5.296908244680851
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8938829787234046,
-        "y": 6.172074468085105
+        "x": 2.4387965425531912,
+        "y": 5.6703125
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.213563829787234,
-        "y": 4.2700465425531915
+        "x": 1.2210204058113694,
+        "y": 4.006053667623587
       },
       "prevControl": {
-        "x": 1.5636303191489362,
-        "y": 4.643450797872341
+        "x": 1.5519614361717302,
+        "y": 4.456748670207102
       },
       "nextControl": {
-        "x": 1.0425785475669018,
-        "y": 4.087662241518171
+        "x": 1.0730541003845653,
+        "y": 3.804544430965955
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.2404255319148936,
-        "y": 4.106682180851063
+        "x": 2.6605053191504533,
+        "y": 4.165026595739018
       },
       "prevControl": {
-        "x": 1.3769281914893616,
-        "y": 3.6165890957446805
+        "x": 1.9603723404270492,
+        "y": 3.93164893616455
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,10 +48,10 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.6620046620046626,
-      "maxWaypointRelativePos": 1.6083916083916072,
+      "minWaypointRelativePos": 0.6013986013986012,
+      "maxWaypointRelativePos": 1.1095571095571082,
       "constraints": {
-        "maxVelocity": 1.5,
+        "maxVelocity": 1.3,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 240.0,
         "maxAngularAcceleration": 240.0,
@@ -68,7 +68,7 @@
       },
       "rotationOffset": 0.0,
       "minWaypointRelativePos": 0.20046620046620017,
-      "maxWaypointRelativePos": 1.2400932400932405,
+      "maxWaypointRelativePos": 0.9743589743589745,
       "name": "Point Towards Coral"
     }
   ],
