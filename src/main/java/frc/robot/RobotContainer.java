@@ -642,7 +642,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("ScoreL4", new SequentialCommandGroup(PivotIntoReefL4(),CoralDropScoreL4(),ParkElevatorAndHead()));
 
 
-        NamedCommands.registerCommand("GroundIntakeCoral", GroundIntake());
+        NamedCommands.registerCommand("GroundIntakeCoral", GroundIntake().withTimeout(4.5));
     }
 
     

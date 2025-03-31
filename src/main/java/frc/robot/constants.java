@@ -185,8 +185,8 @@ public class constants {
         public static final double kS = 0.0;//2.5;
         public static final double kG = 0.15;//0.6;//-21;
 
-        public static final double Accel = 30.0;//9.0;//10.0;
-        public static final double Jerk = 0;//400.0;
+        public static final double Accel = 25;//30.0;        //9.0;//10.0;
+        public static final double Jerk = 120;//0;        //400.0;
         public static final double Cruise = 120;//100.0;
   
         
@@ -250,7 +250,7 @@ public class constants {
         public static class CatchSide {
             public static final double gearRatio = 45; //9:1 on a 5:1
             public static final double maxPostion = 5.25;//4.12; //max pos will be hook position
-            public static final double minPostion = -9; //min position will be negative and will be prolly be full climb position
+            public static final double minPostion = -9.5; //min position will be negative and will be prolly be full climb position
             public static final double startPos = 0; // we start at flat across with tips almost touching. this is out start pos
             public static final double LoadPostion = maxPostion; //the position this motor is in when we are in load mode catch side is at max hook height slide is folder back over to allow cage in
             public static final double FullClimbPostion = minPostion;

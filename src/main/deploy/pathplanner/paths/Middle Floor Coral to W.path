@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.831549657534247,
-        "y": 5.422388698630137
+        "x": 2.2637632978723405,
+        "y": 4.16502659574468
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5460616438356163,
-        "y": 5.69285102739726
+        "x": 2.718849734042553,
+        "y": 4.06000664893617
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.2835771276595744,
-        "y": 6.7671875
+        "x": 3.057247340425532,
+        "y": 4.16502659574468
       },
       "prevControl": {
-        "x": 1.3472781138766066,
-        "y": 6.190525940561602
+        "x": 2.7421875000000004,
+        "y": 4.2700465425531915
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.914926957147884
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "OtherSide",
+  "folder": "FloorCoral 4 coral Pickups",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -60.25511870305777
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
