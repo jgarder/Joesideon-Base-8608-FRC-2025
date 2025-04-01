@@ -93,6 +93,10 @@ public class josiahClimber extends SubsystemBase {
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     _configuration.CurrentLimits.StatorCurrentLimit = constants.Climber.maxStatorCurrent;
 
+    //i could just set this to false but jow says no
+    _configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    _configuration.CurrentLimits.SupplyCurrentLimit = constants.Climber.maxSupplyCurrent;
+
     _configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -117,6 +121,9 @@ public class josiahClimber extends SubsystemBase {
 
     _configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     _configuration.CurrentLimits.StatorCurrentLimit = constants.Climber.maxStatorCurrent;
+
+    _configuration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    _configuration.CurrentLimits.SupplyCurrentLimit = constants.Climber.maxSupplyCurrent;
 
     _configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     

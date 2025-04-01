@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;  
 import frc.robot.constants;
 
@@ -19,6 +21,7 @@ public class CANdleSubsystem extends SubsystemBase {
     public static CANdle staticCandle = new CANdle(constants.CanBus.CANdleID, constants.CanBus.RioCANBusName);
     private final CANdle m_candle ;
     private static final int LedCount = 300;
+    private static final int BottomLightsSubtraction = 201;
     private final Timer m_LightstimeoutUntilResetToDefault = new Timer();
     //private XboxController joystick;
     int LightsTimeoutSeconds = 2;
@@ -189,12 +192,22 @@ public class CANdleSubsystem extends SubsystemBase {
         staticCandle.animate(m_toAnimate, 0);
     }
     public static void limelightBypassLights(){
-        var m_toAnimate = new StrobeAnimation(0, 250, 0, 0, 1.0, LedCount);
+        var m_toAnimate = new StrobeAnimation(0, 250, 0, 0, .5, LedCount);
         staticCandle.animate(m_toAnimate,0);
     }
+
     public static void climbLights(){
-        staticCandle.setLEDs(255, 55, 0, 0, 0, LedCount);
-        staticCandle.configBrightnessScalar(0.1);
+        //Alliance Specific Climbing Lights
+        if(DriverStation.getAlliance().get() == Alliance.Red){
+            var  m_toAnimate = new StrobeAnimation(255, 0, 0, 0, .3, LedCount - BottomLightsSubtraction);
+            staticCandle.animate(m_toAnimate, 0);
+        }else{
+            var  m_toAnimate = new StrobeAnimation(0, 0, 255, 0, .3, LedCount - BottomLightsSubtraction);
+            staticCandle.animate(m_toAnimate, 0);}
+         
+
+        staticCandle.setLEDs(255, 55, 0, 0, LedCount - BottomLightsSubtraction, LedCount);
+        staticCandle.configBrightnessScalar(1);
     }
     public static void redLights(){
         staticCandle.setLEDs(255, 0, 0, 0, 0, LedCount);

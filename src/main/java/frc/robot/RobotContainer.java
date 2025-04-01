@@ -35,11 +35,13 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.C_Align;
+import frc.robot.commands.C_CatchMotorToPosition;
 import frc.robot.commands.C_ClearRearIntake;
 import frc.robot.commands.C_DropElevateToScore;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
 import frc.robot.commands.C_PivotToPosition;
+import frc.robot.commands.C_SlideMotorToPosition;
 import frc.robot.commands.C_TridentIntake;
 import frc.robot.AlphaBots.LimeLightPoseFilter;
 import frc.robot.AlphaBots.Tools;
@@ -315,8 +317,8 @@ public class RobotContainer {
                 new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.climbExtension),
             new WaitCommand(.1),//small delay to stop motor from smasshing into rear intake. might not be needed when motor is 90 in future. 
             new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.GroundPickupExtension,true),
-            new WaitCommand(.1),//small delay to debounce the head moving and causing high amps. 
-            new C_TridentIntake(ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout)
+            //new WaitCommand(.1),//small delay to debounce the head moving and causing high amps. 
+            new C_TridentIntake(3.0,ss_Trident,RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout)
             )
             )
         .finallyDo(groundIntakeReset());
@@ -565,7 +567,8 @@ public class RobotContainer {
             ClimbHookStartFlat()
         );
         joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
-            new ParallelCommandGroup(
+            C_ClimbHookStartFlat()//.withTimeout(1).unless(()->{return ss_Climber.getCatchPosition() < constants.Climber.CatchSide.startPos;})
+            .andThen(
                 ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.minPostion),
                 ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion))
                 //wait command acts as timeout since if the match ends the motor stops anyway
@@ -587,6 +590,11 @@ public class RobotContainer {
     private ParallelCommandGroup ClimbHookStartFlat() {
         return  ss_Climber.C_CatchGotoPositon(constants.Climber.CatchSide.startPos).alongWith(
             ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.startPos)
+      );
+    }
+    private Command C_ClimbHookStartFlat() {
+        return  new C_CatchMotorToPosition(ss_Climber,constants.Climber.CatchSide.startPos).alongWith(
+            new C_SlideMotorToPosition(ss_Climber,constants.Climber.SlideSide.startPos)
       );
     }
 

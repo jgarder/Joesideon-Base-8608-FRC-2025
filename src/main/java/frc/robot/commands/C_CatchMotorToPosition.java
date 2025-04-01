@@ -12,7 +12,7 @@ public class C_CatchMotorToPosition extends Command{
     public C_CatchMotorToPosition(josiahClimber subSys, double wantedposition){
         SubSystem = subSys;
         wantedPosition = wantedposition;
-        addRequirements(subSys);
+        //addRequirements(subSys);
     }
 
     @Override

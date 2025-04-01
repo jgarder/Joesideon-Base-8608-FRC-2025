@@ -241,6 +241,7 @@ public class constants {
         public static final double secondsToClimb = 20; //20 for actual matches, 130 for testing without waiting 2:10
 
         public static final double maxStatorCurrent = 120;
+        public static final double maxSupplyCurrent = 120;
         public static final double kP = 0.5;
         public static final double kI = 0.04;
         public static final double kD = 0;
