@@ -90,7 +90,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController Testjoystick = new CommandXboxController(1);
+    //private final CommandXboxController Testjoystick = new CommandXboxController(1);
 
     private final IntSupplier OptionalButtonSupplier = ()-> {
         if(joystick.x().getAsBoolean())
@@ -215,7 +215,7 @@ public class RobotContainer {
     }
     public Command PivotIntoReefL4()
     {
-        return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition)
+        return new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l4ReadyPosition)
                 .alongWith(new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.l4ScorePosition));
     }
     
@@ -224,7 +224,7 @@ public class RobotContainer {
         return new C_DropElevateToScore(ss_Elevator)
         .deadlineFor(TridentCoralBumpOut()
         .alongWith(
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l3ReadyPosition + constants.PlasmaPivot.L4CoralDropPivotAmount)
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.l4ReadyPosition + constants.PlasmaPivot.L4CoralDropPivotAmount)
             )
             .finallyDo(()->{ss_Trident.setDutyCycle(0);}));
         //
@@ -388,7 +388,7 @@ public class RobotContainer {
         // Testjoystick.y().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
         // Testjoystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
         //     .onTrue(ParkElevatorAndHead());
-        Testjoystick.a().onTrue(alignReefForCoral().until(MantaState.getLimeLightBypassed));
+        //Testjoystick.a().onTrue(alignReefForCoral().until(MantaState.getLimeLightBypassed));
         // Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
         // Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
         // Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());

@@ -85,7 +85,7 @@ public class constants {
        
         public static double ReversingdutyCyclePercent = .16;
        // public static double dutyCyclePercent = .14; // different from wanted an rps, its just volt out. 
-        public static  double IntakeRps = 19;//24;//25; // this is "WantedRPM * 60" to make the RPM into RPS
+        public static  double IntakeRps = 17.25;//24;//25; // this is "WantedRPM * 60" to make the RPM into RPS
         //public static double feedforwardsamps = 12.5; //kt = .0198
     }
  
@@ -162,15 +162,15 @@ public class constants {
         public static final double l1ReadyPosition = .02;
         public static final double l2ReadyPosition = .117;
         public static final double l3ReadyPosition = .107;
+        public static final double l4ReadyPosition = l3ReadyPosition + .01;
 
-        public static final double l1ScorePosition = l3ReadyPosition + -.04;
 
-       
-        public static final double l2ScorePosition = l2ReadyPosition + -.04;
+        //public static final double l1ScorePosition = l3ReadyPosition + -.04;
+        //public static final double l2ScorePosition = l2ReadyPosition + -.04;
 
-        public static final double l4ReadyPosition = l3ReadyPosition +.04;
+        
         public static final double SideScorePosition = 0.05;
-        public static final double L4CoralDropPivotAmount = -.04; //when scoring l4 how should the pivot change. 
+        public static final double L4CoralDropPivotAmount = -.08; //when scoring l4 how should the pivot change. 
         
         
 
@@ -200,7 +200,7 @@ public class constants {
 
     public class PlasmaExtension {
         //CURRENTLY EACH "1" POSITION is .33" approx more etenxsion.
-        public static double LiveOffset = 3.25;//-2.0; 
+        public static double LiveOffset = 2.25;//-2.0; 
         //0.7407407
         public static final double gearRatio = 4*5;//3*3*3; //27:1 gear reduction (was60)
   
