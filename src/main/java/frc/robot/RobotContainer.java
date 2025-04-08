@@ -71,7 +71,7 @@ public class RobotContainer {
     public final Pivot ss_Pivot = new Pivot(ss_Elevator.currentHeight);
     public final ArmExtension ss_ArmExtension = new ArmExtension(ss_Elevator.currentHeight);
     public final josiahClimber ss_Climber = new josiahClimber();
-    public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot);
+    public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot, ss_ArmExtension);
     public final CANdleSubsystem Candle = new CANdleSubsystem();
     public final RearIntake RearIntake = new RearIntake();
 
@@ -92,7 +92,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    //private final CommandXboxController Testjoystick = new CommandXboxController(1);
+    private final CommandXboxController Testjoystick = new CommandXboxController(1);
 
     private final IntSupplier OptionalButtonSupplier = ()-> {
         if(joystick.x().getAsBoolean())
@@ -383,16 +383,17 @@ public class RobotContainer {
 
         //TEST CONFIGURATIONS
         // Testjoystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));// reset the field-centric heading on start button press
-        // Testjoystick.a().and(joystick.x().negate()).onTrue(gotoL2Travel()
-        // .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
-        // );
-        // Testjoystick.b().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
-        // Testjoystick.y().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
-        // Testjoystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-        //     .onTrue(ParkElevatorAndHead());
+         Testjoystick.a().and(joystick.x().negate()).onTrue(gotoL2Travel()
+         .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
+         );
+         Testjoystick.b().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
+         Testjoystick.y().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
+         
+         Testjoystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+             .onTrue(ParkElevatorAndHead());
         //Testjoystick.a().onTrue(alignReefForCoral().until(MantaState.getLimeLightBypassed));
         // Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
-        // Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition));
+         Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
         // Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());
         // Testjoystick.leftTrigger().onTrue(CoralDropScoreL4().andThen(ParkElevatorAndHead()));
         //joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));

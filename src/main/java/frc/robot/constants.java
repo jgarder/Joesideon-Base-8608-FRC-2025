@@ -135,7 +135,7 @@ public class constants {
 
     public class PlasmaPivot {
 
-        public static final double gearRatio = 5*9*(52/26);//is now 5:1 on 9:1 on 26T driving gear to 52T driven gear - 90:1 gear ratio.
+        public static final double gearRatio = 4*9*(52/26);//is now 4:1 on 9:1 on 26T driving gear to 52T driven gear - 72:1 gear ratio.
         public static final double absoMagnetOffset = -0.480712890625;//0.4716796875;//
        
         public static final double minPositionToBeSafeFromStage1Crossbar = .18;//.03;////3.55; //cant be folded up too much when elevator goes up or else head crashes.
@@ -174,16 +174,17 @@ public class constants {
         
         
 
-        public static final double maxStatorCurrent = 60;
+        public static final double maxStatorCurrent = 120;
 
-        public static final double kP = 100;//320;//350;//270.0;
-        public static final double kI = 4.0;//400;//160;//60.0;
-        public static final double kD = 20.0;//83;//80.0;
+        public static final double kP = 1800;//320;//350;//270.0;
+        public static final double kI = 0.0;//400;//160;//60.0;
+        public static final double kD = 400.0;//83;//80.0;
 
-        public static final double kA = 0.0;
+        public static final double kA = 0.001;
         public static final double kV = 0.0;
-        public static final double kS = 0.0;//2.5;
-        public static final double kG = 0.15;//0.6;//-21;
+        public static final double kS = 4.0;//2.5;
+        public static final double lowkG = 12.5;
+        public static final double highkG = 20;
 
         public static final double Accel = 30;//30.0;        //9.0;//10.0;
         public static final double Jerk = 0;//120;//0;        //400.0;
@@ -200,7 +201,7 @@ public class constants {
 
     public class PlasmaExtension {
         //CURRENTLY EACH "1" POSITION is .33" approx more etenxsion.
-        public static double LiveOffset = 2.25;//-2.0; 
+        public static double LiveOffset = 2.0;//-2.0; 
         //0.7407407
         public static final double gearRatio = 4*5;//3*3*3; //27:1 gear reduction (was60)
   

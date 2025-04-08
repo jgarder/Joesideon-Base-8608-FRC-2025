@@ -110,11 +110,14 @@ public class MantaState extends SubsystemBase {
     }
     public static Elevator ss_Elevator;
     public static Pivot ss_Pivot;
+    public static ArmExtension ss_ArmExtension;
 
-    public MantaState(CommandSwerveDrivetrain incDriveTrain,Elevator ssElevator, Pivot ssPivot)
+    public MantaState(CommandSwerveDrivetrain incDriveTrain,Elevator ssElevator, Pivot ssPivot, ArmExtension ssArmExtension)
     {
       DriveTrain = incDriveTrain;
       ss_Elevator = ssElevator;
+
+      ss_ArmExtension = ssArmExtension;
 
       ss_Pivot = ssPivot;
       IsPivotFoldedOut = ss_Pivot.IsPivotFoldedOut;

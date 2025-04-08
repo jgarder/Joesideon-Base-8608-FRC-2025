@@ -140,6 +140,9 @@ public class Elevator extends SubsystemBase {
     configuration.CurrentLimits.StatorCurrentLimitEnable = true;
     configuration.CurrentLimits.StatorCurrentLimit = constants.Elevator.maxStatorCurrent;
 
+    configuration.CurrentLimits.SupplyCurrentLimitEnable = false;
+    configuration.CurrentLimits.SupplyCurrentLimit = constants.Elevator.maxStatorCurrent;
+
     configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.Elevator.maxElevatorheight;
 

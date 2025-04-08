@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import java.lang.constant.Constable;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -35,6 +36,7 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.DoubleEntry;
@@ -107,6 +109,8 @@ public class Pivot extends SubsystemBase {
   private double requestedPosition = 0;
   private double setPointPosition = 0;
 
+  private double tempkG = constants.PlasmaPivot.lowkG;
+
   DoubleSupplier elevatorposition;
   //InterpolatingDoubleTreeMap heightMaxPivotMap;
 
@@ -121,7 +125,7 @@ public class Pivot extends SubsystemBase {
     NT_VGain.set(constants.PlasmaPivot.kV);
 
     NT_SGain.set(constants.PlasmaPivot.kS);
-    NT_GGain.set(constants.PlasmaPivot.kG);
+    NT_GGain.set(constants.PlasmaPivot.lowkG);
 
     NT_Acceleration.set(constants.PlasmaPivot.Accel);
     NT_Jerk.set(constants.PlasmaPivot.Jerk);
@@ -153,8 +157,8 @@ public class Pivot extends SubsystemBase {
     _configuration.Slot1.kA = constants.PlasmaPivot.kA;
     _configuration.Slot1.kV = constants.PlasmaPivot.kV;
 
-    _configuration.Slot1.kG = constants.PlasmaPivot.kG;
-    _configuration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
+    _configuration.Slot1.kG = 0.0;
+    //_configuration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
 
     _configuration.Slot1.kS = constants.PlasmaPivot.kS;
     _configuration.Slot1.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -204,6 +208,8 @@ public class Pivot extends SubsystemBase {
   @Override
   public void periodic() {
     currentPosition = m_PivotMotor.getPosition().getValueAsDouble();
+    //sets the arbitrary feedforward
+    PivotRequest = PivotRequest.withFeedForward(calculateArmkG(currentPosition, MantaState.ss_ArmExtension.getPosition()));
 
     NT_CurrentPosition.set(currentPosition);
     NT_SetpointPosition.set(setPointPosition);
@@ -243,7 +249,7 @@ public class Pivot extends SubsystemBase {
     if((a != configuration.Slot1.kA)) { configuration.Slot1.kA = a; motorNeedsConfig = true; }
     if((v != configuration.Slot1.kV)) { configuration.Slot1.kV = v; motorNeedsConfig = true; }
     if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; motorNeedsConfig = true; }
-    if((g != configuration.Slot1.kG)) { configuration.Slot1.kG = g; motorNeedsConfig = true; }
+    //if((g != tempkG)) { tempkG = g; motorNeedsConfig = true; }
 
     if((mA != configuration.MotionMagic.MotionMagicAcceleration)) { configuration.MotionMagic.MotionMagicAcceleration = mA; motorNeedsConfig = true; }
     if((mJ != configuration.MotionMagic.MotionMagicJerk)) { configuration.MotionMagic.MotionMagicJerk = mJ; motorNeedsConfig = true; }
@@ -253,6 +259,19 @@ public class Pivot extends SubsystemBase {
 
     doTravelIfelevatormoving(requestedPosition);
   }
+  public double calculateArmkG(double armCurrentPosition, double armExtension){
+    //changes kG depending on arm extension
+    InterpolatingDoubleTreeMap gravityExtensionTable = new InterpolatingDoubleTreeMap();
+      gravityExtensionTable.put(constants.PlasmaExtension.minposition, constants.PlasmaPivot.lowkG);
+      gravityExtensionTable.put(constants.PlasmaExtension.maxposition, constants.PlasmaPivot.highkG);
+    //converts arm position to radians 
+    double armCurrentPositionRadians = Units.degreesToRadians(armCurrentPosition * 360);
+    //calculates the arbitrary feedforward (used as kG) to be sent to the motor
+    double armKG = gravityExtensionTable.get(armExtension) * Math.cos(armCurrentPositionRadians);
+    NT_GGain.set(armKG);
+    return armKG;
+  }
+
   public void doTravelIfelevatormoving(double _requestedPosition)
   {
     if (setPointPosition != _requestedPosition) {
@@ -421,7 +440,7 @@ public class Pivot extends SubsystemBase {
   //Kraken x60 FOC kT = 19.81;  From https://ctre.download/files/datasheet/Motor%20Performance%20Analysis%20Report.pdf
   //private MotionMagicTorqueCurrentFOC PivotRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
   
-  private MotionMagicVoltage PivotRequest = new MotionMagicVoltage(0).withSlot(1).withFeedForward(0);
+  private MotionMagicTorqueCurrentFOC PivotRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
   //private MotionMagicExpoTorqueCurrentFOC
 
 
