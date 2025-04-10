@@ -216,6 +216,10 @@ public class Elevator extends SubsystemBase {
 
   public void doTravelIfInCorrectPosition(double _requestedPosition)
   {
+    if(MantaState.ss_RearIntake.LaserDetectsCoral())
+    {
+      return; 
+    }
     if (setPointPosition != _requestedPosition) {
       
       //if we are above the CannotFoldBelow position

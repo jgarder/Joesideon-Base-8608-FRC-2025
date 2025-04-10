@@ -111,14 +111,14 @@ public class MantaState extends SubsystemBase {
     public static Elevator ss_Elevator;
     public static Pivot ss_Pivot;
     public static ArmExtension ss_ArmExtension;
-
-    public MantaState(CommandSwerveDrivetrain incDriveTrain,Elevator ssElevator, Pivot ssPivot, ArmExtension ssArmExtension)
+    public static RearIntake ss_RearIntake;
+    public MantaState(CommandSwerveDrivetrain incDriveTrain,Elevator ssElevator, Pivot ssPivot, ArmExtension ssArmExtension,RearIntake _ss_RearIntake)
     {
       DriveTrain = incDriveTrain;
       ss_Elevator = ssElevator;
 
       ss_ArmExtension = ssArmExtension;
-
+      ss_RearIntake = _ss_RearIntake;
       ss_Pivot = ssPivot;
       IsPivotFoldedOut = ss_Pivot.IsPivotFoldedOut;
       //IsPivotFoldedFarOut = ss_Pivot.IsPivotFoldedFarOut;

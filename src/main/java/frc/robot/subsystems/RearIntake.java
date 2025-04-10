@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
@@ -10,6 +11,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
@@ -31,9 +33,10 @@ public class RearIntake extends SubsystemBase {
   
   public final TalonFX m_Motor = new TalonFX(constants.CanBus.MotorizedRearIntakeCanID, constants.CanBus.RioCANBusName);
   
+  public final CANrange m_CANRange = new CANrange(constants.CanBus.CanRangeRearIntakeCanID, constants.CanBus.RioCANBusName);
   TalonFXConfiguration configuration;
   
-
+  BooleanEntry NT_IsLoaded = NT.getBooleanEntry(className , "CanRangedIsLoaded",false);
   DoubleEntry NT_Rps =  NT.getDoubleEntry(className ,"RPS",0);
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
   DoubleEntry NT_StatorCurrent = NT.getDoubleEntry(className, "StatorCurrent", 0);
@@ -49,6 +52,7 @@ public class RearIntake extends SubsystemBase {
   DoubleEntry NT_SetpointVelocity = NT.getDoubleEntry(className , "SetpointRPS",0.0);
   BooleanEntry NT_BrakeEnabled = NT.getBooleanEntry(className , "BrakeOn",false);
 
+  public double DetectionThresholdMeters = .07;//.01 == 10mm; 1 = 1meter == 1000 millimeters.
   
   public RearIntake() {
     System.out.println("Creating " + className + " object"); 
@@ -63,9 +67,19 @@ public class RearIntake extends SubsystemBase {
     NT_SGain.set(constants.RearMotorizedIntake.kS);
     NT_VGain.set(constants.RearMotorizedIntake.kV);
 
-
+    SetCANrangeConfiguration();
   }
 
+  private void SetCANrangeConfiguration() {
+    CANrangeConfiguration CANrangeConfiguration = new CANrangeConfiguration();
+    CANrangeConfiguration.ProximityParams.ProximityThreshold = DetectionThresholdMeters;
+
+    m_CANRange.getConfigurator().apply(CANrangeConfiguration);
+  }
+  public Trigger CoralInRearIntake = new Trigger(()->{return LaserDetectsCoral();});
+  public boolean LaserDetectsCoral(){
+    return m_CANRange.getIsDetected().getValue();
+  }
   public TalonFXConfiguration buildMotorConfig(){
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
     _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
@@ -90,7 +104,7 @@ public class RearIntake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
+    NT_IsLoaded.set(LaserDetectsCoral());
     NT_Rps.set(m_Motor.getVelocity().getValueAsDouble());
     NT_MotorTemp.set(m_Motor.getDeviceTemp().getValueAsDouble());
     NT_StatorCurrent.set(m_Motor.getStatorCurrent().getValueAsDouble());

@@ -56,8 +56,10 @@ public class constants {
         public static final int josiahClimberSlideCanID = 43;
 
         public static final int MotorizedRearIntakeCanID = 47;
+        public static final int CanRangeRearIntakeCanID = 3;
 
         public static final int CANdleID = 2;
+       
         
     
 
