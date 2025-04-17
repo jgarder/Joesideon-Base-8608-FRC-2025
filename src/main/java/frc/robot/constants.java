@@ -124,7 +124,7 @@ public class constants {
         public static final double CannotPivotParkAboveElevatorPosition = 2.0;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
         
         public static final double groundPickup = minElevatorHeight;
-        public static final double AngledgroundPickup = 4.5;
+        public static final double AngledgroundPickup = 8.0;
         public static final double ProcessorPos = 4.0;
         public static final double l1Position = 5.5;
         public static final double l2Position = 9.0;
@@ -157,6 +157,7 @@ public class constants {
         public static final double AlgaeReefPickup = 0.01;
         public static final double processorPivot = .050;
         public static final double GroundPickupPosition = 0.00;//12.0;
+        public static final double AngledGroundPickupPos = -0.06;//-0.247;
         public static final double BargePosition = .17;
 
         public static final double CoralGroundPickup = 0.06;
@@ -221,7 +222,7 @@ public class constants {
         public static final double rearintakePos = 0.0;//0.37;//.5;
         public static final double l1ReadyPosition =  25.18;//34.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
         public static final double l2ReadyPosition = 28.14;//38;//uses LiveOffset
-        public static final double l3ReadyPosition =  29.0;//41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
+        public static final double l3ReadyPosition =  27;//41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
 
         public static final double l1ScorePosition = 15.55;//21.0;//uses LiveOffset
         public static final double l2ScorePosition = 0;//uses LiveOffset

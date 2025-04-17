@@ -31,10 +31,22 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "gotoL4Travel",
+      "waypointRelativePos": 0.3464991023339318,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "gotoL4Travel"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 5.2,
-    "maxAcceleration": 11.0,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,

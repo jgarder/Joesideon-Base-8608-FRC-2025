@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.3769281914893616,
-        "y": 6.80219414893617
+        "x": 1.2719082446808512,
+        "y": 6.90721409574468
       },
       "prevControl": {
-        "x": 1.5333168901194985,
-        "y": 6.363022375324058
+        "x": 1.428296943310988,
+        "y": 6.468042322132568
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,22 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ParkElevatorAndHead",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ParkElevatorAndHead"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 5.2,
-    "maxAcceleration": 11.0,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,

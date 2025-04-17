@@ -55,6 +55,13 @@ public class C_Align extends Command{
     Pose2d TargetPose;//this is where we wnt to go in field space coords X,y,Rotation
     Pose2d PoseOffset;//This is how far we are from where we want to be. this is CurrentPose minus TargetPose.
     double xyMirrorRed; //our drivetrain auto flips itself when we are on red. so we have to aswell. 
+    public C_Align(double _minXposeErrorToCorrect,double _minYposeErrorToCorrect,double _minRZDegreesErrorToCorrect,Pose2d PosePositionGoal, DoubleSupplier _yAlignOverride){
+      minXposeErrorToCorrect = _minXposeErrorToCorrect;
+      minYposeErrorToCorrect = _minYposeErrorToCorrect;
+      minRZDegreesErrorToCorrect = _minRZDegreesErrorToCorrect;
+      yAlignOverride = _yAlignOverride;
+      SetupAlign(PosePositionGoal);
+    }
     public C_Align(Pose2d PosePositionGoal, DoubleSupplier _yAlignOverride){
       yAlignOverride = _yAlignOverride;
       SetupAlign(PosePositionGoal);

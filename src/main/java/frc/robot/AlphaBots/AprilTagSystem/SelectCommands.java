@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import frc.robot.constants;
 import frc.robot.AlphaBots.PathToPose;
 import frc.robot.AlphaBots.AprilTagSystem.AprilTag.TagType;
 import frc.robot.commands.C_Align;
@@ -54,16 +55,32 @@ public class SelectCommands {
               // Maps selector values to commands
               Map.ofEntries(
                   Map.entry(4, new PrintCommand("Command 4 blue was selected!")
-                  .alongWith(new C_Align(PoseFinder.getStraightOutLoc(4,0.0),yAxisOverride))),
+                  .alongWith(new C_Align(
+                  constants.drivetrainThings.minXposeErrorMetersToCorrect * 2.0,
+                  constants.drivetrainThings.minYposeErrorMetersToCorrect * 2.0,
+                  constants.drivetrainThings.minRZErrorToCorrect * 2.0,
+                    PoseFinder.getStraightOutLoc(4,0.0),yAxisOverride))),
       
                   Map.entry(14, new PrintCommand("Command 14 blue was selected!")
-                  .alongWith(new C_Align(PoseFinder.getStraightOutLoc(14,0),yAxisOverride))),
+                  .alongWith(new C_Align(
+                    constants.drivetrainThings.minXposeErrorMetersToCorrect * 2.0,
+                    constants.drivetrainThings.minYposeErrorMetersToCorrect * 2.0,
+                    constants.drivetrainThings.minRZErrorToCorrect * 2.0,
+                    PoseFinder.getStraightOutLoc(14,0),yAxisOverride))),
                   
                   Map.entry(5, new PrintCommand("Command 5 red was selected!")
-                  .alongWith(new C_Align(PoseFinder.getStraightOutLoc(5,0),yAxisOverride))),
+                  .alongWith(new C_Align(
+                    constants.drivetrainThings.minXposeErrorMetersToCorrect * 2.0,
+                    constants.drivetrainThings.minYposeErrorMetersToCorrect * 2.0,
+                    constants.drivetrainThings.minRZErrorToCorrect * 2.0,
+                    PoseFinder.getStraightOutLoc(5,0),yAxisOverride))),
       
                   Map.entry(15, new PrintCommand("Command 15 red was selected!")
-                  .alongWith(new C_Align(PoseFinder.getStraightOutLoc(15,0),yAxisOverride)))
+                  .alongWith(new C_Align(
+                    constants.drivetrainThings.minXposeErrorMetersToCorrect * 2.0,
+                    constants.drivetrainThings.minYposeErrorMetersToCorrect * 2.0,
+                    constants.drivetrainThings.minRZErrorToCorrect * 2.0,
+                    PoseFinder.getStraightOutLoc(15,0),yAxisOverride)))
                   ),
       
               ()->{return selectBarge();});

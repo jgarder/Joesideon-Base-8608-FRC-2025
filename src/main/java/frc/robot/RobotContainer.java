@@ -93,7 +93,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController Testjoystick = new CommandXboxController(1);
+    //private final CommandXboxController Testjoystick = new CommandXboxController(1);
 
     private final IntSupplier OptionalButtonSupplier = ()-> {
         if(joystick.x().getAsBoolean())
@@ -347,7 +347,7 @@ public class RobotContainer {
     public Command GroundIntakeAngled(){
         return new ParallelCommandGroup(
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.AngledgroundPickup),
-            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.minposition),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AngledGroundPickupPos),
             new SequentialCommandGroup(
                 new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.climbExtension),
             new WaitCommand(.1),//small delay to stop motor from smasshing into rear intake. might not be needed when motor is 90 in future. 
@@ -392,17 +392,17 @@ public class RobotContainer {
 
         //TEST CONFIGURATIONS
         // Testjoystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));// reset the field-centric heading on start button press
-         Testjoystick.a().and(joystick.x().negate()).onTrue(gotoL2Travel()
-         .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
-         );
-         Testjoystick.b().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
-         Testjoystick.y().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
+        //  Testjoystick.a().and(joystick.x().negate()).onTrue(gotoL2Travel()
+        //  .andThen(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.maxposition))
+        //  );
+        //  Testjoystick.b().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
+        //  Testjoystick.y().onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition));
          
-         Testjoystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-             .onTrue(ParkElevatorAndHead());
-        //Testjoystick.a().onTrue(alignReefForCoral().until(MantaState.getLimeLightBypassed));
-        // Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
-         Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
+        //  Testjoystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
+        //      .onTrue(ParkElevatorAndHead());
+        // //Testjoystick.a().onTrue(alignReefForCoral().until(MantaState.getLimeLightBypassed));
+        // // Testjoystick.b().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
+        //  Testjoystick.x().onTrue(new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition));
         // Testjoystick.rightBumper().onTrue(TridentCoralBumpOut());
         // Testjoystick.leftTrigger().onTrue(CoralDropScoreL4().andThen(ParkElevatorAndHead()));
         //joystick.start().onTrue(new InstantCommand(()->{ss_Elevator.setMotorConfig();}));
@@ -505,10 +505,10 @@ public class RobotContainer {
         joystick.rightBumper().whileTrue(Control_RearIntake());
         
         //pick up algae (and technically coral too)
-        joystick.leftTrigger().and(joystick.x().negate()).whileTrue(GroundIntake());
+        joystick.leftTrigger().and(joystick.x()).whileTrue(GroundIntake());
 
         //score algae in amp
-        joystick.leftTrigger().and(joystick.x()).toggleOnTrue(GroundIntakeAngled());
+        joystick.leftTrigger().and(joystick.x().negate()).toggleOnTrue(GroundIntakeAngled());
 
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(ParkElevatorAndHead().alongWith(new InstantCommand(()->{isbargeing = false;})));
