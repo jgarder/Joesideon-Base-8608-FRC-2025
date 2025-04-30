@@ -7,7 +7,7 @@ public class config {
     //YOU MUST SET drivetrain BEFORE using!
     public static CommandSwerveDrivetrain drivetrain;//this is required because then the SelectCommands will need our drivetrains position for Getting Closest Tag. 
 
-    public static double BargeOffset = Units.inchesToMeters(4);//-0.5; //LIVE
+    public static double BargeOffset = Units.inchesToMeters(3.5);//-0.5; //LIVE
     public static double SourceOffset = Units.inchesToMeters(2.5);//-0.5; //LIVE
     //public static double SourceOffset =  Units.inchesToMeters(60); //TESTING ONLY
 

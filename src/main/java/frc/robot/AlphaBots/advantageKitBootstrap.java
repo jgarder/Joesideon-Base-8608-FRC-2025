@@ -25,7 +25,7 @@ public class advantageKitBootstrap {
         robot = robot2;
         startAdvantageKitLogger();//run before robot container boots. //declare in robot as a private final?
 
-        //StartWpiLogger(); //let them both sing and see which is better?
+        StartWpiLogger(); //let them both sing and see which is better?
     }
 
     public void startAdvantageKitLogger() {
