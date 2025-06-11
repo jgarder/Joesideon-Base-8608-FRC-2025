@@ -1,13 +1,8 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Volts;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -15,7 +10,6 @@ import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.StrictFollower;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,13 +17,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleTopic;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
@@ -63,7 +53,10 @@ public class Elevator extends SubsystemBase {
 
 
   TalonFXConfiguration configuration;
+  public DoubleSupplier setpointHeight = ()->{return setPointPosition;};
   public DoubleSupplier currentHeight = ()->{return currentPosition;};
+  public DoubleSupplier requestedHeight = ()->{return requestedPosition;};
+  public DoubleSupplier elevatorVelocity = ()->{return m_ElevatorMotor1.getVelocity().getValueAsDouble();};
 
   DoubleEntry NT_Rpm = NT.getDoubleEntry(className , " rpm",0.0);
 
@@ -211,121 +204,10 @@ public class Elevator extends SubsystemBase {
     
     if (motorNeedsConfig){Tools.SetConfigToTalonFX(m_ElevatorMotor1,configuration,className);}
 
-    doTravelIfInCorrectPosition(requestedPosition);
-  }
-
-  public void doTravelIfInCorrectPosition(double _requestedPosition)
-  {
-    if(MantaState.ss_RearIntake.LaserDetectsCoral())
-    {
-      return; 
-    }
-    if (setPointPosition != _requestedPosition) {
-      
-      //if we are above the CannotFoldBelow position
-      if(currentPosition > constants.Elevator.CannotPivotParkBelowElevatorPosition)
-      {
-        //if we are going below the cannot fold position
-        if(_requestedPosition <= constants.Elevator.CannotPivotParkBelowElevatorPosition)
-        {
-          //check if pivot is in a safe travel position
-          if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
-          {
-             //if/when we are folded out, set position to requested position
-            //safe to goto requestion position
-            GotoPosition(_requestedPosition);
-          }
-          else{
-            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-            //ONLY safe to goto CannotFoldBelowPosition
-            GotoPosition(constants.Elevator.CannotPivotParkBelowElevatorPosition);
-          }
-        }
-        else{
-          //if we are above the safe zone and staying above the safe zone then request the new position. 
-          GotoPosition(_requestedPosition);
-        }
-      }
-      //else if we are in the void zone only allow travel mode
-      else if(currentPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition && currentPosition < constants.Elevator.CannotPivotParkBelowElevatorPosition)
-      {
-        //if we are above the CannotFoldBelow position
-      if(currentPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
-      {
-        //if we are going below the cannot fold position
-        if(_requestedPosition <= constants.Elevator.CannotPivotParkAboveElevatorPosition)
-        {
-          //check if pivot is in a safe travel position
-          if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
-          {
-             //if/when we are folded out, set position to requested position
-            //safe to goto requestion position
-            GotoPosition(_requestedPosition);
-          }
-          else{
-            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-            //ONLY safe to goto CannotFoldBelowPosition
-            GotoPosition(constants.Elevator.CannotPivotParkBelowElevatorPosition);
-          }
-        }
-        else{
-          //if we are above the safe zone and staying above the safe zone then request the new position. 
-          GotoPosition(_requestedPosition);
-        }
-      }
-      }   
-      //if we are below the CannotFoldabove position
-      else if(currentPosition < constants.Elevator.CannotPivotParkAboveElevatorPosition)
-      {
-        //if we are going above the cannot fold position
-        if(_requestedPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
-        {
-          //check if pivot is in a safe travel position
-          if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
-          {
-              //if/when we are folded out, set position to requested position
-            //safe to goto requestion position
-            GotoPosition(_requestedPosition);
-          }
-          else{
-            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-            //ONLY safe to goto CannotFoldBelowPosition
-            GotoPosition(constants.Elevator.CannotPivotParkAboveElevatorPosition);
-          }
-        }
-        else{
-          //if we are below the safe zone and going below the safe zone then request the new position. 
-          GotoPosition(_requestedPosition);
-        }
-      }//if we are not above the nogo and we are not below the nogo we are in the nogo. make sure we are in travel position and goto the called position
-      else 
-      {
-        //check if pivot is in a safe travel position
-        if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
-        {
-            //if/when we are folded out, set position to requested position
-          //safe to goto requestion position
-          GotoPosition(_requestedPosition);
-        }
-        else{
-          //if not IsPivotinTravelPosition, dont move we are in the No-go zone already. 
-        }
-      }
-    }// else if we are close to parked and we are requesting a park. then just brake mode. 
-    else if ((setPointPosition < constants.Elevator.ElevatorBrakeParkTolerance) 
-          & (_requestedPosition < constants.Elevator.ElevatorBrakeParkTolerance)
-          &  m_ElevatorMotor1.getVelocity().getValueAsDouble() < 100
-          & Tools.isPosAtSetpoint(currentPosition, constants.Elevator.minElevatorHeight, constants.Elevator.ElevatorBrakeParkTolerance))
-    {
-      //System.out.println("elevator Braking");
-      
-      currentState = POSITION.parked;
-      BRAKE();
-    }
+    
   }
   
   
-  public double canBusUpdateFrequency = 50;
   public double getPosition()
   {
     return currentPosition;//m_ElevatorMotor1.getPosition().getValueAsDouble(); // / gearRatio;
@@ -344,14 +226,14 @@ public class Elevator extends SubsystemBase {
     }
 
     public void HoldPosition(){ 
-        GotoPosition(currentPosition-(m_ElevatorMotor1.getVelocity().getValueAsDouble()/canBusUpdateFrequency));
+        GotoPosition(currentPosition-(m_ElevatorMotor1.getVelocity().getValueAsDouble()/constants.CanBus.canBusUpdateFrequency));
     }
     
     public void RequestPosition(double wantedposition)
     {
       requestedPosition = wantedposition;
     }
-    private void GotoPosition(double wantedposition){
+    public void GotoPosition(double wantedposition){
         setPointPosition = wantedposition;
         currentState = POSITION.up;
         m_ElevatorMotor1.setControl(
