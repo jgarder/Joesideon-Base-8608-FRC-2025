@@ -8,9 +8,6 @@ package frc.robot;
 
 import java.util.function.IntSupplier;
 
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -29,7 +26,7 @@ import frc.robot.commands.C_TridentIntake;
 import frc.robot.AlphaBots.Tools;
 import frc.robot.AlphaBots.AprilTagSystem.SelectCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.AprilTagManager;
+import frc.robot.subsystems.ChassisTelemetryUpdater;
 import frc.robot.subsystems.ArmExtension;
 import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -48,7 +45,7 @@ public class RobotContainer {
 
     //Subsystem bootup Zone - Order matters.
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final AprilTagManager ATMan = new AprilTagManager(drivetrain); 
+    private final ChassisTelemetryUpdater ATMan = new ChassisTelemetryUpdater(drivetrain); 
 
     public final MantaRay ss_Trident = new MantaRay();
     public final Elevator ss_Elevator = new Elevator();
@@ -67,10 +64,7 @@ public class RobotContainer {
     /* Setting up bindings for necessary control of the swerve drive platform */
 
 
-    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-    // private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-            //.withDriveRequestType(DriveRequestType.Velocity);
+
 
     private final Telemetry logger = new Telemetry(constants.drivetrainThings.MaxSpeed);
 
