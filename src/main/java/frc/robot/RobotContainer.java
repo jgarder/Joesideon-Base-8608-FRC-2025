@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+//import static edu.wpi.first.units.Units.*;
 
 import java.util.function.IntSupplier;
 
@@ -44,7 +44,7 @@ import frc.robot.subsystems.RearIntake;
 public class RobotContainer {
     //fields
     
-    double TridentEjectMovement = 20;
+    
 
     //Subsystem bootup Zone - Order matters.
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -62,21 +62,17 @@ public class RobotContainer {
     public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot, ss_ArmExtension,ss_RearIntake);
     public final SuperStructure SuperS = new SuperStructure(ss_Trident, ss_Elevator, ss_Pivot, ss_ArmExtension, ss_Climber, Candle, ss_RearIntake);
     
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+   
 
     /* Setting up bindings for necessary control of the swerve drive platform */
-    public double translationDeadbandPercent = 0.025;//0.025 = 2.5%
-    public double rotationalDeadband = 0.05;//0.05 = 5% deadband
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * translationDeadbandPercent).withRotationalDeadband(MaxAngularRate * rotationalDeadband) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+
+
     // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     // private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
             //.withDriveRequestType(DriveRequestType.Velocity);
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(constants.drivetrainThings.MaxSpeed);
 
     public static final CommandXboxController joystick = new CommandXboxController(0);
     //private final CommandXboxController Testjoystick = new CommandXboxController(1);
@@ -150,27 +146,27 @@ public class RobotContainer {
             //joystick.x().whileTrue(AprilTagManager.C_OnTheFlyWaypointAlign(new Pose2d(1.19,6.93,Rotation2d.fromDegrees(-53))));
         }
         
-        joystick.y().onTrue(SuperS.ScoreBarge());
+        joystick.y().onTrue(SuperS.Btn_ScoreBarge());
 
 
         joystick.rightTrigger().and(joystick.x().negate())
-        .whileTrue(SuperS.GetAlgaeFromReef());
+        .whileTrue(SuperS.Btn_GetAlgaeFromReef());
             //.onFalse(gotoMinTravel());
         
         //processor score
         joystick.rightTrigger().and(joystick.x())
-        .onTrue(SuperS.GotoProcessorPos(this));
+        .onTrue(SuperS.Btn_GotoProcessorPos(this));
 
         joystick.rightBumper()
-        .whileTrue(SuperS.Control_RearIntake());
+        .whileTrue(SuperS.Btn_RearIntake());
         
         //pick up algae (and technically coral too)
         joystick.leftTrigger().and(joystick.x())
-        .whileTrue(SuperS.GroundIntake());
+        .whileTrue(SuperS.Btn_GroundIntake());
 
         //score algae in amp
         joystick.leftTrigger().and(joystick.x().negate())
-        .toggleOnTrue(SuperS.GroundIntakeAngled());
+        .toggleOnTrue(SuperS.Btn_GroundIntakeAngled());
 
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(SuperS.Btn_Park());
@@ -178,28 +174,28 @@ public class RobotContainer {
 
         //Faster
         joystick.povUp().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(SuperS.ScoreL4(this));
+            .onTrue(SuperS.Btn_ScoreL4(this));
             
             //.onFalse(ParkElevatorAndHead());
 
         joystick.povRight().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(SuperS.ScoreL3());
+            .onTrue(SuperS.Btn_ScoreL3());
             
         joystick.povDown().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(SuperS.ScoreL2());
+            .onTrue(SuperS.Btn_ScoreL2());
 
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(SuperS.ScoreL1());
+            .onTrue(SuperS.Btn_ScoreL1());
 
 
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
+        // Note that X is defined as forward according to WPILib convention in robot centric, but we use field centric where x is x and y is y.
+        // and Y is defined as to the left according to WPILib convention in robot centric, but we use field centric where x is x and y is y.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(Tools.getExpoJoystickInput(-joystick.getLeftY(),MaxSpeed)) // Drive forward with negative Y (forward)
-                    .withVelocityY(Tools.getExpoJoystickInput(-joystick.getLeftX(),MaxSpeed)) // Drive left with negative X (left)
-                    .withRotationalRate(Tools.getExpoJoystickInput(-joystick.getRightX(), MaxAngularRate)) // Drive counterclockwise with negative X (left)
+                constants.drivetrainThings.TeleOpDrive.withVelocityX(Tools.getExpoJoystickInput(-joystick.getLeftY(),constants.drivetrainThings.MaxSpeed)) // Drive forward with negative Y (forward)
+                    .withVelocityY(Tools.getExpoJoystickInput(-joystick.getLeftX(),constants.drivetrainThings.MaxSpeed)) // Drive left with negative X (left)
+                    .withRotationalRate(Tools.getExpoJoystickInput(-joystick.getRightX(), constants.drivetrainThings.MaxAngularRate)) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -211,17 +207,15 @@ public class RobotContainer {
     {
         
         joystick.povUp().and(MantaState.getAltControlModeEnabled).onTrue(
-            SuperS.ClimbHookReady()
+            SuperS.Btn_ClimbHookReady()
         );
         joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
-            SuperS.ClimbHookStartFlat()
+            SuperS.Btn_ClimbHookStartFlat()
         );
         joystick.povDown().and(MantaState.getAltControlModeEnabled).onTrue(
             SuperS.Btn_ClimbNow(this));
 
-            // .alongWith(
-            //     ss_Climber.C_SlideGotoPositon(constants.Climber.SlideSide.minPostion))
-            // .andThen(ss_Climber.C_Stop()));
+         
         joystick.povLeft().and(MantaState.getAltControlModeEnabled).onTrue(
             ss_Climber.C_Stop()
         );

@@ -1,11 +1,30 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+
 import edu.wpi.first.math.util.Units;
+import frc.robot.generated.TunerConstants;
 
 public class constants {
 
     public static class drivetrainThings{
-        public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+        public static final double translationDeadbandPercent = 0.025;//0.025 = 2.5%
+        public static final double rotationalDeadband = 0.05;//0.05 = 5% deadband
+        public static final SwerveRequest.FieldCentric TeleOpDrive = new SwerveRequest.FieldCentric()
+        .withDeadband(constants.drivetrainThings.MaxSpeed * translationDeadbandPercent).withRotationalDeadband(constants.drivetrainThings.MaxAngularRate * rotationalDeadband) // Add a 10% deadband
+        .withDriveRequestType(DriveRequestType.Velocity); 
+
+        public static final SwerveRequest.FieldCentric FCdriveAuton = new SwerveRequest.FieldCentric().withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
+        public static final SwerveRequest.FieldCentric StopDrivetrain = FCdriveAuton.withVelocityX(0 ) // Drive forward with // negative Y (forward)
+    .withVelocityY(0 ) // Drive left with negative X (left)
+    .withRotationalRate(0);
+        public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+        public static final double MaxAngularRate = RotationsPerSecond.of(0.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+        //public static final double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
         public static final double minXposeErrorMetersToCorrect = Units.inchesToMeters(.9);//.6;
         public static final double minYposeErrorMetersToCorrect = Units.inchesToMeters(.9);//.6;

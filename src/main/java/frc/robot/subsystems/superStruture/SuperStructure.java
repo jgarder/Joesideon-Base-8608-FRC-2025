@@ -50,6 +50,7 @@ public class SuperStructure extends SubsystemBase{
     public final CANdleSubsystem Candle;
     public final RearIntake ss_RearIntake;
 
+    public double TridentEjectMovement = 20;
     public double processorAlgaeScoringDutyCycle = -.35;
     public double BargeAlgaeScoringDutyCycle = -1.0;//-.75;
     //started working on this, not done yet
@@ -392,7 +393,7 @@ public void doTravelIfInCorrectPosition()
             );
     }
 
-    public Command GroundIntake(){
+    public Command Btn_GroundIntake(){
         return new ParallelCommandGroup(
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.groundPickup),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition),
@@ -420,7 +421,7 @@ public void doTravelIfInCorrectPosition()
             );
     }
 
-    public Command GroundIntakeAngled(){
+    public Command Btn_GroundIntakeAngled(){
         return new ParallelCommandGroup(
             new C_ElevateToPosition(ss_Elevator, constants.Elevator.AngledgroundPickup),
             new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.AngledGroundPickupPos),
@@ -458,13 +459,13 @@ public void doTravelIfInCorrectPosition()
         .andThen(Auto_AlgaeReefIntake(),gotoMinTravel());
     }
 
-    public ParallelCommandGroup ClimbHookReady() {
+    public ParallelCommandGroup Btn_ClimbHookReady() {
         return ss_Climber.C_CatchGotoPositon(CatchSide.maxPostion).alongWith(
         ss_Climber.C_SlideGotoPositon(SlideSide.maxPostion)
       );
     }
 
-    public ParallelCommandGroup ClimbHookStartFlat() {
+    public ParallelCommandGroup Btn_ClimbHookStartFlat() {
         return  ss_Climber.C_CatchGotoPositon(CatchSide.startPos).alongWith(
             ss_Climber.C_SlideGotoPositon(SlideSide.startPos)
       );
@@ -503,7 +504,7 @@ public void doTravelIfInCorrectPosition()
         .andThen(PivotIntoReefL4(),CoralDropScoreL4().withTimeout(.25));//timeout incase we get stuck then just auto reset 
     }
 
-    public Command Control_RearIntake()
+    public Command Btn_RearIntake()
     {
         return SelectCommands.C_SourceSelectCommand().asProxy().until(ss_Trident.getisloaded).until(MantaState.getLimeLightBypassed).withTimeout(6)
             .alongWith(RearIntake().andThen(new ParallelCommandGroup(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.TravelPosition),
@@ -534,7 +535,7 @@ public void doTravelIfInCorrectPosition()
             .andThen(TridentBargeAlgaeBumpOut());
     }
 
-        public Command ScoreBarge()
+        public Command Btn_ScoreBarge()
     {
         return 
         SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
@@ -545,25 +546,25 @@ public void doTravelIfInCorrectPosition()
         .finallyDo(traveltopark());
     }
 
-        public WrapperCommand ScoreL1() {
+        public WrapperCommand Btn_ScoreL1() {
             return SelectCommands.C_ReefL1CenterSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(gotoL1Travel())
             .andThen(PivotIntoReefL1(),TridentCoralShootOut(),ParkElevatorAndHead()).finallyDo(traveltopark());
         }
 
-        public WrapperCommand ScoreL2() {
+        public WrapperCommand Btn_ScoreL2() {
             return alignReefForCoral()
             .alongWith(gotoL2Travel())
             .andThen(PivotIntoReefL2(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark());
         }
 
-        public WrapperCommand ScoreL3() {
+        public WrapperCommand Btn_ScoreL3() {
             return alignReefForCoral()
             .alongWith(gotoL3Travel())
             .andThen(PivotIntoReefl3(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark());
         }
 
-        public WrapperCommand ScoreL4(RobotContainer robotContainer) {
+        public WrapperCommand Btn_ScoreL4(RobotContainer robotContainer) {
             return Control_AlignClosestScoreL4()
             .andThen(GetClosestAlgae().unless(()->{return !robotContainer.joystick.x().getAsBoolean();}))
             .andThen(ParkElevatorAndHead()).finallyDo(traveltopark());
@@ -574,7 +575,7 @@ public void doTravelIfInCorrectPosition()
             return ParkElevatorAndHead().alongWith(new InstantCommand(()->{isbargeing = false;}));
         }
 
-        public ParallelCommandGroup GotoProcessorPos(RobotContainer robotContainer) {
+        public ParallelCommandGroup Btn_GotoProcessorPos(RobotContainer robotContainer) {
             return new InstantCommand(()->{})//SelectCommands.C_ProcessorSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
             .alongWith(
                 new C_ElevateToPosition(robotContainer.ss_Elevator, frc.robot.constants.Elevator.minElevatorHeight),
@@ -585,7 +586,7 @@ public void doTravelIfInCorrectPosition()
         ;
         }
 
-        public WrapperCommand GetAlgaeFromReef() {
+        public WrapperCommand Btn_GetAlgaeFromReef() {
             return //
             GetClosestAlgae().finallyDo(traveltopark());
         }
@@ -605,7 +606,7 @@ public void doTravelIfInCorrectPosition()
         public ParallelCommandGroup Btn_DisableClimbMode(RobotContainer robotContainer) {
             return new InstantCommand(()->{MantaState.setAltControlModeEnabled(false);})
           .alongWith(
-            ClimbHookStartFlat(),
+            Btn_ClimbHookStartFlat(),
             new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.minposition)
             );
         }
@@ -615,7 +616,7 @@ public void doTravelIfInCorrectPosition()
           .alongWith(
             new C_PivotToPosition(robotContainer.ss_Pivot, PlasmaPivot.ParkPosition)
             ,new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.climbExtension)
-            ,ClimbHookReady()
+            ,Btn_ClimbHookReady()
             );
         }
 
@@ -642,6 +643,8 @@ public void doTravelIfInCorrectPosition()
                 robotContainer.ss_Climber.C_SlideGotoPositon(SlideSide.minPostion))
                 //wait command acts as timeout since if the match ends the motor stops anyway
             .andThen(new WaitCommand(3.0),robotContainer.ss_Climber.C_Stop());
+
+            
         }
 
 }
