@@ -46,7 +46,7 @@ public class SuperStructure extends SubsystemBase{
     public final Pivot ss_Pivot;
     public final ArmExtension ss_ArmExtension;
     public final josiahClimber ss_Climber;
-    
+
     public final CANdleSubsystem Candle;
     public final RearIntake ss_RearIntake;
 
@@ -74,121 +74,120 @@ public class SuperStructure extends SubsystemBase{
         ss_RearIntake = _ss_RearIntake;
     }
 
-@Override
-public void periodic() {
-    //TODO: put the elevator slam protection here
-    doTravelIfInCorrectPosition();
-}
+    @Override
+    public void periodic() {
+        //TODO: put the elevator slam protection here
+        doTravelIfInCorrectPosition();
+    }
 
-public void doTravelIfInCorrectPosition()
-  {
-    double _requestedPosition = ss_Elevator.requestedHeight.getAsDouble();
-    
-    if(MantaState.ss_RearIntake.LaserDetectsCoral())
-    {
-      return; 
-    }
-    if (ss_Elevator.setpointHeight.getAsDouble() != _requestedPosition) {
-      
-      //if we are above the CannotFoldBelow position
-      if(ss_Elevator.currentHeight.getAsDouble() > constants.Elevator.CannotPivotParkBelowElevatorPosition)
-      {
-        //if we are going below the cannot fold position
-        if(_requestedPosition <= constants.Elevator.CannotPivotParkBelowElevatorPosition)
+    public void doTravelIfInCorrectPosition()   {
+        double _requestedPosition = ss_Elevator.requestedHeight.getAsDouble();
+        
+        if(MantaState.ss_RearIntake.LaserDetectsCoral())
         {
-          //check if pivot is in a safe travel position
-          if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
-          {
-             //if/when we are folded out, set position to requested position
-            //safe to goto requestion position
-            ss_Elevator.GotoPosition(_requestedPosition);
-          }
-          else{
-            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-            //ONLY safe to goto CannotFoldBelowPosition
-            ss_Elevator. GotoPosition(constants.Elevator.CannotPivotParkBelowElevatorPosition);
-          }
+        return; 
         }
-        else{
-          //if we are above the safe zone and staying above the safe zone then request the new position. 
-          ss_Elevator.GotoPosition(_requestedPosition);
-        }
-      }
-      //else if we are in the void zone only allow travel mode
-      else if(ss_Elevator.currentHeight.getAsDouble() > constants.Elevator.CannotPivotParkAboveElevatorPosition && ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.CannotPivotParkBelowElevatorPosition)
-      {
+        if (ss_Elevator.setpointHeight.getAsDouble() != _requestedPosition) {
+        
         //if we are above the CannotFoldBelow position
-      if(ss_Elevator.currentHeight.getAsDouble() > constants.Elevator.CannotPivotParkAboveElevatorPosition)
-      {
-        //if we are going below the cannot fold position
-        if(_requestedPosition <= constants.Elevator.CannotPivotParkAboveElevatorPosition)
+        if(ss_Elevator.currentHeight.getAsDouble() > constants.Elevator.CannotPivotParkBelowElevatorPosition)
         {
-          //check if pivot is in a safe travel position
-          if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
-          {
-             //if/when we are folded out, set position to requested position
+            //if we are going below the cannot fold position
+            if(_requestedPosition <= constants.Elevator.CannotPivotParkBelowElevatorPosition)
+            {
+            //check if pivot is in a safe travel position
+            if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
+            {
+                //if/when we are folded out, set position to requested position
+                //safe to goto requestion position
+                ss_Elevator.GotoPosition(_requestedPosition);
+            }
+            else{
+                //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
+                //ONLY safe to goto CannotFoldBelowPosition
+                ss_Elevator. GotoPosition(constants.Elevator.CannotPivotParkBelowElevatorPosition);
+            }
+            }
+            else{
+            //if we are above the safe zone and staying above the safe zone then request the new position. 
+            ss_Elevator.GotoPosition(_requestedPosition);
+            }
+        }
+        //else if we are in the void zone only allow travel mode
+        else if(ss_Elevator.currentHeight.getAsDouble() > constants.Elevator.CannotPivotParkAboveElevatorPosition && ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.CannotPivotParkBelowElevatorPosition)
+        {
+            //if we are above the CannotFoldBelow position
+        if(ss_Elevator.currentHeight.getAsDouble() > constants.Elevator.CannotPivotParkAboveElevatorPosition)
+        {
+            //if we are going below the cannot fold position
+            if(_requestedPosition <= constants.Elevator.CannotPivotParkAboveElevatorPosition)
+            {
+            //check if pivot is in a safe travel position
+            if(MantaState.ss_Pivot.IsPivotFoldedOut.getAsBoolean()) //IsPivotinTravelPosition
+            {
+                //if/when we are folded out, set position to requested position
+                //safe to goto requestion position
+                ss_Elevator.GotoPosition(_requestedPosition);
+            }
+            else{
+                //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
+                //ONLY safe to goto CannotFoldBelowPosition
+                ss_Elevator.GotoPosition(constants.Elevator.CannotPivotParkBelowElevatorPosition);
+            }
+            }
+            else{
+            //if we are above the safe zone and staying above the safe zone then request the new position. 
+            ss_Elevator.GotoPosition(_requestedPosition);
+            }
+        }
+        }   
+        //if we are below the CannotFoldabove position
+        else if(ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.CannotPivotParkAboveElevatorPosition)
+        {
+            //if we are going above the cannot fold position
+            if(_requestedPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
+            {
+            //check if pivot is in a safe travel position
+            if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
+            {
+                //if/when we are folded out, set position to requested position
+                //safe to goto requestion position
+                ss_Elevator.GotoPosition(_requestedPosition);
+            }
+            else{
+                //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
+                //ONLY safe to goto CannotFoldBelowPosition
+                ss_Elevator.GotoPosition(constants.Elevator.CannotPivotParkAboveElevatorPosition);
+            }
+            }
+            else{
+            //if we are below the safe zone and going below the safe zone then request the new position. 
+            ss_Elevator.GotoPosition(_requestedPosition);
+            }
+        }//if we are not above the nogo and we are not below the nogo we are in the nogo. make sure we are in travel position and goto the called position
+        else 
+        {
+            //check if pivot is in a safe travel position
+            if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
+            {
+                //if/when we are folded out, set position to requested position
             //safe to goto requestion position
             ss_Elevator.GotoPosition(_requestedPosition);
-          }
-          else{
-            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-            //ONLY safe to goto CannotFoldBelowPosition
-            ss_Elevator.GotoPosition(constants.Elevator.CannotPivotParkBelowElevatorPosition);
-          }
+            }
+            else{
+            //if not IsPivotinTravelPosition, dont move we are in the No-go zone already. 
+            }
         }
-        else{
-          //if we are above the safe zone and staying above the safe zone then request the new position. 
-          ss_Elevator.GotoPosition(_requestedPosition);
-        }
-      }
-      }   
-      //if we are below the CannotFoldabove position
-      else if(ss_Elevator.currentHeight.getAsDouble() < constants.Elevator.CannotPivotParkAboveElevatorPosition)
-      {
-        //if we are going above the cannot fold position
-        if(_requestedPosition > constants.Elevator.CannotPivotParkAboveElevatorPosition)
+        }// else if we are close to parked and we are requesting a park. then just brake mode. 
+        else if ((ss_Elevator.setpointHeight.getAsDouble() < constants.Elevator.ElevatorBrakeParkTolerance) 
+            & (_requestedPosition < constants.Elevator.ElevatorBrakeParkTolerance)
+            &  ss_Elevator.elevatorVelocity.getAsDouble() < 100
+            & Tools.isPosAtSetpoint(ss_Elevator.currentHeight.getAsDouble(), constants.Elevator.minElevatorHeight, constants.Elevator.ElevatorBrakeParkTolerance))
         {
-          //check if pivot is in a safe travel position
-          if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
-          {
-              //if/when we are folded out, set position to requested position
-            //safe to goto requestion position
-            ss_Elevator.GotoPosition(_requestedPosition);
-          }
-          else{
-            //if not IsPivotinTravelPosition, set position to "cannotfoldbelowPosition"
-            //ONLY safe to goto CannotFoldBelowPosition
-            ss_Elevator.GotoPosition(constants.Elevator.CannotPivotParkAboveElevatorPosition);
-          }
+        //System.out.println("elevator Braking");
+        ss_Elevator.BRAKE();
         }
-        else{
-          //if we are below the safe zone and going below the safe zone then request the new position. 
-          ss_Elevator.GotoPosition(_requestedPosition);
-        }
-      }//if we are not above the nogo and we are not below the nogo we are in the nogo. make sure we are in travel position and goto the called position
-      else 
-      {
-        //check if pivot is in a safe travel position
-        if(MantaState.ss_Pivot.IsPivotinTravelPosition.getAsBoolean())
-        {
-            //if/when we are folded out, set position to requested position
-          //safe to goto requestion position
-          ss_Elevator.GotoPosition(_requestedPosition);
-        }
-        else{
-          //if not IsPivotinTravelPosition, dont move we are in the No-go zone already. 
-        }
-      }
-    }// else if we are close to parked and we are requesting a park. then just brake mode. 
-    else if ((ss_Elevator.setpointHeight.getAsDouble() < constants.Elevator.ElevatorBrakeParkTolerance) 
-          & (_requestedPosition < constants.Elevator.ElevatorBrakeParkTolerance)
-          &  ss_Elevator.elevatorVelocity.getAsDouble() < 100
-          & Tools.isPosAtSetpoint(ss_Elevator.currentHeight.getAsDouble(), constants.Elevator.minElevatorHeight, constants.Elevator.ElevatorBrakeParkTolerance))
-    {
-      //System.out.println("elevator Braking");
-      ss_Elevator.BRAKE();
     }
-  }
   
 
     public Command gotoMinTravel()
@@ -546,105 +545,105 @@ public void doTravelIfInCorrectPosition()
         .finallyDo(traveltopark());
     }
 
-        public WrapperCommand Btn_ScoreL1() {
-            return SelectCommands.C_ReefL1CenterSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
-            .alongWith(gotoL1Travel())
-            .andThen(PivotIntoReefL1(),TridentCoralShootOut(),ParkElevatorAndHead()).finallyDo(traveltopark());
-        }
+    public WrapperCommand Btn_ScoreL1() {
+        return SelectCommands.C_ReefL1CenterSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
+        .alongWith(gotoL1Travel())
+        .andThen(PivotIntoReefL1(),TridentCoralShootOut(),ParkElevatorAndHead()).finallyDo(traveltopark());
+    }
 
-        public WrapperCommand Btn_ScoreL2() {
-            return alignReefForCoral()
-            .alongWith(gotoL2Travel())
-            .andThen(PivotIntoReefL2(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark());
-        }
+    public WrapperCommand Btn_ScoreL2() {
+        return alignReefForCoral()
+        .alongWith(gotoL2Travel())
+        .andThen(PivotIntoReefL2(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark());
+    }
 
-        public WrapperCommand Btn_ScoreL3() {
-            return alignReefForCoral()
-            .alongWith(gotoL3Travel())
-            .andThen(PivotIntoReefl3(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark());
-        }
+    public WrapperCommand Btn_ScoreL3() {
+        return alignReefForCoral()
+        .alongWith(gotoL3Travel())
+        .andThen(PivotIntoReefl3(),CoralDropScoreL2(),ParkElevatorAndHead()).finallyDo(traveltopark());
+    }
 
-        public WrapperCommand Btn_ScoreL4(RobotContainer robotContainer) {
-            return Control_AlignClosestScoreL4()
-            .andThen(GetClosestAlgae().unless(()->{return !robotContainer.joystick.x().getAsBoolean();}))
-            .andThen(ParkElevatorAndHead()).finallyDo(traveltopark());
-        }
+    public WrapperCommand Btn_ScoreL4(RobotContainer robotContainer) {
+        return Control_AlignClosestScoreL4()
+        .andThen(GetClosestAlgae().unless(()->{return !robotContainer.joystick.x().getAsBoolean();}))
+        .andThen(ParkElevatorAndHead()).finallyDo(traveltopark());
+    }
 
-        public Command Btn_Park()
-        {
-            return ParkElevatorAndHead().alongWith(new InstantCommand(()->{isbargeing = false;}));
-        }
+    public Command Btn_Park()
+    {
+        return ParkElevatorAndHead().alongWith(new InstantCommand(()->{isbargeing = false;}));
+    }
 
-        public ParallelCommandGroup Btn_GotoProcessorPos(RobotContainer robotContainer) {
-            return new InstantCommand(()->{})//SelectCommands.C_ProcessorSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
-            .alongWith(
-                new C_ElevateToPosition(robotContainer.ss_Elevator, frc.robot.constants.Elevator.minElevatorHeight),
-                new C_PivotToPosition(robotContainer.ss_Pivot, PlasmaPivot.processorPivot),
-                new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.processorExtension,true)
-                )
-            //.andThen(TridentAlgaeBumpOut().withTimeout(.5).finallyDo(()->{ss_Trident.HoldPosition(); traveltopark();}))
-        ;
-        }
+    public ParallelCommandGroup Btn_GotoProcessorPos(RobotContainer robotContainer) {
+        return new InstantCommand(()->{})//SelectCommands.C_ProcessorSelectCommand().asProxy().until(MantaState.getLimeLightBypassed)
+        .alongWith(
+            new C_ElevateToPosition(robotContainer.ss_Elevator, frc.robot.constants.Elevator.minElevatorHeight),
+            new C_PivotToPosition(robotContainer.ss_Pivot, PlasmaPivot.processorPivot),
+            new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.processorExtension,true)
+            )
+        //.andThen(TridentAlgaeBumpOut().withTimeout(.5).finallyDo(()->{ss_Trident.HoldPosition(); traveltopark();}))
+    ;
+    }
 
-        public WrapperCommand Btn_GetAlgaeFromReef() {
-            return //
-            GetClosestAlgae().finallyDo(traveltopark());
-        }
+    public WrapperCommand Btn_GetAlgaeFromReef() {
+        return //
+        GetClosestAlgae().finallyDo(traveltopark());
+    }
 
-        public WrapperCommand Btn_ManualBumpOut(RobotContainer robotContainer) {
-            return TridentBargeAlgaeBumpOut().alongWith(new InstantCommand(()->{robotContainer.ss_RearIntake.GotoDutyCycle(-RearMotorizedIntake.ReversingdutyCyclePercent);})).finallyDo(()->{robotContainer.ss_Trident.HoldPosition(); robotContainer.ss_RearIntake.COAST();});
-        }
+    public WrapperCommand Btn_ManualBumpOut(RobotContainer robotContainer) {
+        return TridentBargeAlgaeBumpOut().alongWith(new InstantCommand(()->{robotContainer.ss_RearIntake.GotoDutyCycle(-RearMotorizedIntake.ReversingdutyCyclePercent);})).finallyDo(()->{robotContainer.ss_Trident.HoldPosition(); robotContainer.ss_RearIntake.COAST();});
+    }
 
-        public InstantCommand Btn_BypassLimelight() {
-            return new InstantCommand(()->{MantaState.setLimeLightBypassed(true);});
-        }
+    public InstantCommand Btn_BypassLimelight() {
+        return new InstantCommand(()->{MantaState.setLimeLightBypassed(true);});
+    }
 
-        public InstantCommand Btn_EnableLimelight() {
-            return new InstantCommand(()->{MantaState.setLimeLightBypassed(false);});
-        }
+    public InstantCommand Btn_EnableLimelight() {
+        return new InstantCommand(()->{MantaState.setLimeLightBypassed(false);});
+    }
 
-        public ParallelCommandGroup Btn_DisableClimbMode(RobotContainer robotContainer) {
-            return new InstantCommand(()->{MantaState.setAltControlModeEnabled(false);})
-          .alongWith(
-            Btn_ClimbHookStartFlat(),
-            new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.minposition)
-            );
-        }
+    public ParallelCommandGroup Btn_DisableClimbMode(RobotContainer robotContainer) {
+        return new InstantCommand(()->{MantaState.setAltControlModeEnabled(false);})
+        .alongWith(
+        Btn_ClimbHookStartFlat(),
+        new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.minposition)
+        );
+    }
 
-        public ParallelCommandGroup Btn_EnableClimbMode(RobotContainer robotContainer) {
-            return new InstantCommand(()->{MantaState.setAltControlModeEnabled(true);})
-          .alongWith(
-            new C_PivotToPosition(robotContainer.ss_Pivot, PlasmaPivot.ParkPosition)
-            ,new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.climbExtension)
-            ,Btn_ClimbHookReady()
-            );
-        }
+    public ParallelCommandGroup Btn_EnableClimbMode(RobotContainer robotContainer) {
+        return new InstantCommand(()->{MantaState.setAltControlModeEnabled(true);})
+        .alongWith(
+        new C_PivotToPosition(robotContainer.ss_Pivot, PlasmaPivot.ParkPosition)
+        ,new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.climbExtension)
+        ,Btn_ClimbHookReady()
+        );
+    }
 
-        public SequentialCommandGroup Btn_GotoL4DebugMode(RobotContainer robotContainer) {
-            return robotContainer.ss_Elevator.GotoPositonCommand(frc.robot.constants.Elevator.l4Position)
-            .alongWith(GotoTravelPostion().withTimeout(1))
-            .andThen(new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.maxposition));
-        }
+    public SequentialCommandGroup Btn_GotoL4DebugMode(RobotContainer robotContainer) {
+        return robotContainer.ss_Elevator.GotoPositonCommand(frc.robot.constants.Elevator.l4Position)
+        .alongWith(GotoTravelPostion().withTimeout(1))
+        .andThen(new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.maxposition));
+    }
 
-        public SequentialCommandGroup Btn_ResetVision() {
-            return new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
-          .andThen(
-            new WaitCommand(.01),
-            new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();}),
-            new WaitCommand(.01),
-            new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
-            );
-        }
+    public SequentialCommandGroup Btn_ResetVision() {
+        return new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
+        .andThen(
+        new WaitCommand(.01),
+        new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();}),
+        new WaitCommand(.01),
+        new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
+        );
+    }
 
-        public SequentialCommandGroup Btn_ClimbNow(RobotContainer robotContainer) {
-            return C_ClimbHookStartFlat()//.withTimeout(1).unless(()->{return ss_Climber.getCatchPosition() < constants.Climber.CatchSide.startPos;})
-            .andThen(
-                robotContainer.ss_Climber.C_CatchGotoPositon(CatchSide.minPostion),
-                robotContainer.ss_Climber.C_SlideGotoPositon(SlideSide.minPostion))
-                //wait command acts as timeout since if the match ends the motor stops anyway
-            .andThen(new WaitCommand(3.0),robotContainer.ss_Climber.C_Stop());
+    public SequentialCommandGroup Btn_ClimbNow(RobotContainer robotContainer) {
+        return C_ClimbHookStartFlat()//.withTimeout(1).unless(()->{return ss_Climber.getCatchPosition() < constants.Climber.CatchSide.startPos;})
+        .andThen(
+            robotContainer.ss_Climber.C_CatchGotoPositon(CatchSide.minPostion),
+            robotContainer.ss_Climber.C_SlideGotoPositon(SlideSide.minPostion))
+            //wait command acts as timeout since if the match ends the motor stops anyway
+        .andThen(new WaitCommand(3.0),robotContainer.ss_Climber.C_Stop());
 
-            
-        }
+        
+    }
 
 }
