@@ -19,6 +19,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -44,6 +45,7 @@ import frc.robot.commands.C_PivotToPosition;
 import frc.robot.commands.C_SlideMotorToPosition;
 import frc.robot.commands.C_TridentIntake;
 import frc.robot.AlphaBots.LimeLightPoseFilter;
+import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
 import frc.robot.AlphaBots.AprilTagSystem.SelectCommands;
 import frc.robot.generated.TunerConstants;
@@ -423,6 +425,8 @@ public class RobotContainer {
         // Testjoystick.b().whileTrue(ss_Pivot.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // Testjoystick.x().whileTrue(ss_Pivot.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+        //joystick.rightStick().onTrue(new InstantCommand(()->{System.out.println(LimelightHelpers.getTargetPose3d_CameraSpace("limelight-front"));}));
+        joystick.rightStick().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(0.5)));
         
         joystick.start().and(joystick.x().negate()).onTrue(
             new InstantCommand(()->{LimeLightPoseFilter.DoResetVision();})
