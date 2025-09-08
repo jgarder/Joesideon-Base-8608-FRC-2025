@@ -30,8 +30,6 @@ public class Robot extends LoggedRobot {
   private final advantageKitBootstrap akit = new advantageKitBootstrap(this);
   private final RobotContainer m_robotContainer;
 
-  private final boolean kUseLimelight = false;
-
   public Robot() {
     //Pathfinding.setPathfinder(new LocalADStarAK());
     RobotController.setBrownoutVoltage(6.0);//trade battery life for performance, im sure it will be fine.
@@ -124,7 +122,7 @@ public class Robot extends LoggedRobot {
   private final Field2d field = new Field2d();
   public void SetupPathplannerLog(){
 
-    SmartDashboard.putData("Field", field);
+    SmartDashboard.putData("PPField", field);
 
     // Logging callback for current robot pose
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {

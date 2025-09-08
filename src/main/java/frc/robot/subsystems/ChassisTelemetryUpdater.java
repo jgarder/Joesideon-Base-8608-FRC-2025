@@ -10,7 +10,7 @@ import frc.robot.AlphaBots.AprilTagSystem.PoseFinder;
 import frc.robot.AlphaBots.AprilTagSystem.config;
 import frc.robot.AlphaBots.NT;
 
-public class AprilTagManager extends SubsystemBase
+public class ChassisTelemetryUpdater extends SubsystemBase
   {
     StructEntry<Pose2d> NT_myloc = NT.getStructEntry_Pose2D("Poses","TagLoc",new Pose2d());
     StructEntry<Pose2d> NT_myStraightloc = NT.getStructEntry_Pose2D("Poses","StraightLoc",new Pose2d());//straight out from the april tag. a centered pick for de-algae/processor/pickup 
@@ -25,7 +25,7 @@ public class AprilTagManager extends SubsystemBase
     //DoubleEntry NT_tagID = NT.getDoubleEntry("", "TagID", chosenAprilTagID);
     
   
-    public AprilTagManager(CommandSwerveDrivetrain _drivetrain)
+    public ChassisTelemetryUpdater(CommandSwerveDrivetrain _drivetrain)
     {
       config.drivetrain =_drivetrain;//this is required to be able to use SelectCommands that will need our drivetrains position for Getting Closest Tag. 
     } 
