@@ -1297,6 +1297,12 @@ public class LimelightHelpers {
         return toPose2D(result);
 
     }
+
+    //not part of the original limelight helpers, i dont know what im doing
+    public static Pose3d getTargetPose3dThing(String limelightName){
+        double[] result = getTargetPose_RobotSpace(limelightName);
+        return toPose3D(result);
+    }
    
 
 

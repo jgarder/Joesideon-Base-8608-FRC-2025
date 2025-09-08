@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.networktables.BooleanEntry;
@@ -15,7 +16,9 @@ import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 
@@ -59,8 +62,8 @@ public class MantaRay extends SubsystemBase {
 
 
   public double LastPosition = 0;
-  public double kP = 6.0;
-  public double kI = 10.0;
+  public double kP = 1.0;
+  public double kI = 0.0;
   public double kD = 0.0;
 
   private void setMotorConfig(){
@@ -199,7 +202,7 @@ public class MantaRay extends SubsystemBase {
     }
     public void holdPositionThroughVelocity(){
       m_TridentMotor.setControl(
-            new VelocityTorqueCurrentFOC(0)
+            new VelocityTorqueCurrentFOC(5)
             .withSlot(0)
         );
     }
@@ -207,6 +210,12 @@ public class MantaRay extends SubsystemBase {
     {
         return new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(dutycycle));});
         
+    }
+    public Command postRoll(double dutycycle){
+      return new SequentialCommandGroup(
+        new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(dutycycle));}),
+        new WaitCommand(1.0),
+        new InstantCommand(()->{holdPositionThroughVelocity();}));
     }
 
     public Command bumpout()

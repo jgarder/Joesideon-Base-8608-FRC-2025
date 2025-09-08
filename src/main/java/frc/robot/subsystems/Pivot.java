@@ -175,7 +175,10 @@ public class Pivot extends SubsystemBase {
 
     _configuration.MotionMagic.MotionMagicAcceleration = constants.PlasmaPivot.Accel;
     _configuration.MotionMagic.MotionMagicJerk = constants.PlasmaPivot.Jerk;
-    _configuration.MotionMagic.MotionMagicCruiseVelocity = constants.PlasmaPivot.Cruise;
+    _configuration.MotionMagic.MotionMagicCruiseVelocity = 0;
+
+    _configuration.MotionMagic.MotionMagicExpo_kA = constants.PlasmaPivot.ExpokA;
+    _configuration.MotionMagic.MotionMagicExpo_kV = constants.PlasmaPivot.ExpokV;
 
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.PlasmaPivot.maxposition;
@@ -440,7 +443,8 @@ public class Pivot extends SubsystemBase {
   //Kraken x60 FOC kT = 19.81;  From https://ctre.download/files/datasheet/Motor%20Performance%20Analysis%20Report.pdf
   //private MotionMagicTorqueCurrentFOC PivotRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
   
-  private MotionMagicTorqueCurrentFOC PivotRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
+  //private MotionMagicTorqueCurrentFOC PivotRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
+  private MotionMagicExpoTorqueCurrentFOC PivotRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
   //private MotionMagicExpoTorqueCurrentFOC
 
 

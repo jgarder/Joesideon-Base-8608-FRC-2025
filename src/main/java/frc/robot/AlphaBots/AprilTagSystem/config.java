@@ -26,7 +26,7 @@ public class config {
 
     public static final double SourcePickupWidthCenterOffset = Units.inchesToMeters(24)/2; //Reef Width CenteronCenter divided in half
 
-    public static final double ExtraMetersoffsetForAlgaePickup = Units.inchesToMeters(6.25);
+    public static final double ExtraMetersoffsetForAlgaePickup = Units.inchesToMeters(3.25);//6.25in
 
     public static final double ontheFlyDistanceFromCorrect = Units.inchesToMeters(12);
 

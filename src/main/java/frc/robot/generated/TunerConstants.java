@@ -51,7 +51,7 @@ public class TunerConstants {
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
-    private static final Current kSlipCurrent = Amps.of(130.0);
+    private static final Current kSlipCurrent = Amps.of(90.0);
     //Insane results, we just set the bumpers on top of the robot and all 4 wheels were stalling at 130 amps stator!!
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.

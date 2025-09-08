@@ -53,6 +53,7 @@ public class SuperStructure extends SubsystemBase{
     public double TridentEjectMovement = 20;
     public double processorAlgaeScoringDutyCycle = -.35;
     public double BargeAlgaeScoringDutyCycle = -1.0;//-.75;
+    public double randomPostRoll = .1;
     //started working on this, not done yet
     public double intaketimeout = 20;
     public double groundintakeTimeout = 20; //auton this command will run until finished or this timeout.
@@ -285,7 +286,8 @@ public class SuperStructure extends SubsystemBase{
 
     public Command PivotIntoReefL1(){
         return new C_PivotToPosition(ss_Pivot, PlasmaPivot.l1ReadyPosition)
-                .alongWith(new C_ExtendToPosition(ss_ArmExtension,PlasmaExtension.l1ReadyPosition));
+                .alongWith(
+                    new C_ExtendToPosition(ss_ArmExtension,PlasmaExtension.l1ReadyPosition));
     }
 
     public Command PivotIntoReefL2(){
@@ -437,7 +439,10 @@ public class SuperStructure extends SubsystemBase{
 
     public Runnable groundIntakeReset(){
         return ()->{
-            GotoTravelPostion().alongWith(new C_ElevateToPosition(ss_Elevator, frc.robot.constants.Elevator.minElevatorHeight)).schedule();
+            ss_Trident.postRoll(randomPostRoll)
+            .andThen(new SequentialCommandGroup(
+                new WaitCommand(1.0),
+                GotoTravelPostion()).alongWith(new C_ElevateToPosition(ss_Elevator, frc.robot.constants.Elevator.minElevatorHeight))).schedule();
         };
     }
 
@@ -537,12 +542,12 @@ public class SuperStructure extends SubsystemBase{
         public Command Btn_ScoreBarge()
     {
         return 
-        SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
-        .alongWith(
-            GotoBargePosition()
-            )
-        .andThen(TridentBargeAlgaeBumpOut())
-        .finallyDo(traveltopark());
+        //SelectCommands.C_BargeSelectCommand(getYAxis).asProxy().until(MantaState.getLimeLightBypassed).withTimeout(3)
+        //.alongWith(
+            GotoBargePosition();
+        //    )
+        //.andThen(TridentBargeAlgaeBumpOut())
+        //.finallyDo(traveltopark());
     }
 
     public WrapperCommand Btn_ScoreL1() {

@@ -87,12 +87,16 @@ public class constants {
     
 
     }
+    //temp l1 numbers
+    //pivot .033
+    //elevator 6.565
+    //extension 11.644
 
     public class MantaRay {
         public static final double IntakeDutyCycle = .4;
-        public static final double intakeAmpLimit = 50;
+        public static final double intakeAmpLimit = 60;
 
-        public static final double intakeAmpCutoffThreshold = 28; //20
+        public static final double intakeAmpCutoffThreshold = 17; //28
         public static final double intakeAmpLimittime = 0.125;//.125;
     }
 
@@ -105,7 +109,7 @@ public class constants {
         public static final double kD = 0;
 
         public static final double kA = 0;
-        public static final double kS = 2.12;
+        public static final double kS = 1.0;//2.12
         public static final double kV = 0.047;
        
         public static double ReversingdutyCyclePercent = .16;
@@ -147,9 +151,9 @@ public class constants {
         public static final double CannotPivotParkAboveElevatorPosition = 2.0;//when elevator is below this, pivot must be in TPos for elevator to go above this number. 
         
         public static final double groundPickup = minElevatorHeight;
-        public static final double AngledgroundPickup = 8.0;
+        public static final double AngledgroundPickup = 7.0;
         public static final double ProcessorPos = 4.0;
-        public static final double l1Position = 5.5;
+        public static final double l1Position = 6.5;//5.5;
         public static final double l2Position = 9.0;
         public static final double l2Algae = 13.6;//15.5;
         public static final double l3Position = 18.0;
@@ -185,7 +189,7 @@ public class constants {
 
         public static final double CoralGroundPickup = 0.06;
 
-        public static final double l1ReadyPosition = .02;
+        public static final double l1ReadyPosition = .033; //.02;
         public static final double l2ReadyPosition = .117;
         public static final double l3ReadyPosition = .107;
         public static final double l4ReadyPosition = l3ReadyPosition + .01;
@@ -202,19 +206,22 @@ public class constants {
 
         public static final double maxStatorCurrent = 120;
 
-        public static final double kP = 1800;//320;//350;//270.0;
-        public static final double kI = 0.0;//400;//160;//60.0;
-        public static final double kD = 400.0;//83;//80.0;
+        public static final double kP = 1800;   //320;//350;//270.0;
+        public static final double kI = 0.0;    //400;//160;//60.0;
+        public static final double kD = 400.0;  //83;//80.0;
 
-        public static final double kA = 0.001;
+        public static final double kA = 0.376;
         public static final double kV = 0.0;
-        public static final double kS = 4.0;//2.5;
+        public static final double kS = 1.0;//4.0;
         public static final double lowkG = 12.5;
         public static final double highkG = 20;
 
         public static final double Accel = 30;//30.0;        //9.0;//10.0;
         public static final double Jerk = 0;//120;//0;        //400.0;
         public static final double Cruise = 120;//100.0;
+
+        public static final double ExpokA = 0.1;
+        public static final double ExpokV = 0.12;
   
         
         
@@ -247,10 +254,10 @@ public class constants {
         public static final double l2ReadyPosition = 28.14;//38;//uses LiveOffset
         public static final double l3ReadyPosition =  27;//41.0;//uses LiveOffset //the ready position in the reef is right before we swoop to score.
 
-        public static final double l1ScorePosition = 15.55;//21.0;//uses LiveOffset
+        public static final double l1ScorePosition = 11.644;//15.55;//21.0;//uses LiveOffset
         public static final double l2ScorePosition = 0;//uses LiveOffset
         public static final double l4ScorePosition = 28.8;//39;//uses LiveOffset
-        public static final double ReefAlgaePickupExtension = maxposition-7.4;//10;
+        public static final double ReefAlgaePickupExtension = maxposition - 3;//-7.4;
         public static final double GroundPickupExtension = 28;//38;
          
 
