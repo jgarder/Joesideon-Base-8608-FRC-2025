@@ -82,16 +82,45 @@ public class constants {
         public static final int CanRangeRearIntakeCanID = 3;
 
         public static final int CANdleID = 2;
+
+        public static final int groundPivot = 60;
+        public static final int groundAbsoluteEncoder = 36;
+        public static final int intakeRoller = 48;
+        public static final int rollerCANRange = 50;
        
         
     
 
     }
-    //temp l1 numbers
-    //pivot .033
-    //elevator 6.565
-    //extension 11.644
+    public class groundIntake{
+        //soft limits
+        public static final double gearRatio = (50.0/9.0) * (48.0/16.0) * (48.0/16.0) * (38.0/17.0);
+        public static final double maxStatorCurrent = 60;
 
+        public static final double maxPosition = 0;
+        public static final double minPosition = 0;
+
+        //PID+FF
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+
+        public static final double kS = 0;
+        public static final double kA = 0;
+        public static final double kV = 0;
+
+        public static final double kG = 0;
+
+        //Motion Magic
+        public static final double Jerk = 0;
+        public static final double Accel = 0;
+        public static final double Cruise = 0;
+        public static double absoMagnetOffset;
+        public static double armPositionErrorTolerance;
+
+
+    }
+    
     public class MantaRay {
         public static final double IntakeDutyCycle = .4;
         public static final double intakeAmpLimit = 60;

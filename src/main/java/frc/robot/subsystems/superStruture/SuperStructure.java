@@ -432,6 +432,7 @@ public class SuperStructure extends SubsystemBase{
             new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.maxposition,true),
             new WaitCommand(.1),//small delay to debounce the head moving and causing high amps. 
             new C_TridentIntake(ss_Trident,ss_RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout)
+            //,ss_Trident.postRoll(randomPostRoll)
             )
             )
         .finallyDo(groundIntakeReset());
@@ -439,10 +440,7 @@ public class SuperStructure extends SubsystemBase{
 
     public Runnable groundIntakeReset(){
         return ()->{
-            ss_Trident.postRoll(randomPostRoll)
-            .andThen(new SequentialCommandGroup(
-                new WaitCommand(1.0),
-                GotoTravelPostion()).alongWith(new C_ElevateToPosition(ss_Elevator, frc.robot.constants.Elevator.minElevatorHeight))).schedule();
+            GotoTravelPostion().alongWith(new C_ElevateToPosition(ss_Elevator, frc.robot.constants.Elevator.minElevatorHeight)).schedule();
         };
     }
 

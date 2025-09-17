@@ -214,7 +214,7 @@ public class MantaRay extends SubsystemBase {
     public Command postRoll(double dutycycle){
       return new SequentialCommandGroup(
         new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(dutycycle));}),
-        new WaitCommand(1.0),
+        new WaitCommand(1.5),
         new InstantCommand(()->{holdPositionThroughVelocity();}));
     }
 
