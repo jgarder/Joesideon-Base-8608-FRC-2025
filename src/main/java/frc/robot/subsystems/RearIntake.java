@@ -33,10 +33,11 @@ public class RearIntake extends SubsystemBase {
   
   public final TalonFX m_Motor = new TalonFX(constants.CanBus.MotorizedRearIntakeCanID, constants.CanBus.RioCANBusName);
   
-  public final CANrange m_CANRange = new CANrange(constants.CanBus.CanRangeRearIntakeCanID, constants.CanBus.RioCANBusName);
+  //removing the CANRange for the head instead of the rearintake
+  //public final CANrange m_CANRange = new CANrange(constants.CanBus.CanRangeRearIntakeCanID, constants.CanBus.RioCANBusName);
   TalonFXConfiguration configuration;
   
-  BooleanEntry NT_IsLoaded = NT.getBooleanEntry(className , "CanRangedIsLoaded",false);
+  //BooleanEntry NT_IsLoaded = NT.getBooleanEntry(className , "CanRangedIsLoaded",false);
   DoubleEntry NT_Rps =  NT.getDoubleEntry(className ,"RPS",0);
   DoubleEntry NT_MotorTemp =  NT.getDoubleEntry(className,"MotorTemp",0);
   DoubleEntry NT_StatorCurrent = NT.getDoubleEntry(className, "StatorCurrent", 0);
@@ -74,12 +75,12 @@ public class RearIntake extends SubsystemBase {
     CANrangeConfiguration CANrangeConfiguration = new CANrangeConfiguration();
     CANrangeConfiguration.ProximityParams.ProximityThreshold = DetectionThresholdMeters;
 
-    m_CANRange.getConfigurator().apply(CANrangeConfiguration);
+    //m_CANRange.getConfigurator().apply(CANrangeConfiguration);
   }
-  public Trigger CoralInRearIntake = new Trigger(()->{return LaserDetectsCoral();});
-  public boolean LaserDetectsCoral(){
-    return m_CANRange.getIsDetected().getValue();
-  }
+  //public Trigger CoralInRearIntake = new Trigger(()->{return LaserDetectsCoral();});
+  // public boolean LaserDetectsCoral(){
+  //   return m_CANRange.getIsDetected().getValue();
+  // }
   public TalonFXConfiguration buildMotorConfig(){
     TalonFXConfiguration _configuration = new TalonFXConfiguration();
     _configuration.withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
@@ -104,7 +105,7 @@ public class RearIntake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    NT_IsLoaded.set(LaserDetectsCoral());
+    //NT_IsLoaded.set(LaserDetectsCoral());
     NT_Rps.set(m_Motor.getVelocity().getValueAsDouble());
     NT_MotorTemp.set(m_Motor.getDeviceTemp().getValueAsDouble());
     NT_StatorCurrent.set(m_Motor.getStatorCurrent().getValueAsDouble());

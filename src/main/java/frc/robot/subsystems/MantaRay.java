@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -9,6 +12,7 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.networktables.BooleanEntry;
@@ -32,6 +36,12 @@ public class MantaRay extends SubsystemBase {
   // private final com.ctre.phoenix6.controls.PositionDutyCycle m_positionDC = new PositionDutyCycle(0);
   // private final com.ctre.phoenix6.controls.DutyCycleOut m_DutyCycle = new DutyCycleOut(constants.MantaRay.IntakeDutyCycle);
 
+  public final CANrange mantaRange = new CANrange(constants.CanBus.CanRangeRearIntakeCanID, constants.CanBus.RioCANBusName);
+     CANrangeConfiguration rangeConfiguration;
+
+
+  private boolean _isloaded = false;
+
   private final StaticBrake m_s_Brake = new StaticBrake();
   private final NeutralOut m_s_Neutral = new NeutralOut();
   
@@ -53,6 +63,8 @@ public class MantaRay extends SubsystemBase {
   public MantaRay() {
     System.out.println("Creating " + className + " object"); 
     setMotorConfig();
+    rangeConfiguration = buildCANRangeConfig();
+    mantaRange.getConfigurator().apply(rangeConfiguration);
     NT_PGain.set(kP);
     NT_IGain.set(kI);
     NT_DGain.set(kD);
@@ -101,12 +113,22 @@ public class MantaRay extends SubsystemBase {
     if((i != kI)) { configuration.Slot0.kI = i; kI = i; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
     if((d != kD)) { configuration.Slot0.kD = d; kD = d; frc.robot.AlphaBots.Tools.SetConfigToTalonFX(m_TridentMotor,configuration,className); }
 
+    _isloaded = mantaRange.getIsDetected(true).getValue();
+    Logger.recordOutput(className + "/" + "Manta CanRange is detecting", _isloaded);
     //double currentRotorposition = m_TridentMotor.getPosition().getValueAsDouble();
     // if (LastPosition != currentRotorposition) {
     //     LastPosition = currentRotorposition;
     // }
     //
 
+  }
+
+  public CANrangeConfiguration buildCANRangeConfig(){
+    CANrangeConfiguration _rangeConfiguration = new CANrangeConfiguration();
+
+    _rangeConfiguration.ProximityParams.ProximityThreshold = 0.07;//.034
+
+    return _rangeConfiguration;
   }
 
 
@@ -128,46 +150,68 @@ public class MantaRay extends SubsystemBase {
       intakedebounceTimer.reset();
     }
 
-    private boolean _isloaded = false;
+    
     public BooleanSupplier getisloaded = ()->{return _isloaded;};
     public final Timer intakedebounceTimer = new Timer();
     //Alert alert = new Alert("IsLoaded", AlertType.kInfo);
     
     public boolean isLoaded()
     {
-      if(getisloaded.getAsBoolean()){return getisloaded.getAsBoolean();}
-        //check if amps are high
-        //check is rotor is locked
-        if(m_TridentMotor.getStatorCurrent().getValueAsDouble() > constants.MantaRay.intakeAmpCutoffThreshold)
-        {   
-            //if the timer hasnt been started start it
-            if(!intakedebounceTimer.isRunning())
+      if(_isloaded == true){
+        return _isloaded;
+      }
+      if(m_TridentMotor.getStatorCurrent().getValueAsDouble() > constants.MantaRay.intakeAmpCutoffThreshold){
+        if(!intakedebounceTimer.isRunning())
             {
                 intakedebounceTimer.restart();
-                _isloaded = false;
-                MantaState.NT_IsLoaded.set(getisloaded.getAsBoolean());
                 return false;
             }
-
-            //if timer running and the 
-            if(intakedebounceTimer.isRunning() && intakedebounceTimer.get() >= constants.MantaRay.intakeAmpLimittime)
-            {
-                System.out.println("ISLOADED NOW");
-                //alert.set(true);
-                stopDebouncer();
-                _isloaded = true;
-                MantaState.NT_IsLoaded.set(_isloaded);
-                return true;
-            }
-            return false;
-           
-        }
-        //alert.set(false);
-        intakedebounceTimer.restart();
-        _isloaded = false;
-        MantaState.NT_IsLoaded.set(_isloaded);
-        //if its true then return true;
+        if(intakedebounceTimer.isRunning() && intakedebounceTimer.get() >= constants.MantaRay.intakeAmpLimittime)
+              {
+                  //alert.set(true);
+                  stopDebouncer();
+                  return true;
+              }
+          return _isloaded;
+      }
+      else{
         return false;
+      }
+      // return _isloaded;
+      // // if(getisloaded.getAsBoolean()){return getisloaded.getAsBoolean();}
+      //   //check if amps are high
+      //   //check is rotor is locked
+      //   if(m_TridentMotor.getStatorCurrent().getValueAsDouble() > constants.MantaRay.intakeAmpCutoffThreshold)
+      //   {   
+      //       //if the timer hasnt been started start it
+      //       if(!intakedebounceTimer.isRunning())
+      //       {
+      //           intakedebounceTimer.restart();
+      //           _isloaded = false;
+      //           MantaState.NT_IsLoaded.set(getisloaded.getAsBoolean());
+      //           return false;
+      //       }
+      //     };
+
+      //       //if timer running and the 
+      //       if(intakedebounceTimer.isRunning() && intakedebounceTimer.get() >= constants.MantaRay.intakeAmpLimittime)
+      //       {
+      //           System.out.println("ISLOADED NOW");
+      //           //alert.set(true);
+      //           stopDebouncer();
+      //           _isloaded = true;
+      //           MantaState.NT_IsLoaded.set(_isloaded);
+      //           return true;
+      //       }
+      //       return false;
+           
+        // }
+        // //alert.set(false);
+        // intakedebounceTimer.restart();
+        // _isloaded = false;
+        // MantaState.NT_IsLoaded.set(_isloaded);
+        // //if its true then return true;
+        // return false;
     }
     public double canBusUpdateFrequency = 45;
     public void setDutyCycle(double DutyPercent) {
@@ -214,7 +258,7 @@ public class MantaRay extends SubsystemBase {
     public Command postRoll(double dutycycle){
       return new SequentialCommandGroup(
         new InstantCommand(()->{m_TridentMotor.setControl(new DutyCycleOut(dutycycle));}),
-        new WaitCommand(1.5),
+        new WaitCommand(0.5),
         new InstantCommand(()->{holdPositionThroughVelocity();}));
     }
 

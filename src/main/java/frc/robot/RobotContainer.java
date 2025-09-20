@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.C_ClearRearIntake;
 import frc.robot.commands.C_ElevateToPosition;
+import frc.robot.commands.C_PivotGroundIntake;
 import frc.robot.commands.C_TridentIntake;
+import frc.robot.constants.groundIntake;
 import frc.robot.AlphaBots.Tools;
 import frc.robot.AlphaBots.AprilTagSystem.SelectCommands;
 import frc.robot.generated.TunerConstants;
@@ -35,6 +37,8 @@ import frc.robot.subsystems.MantaRay;
 import frc.robot.subsystems.MantaState;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.josiahClimber;
+import frc.robot.subsystems.groundIntake.groundPivot;
+import frc.robot.subsystems.groundIntake.intakeRoller;
 import frc.robot.subsystems.superStruture.SuperStructure;
 import frc.robot.subsystems.RearIntake;
 
@@ -52,12 +56,15 @@ public class RobotContainer {
     public final Pivot ss_Pivot = new Pivot(ss_Elevator.currentHeight);
     public final ArmExtension ss_ArmExtension = new ArmExtension(ss_Elevator.currentHeight);
     public final josiahClimber ss_Climber = new josiahClimber();
+
+    public final groundPivot ss_GroundPivot = new groundPivot();
+    public final intakeRoller ss_IntakeRoller = new intakeRoller();
     
     public final CANdleSubsystem Candle = new CANdleSubsystem();
     public final RearIntake ss_RearIntake = new RearIntake();
 
     public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot, ss_ArmExtension,ss_RearIntake);
-    public final SuperStructure SuperS = new SuperStructure(ss_Trident, ss_Elevator, ss_Pivot, ss_ArmExtension, ss_Climber, Candle, ss_RearIntake);
+    public final SuperStructure SuperS = new SuperStructure(ss_Trident, ss_Elevator, ss_Pivot, ss_ArmExtension, ss_Climber, Candle, ss_RearIntake, ss_GroundPivot, ss_IntakeRoller);
     
    
 
@@ -97,6 +104,7 @@ public class RobotContainer {
 
     
     private void configureBindings() {
+        joystick.button(5).onTrue(new InstantCommand(()->{}));
         
         joystick.start().and(joystick.x().negate())
         .onTrue( SuperS.Btn_ResetVision());
@@ -157,12 +165,16 @@ public class RobotContainer {
         .whileTrue(SuperS.Btn_RearIntake());
         
         //pick up algae (and technically coral too)
+        // joystick.leftTrigger().and(joystick.x())
+        // .whileTrue(SuperS.Btn_GroundIntake());
+
+        //score algae in amp
         joystick.leftTrigger().and(joystick.x())
-        .whileTrue(SuperS.Btn_GroundIntake());
+        .toggleOnTrue(SuperS.Btn_GroundIntakeAngled());
 
         //score algae in amp
         joystick.leftTrigger().and(joystick.x().negate())
-        .toggleOnTrue(SuperS.Btn_GroundIntakeAngled());
+        .whileTrue(SuperS.Btn_newCoralGroundIntakeHandOff());
 
         joystick.leftBumper().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
             .onTrue(SuperS.Btn_Park());
@@ -181,7 +193,7 @@ public class RobotContainer {
             .onTrue(SuperS.Btn_ScoreL2());
 
         joystick.povLeft().and(()->!MantaState.getAltControlModeEnabled.getAsBoolean())
-            .onTrue(SuperS.Btn_ScoreL1());
+            .whileTrue(SuperS.Btn_newCoralGroundIntakeL1Command());
 
 
         // Note that X is defined as forward according to WPILib convention in robot centric, but we use field centric where x is x and y is y.
@@ -189,9 +201,10 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                constants.drivetrainThings.TeleOpDrive.withVelocityX(Tools.getExpoJoystickInput(-joystick.getLeftY(),constants.drivetrainThings.MaxSpeed)) // Drive forward with negative Y (forward)
-                    .withVelocityY(Tools.getExpoJoystickInput(-joystick.getLeftX(),constants.drivetrainThings.MaxSpeed)) // Drive left with negative X (left)
-                    .withRotationalRate(Tools.getExpoJoystickInput(-joystick.getRightX(), constants.drivetrainThings.MaxAngularRate)) // Drive counterclockwise with negative X (left)
+                constants.drivetrainThings.TeleOpDrive.withVelocityX(Tools.getExpoPolar(-joystick.getLeftX(),-joystick.getLeftY(),constants.drivetrainThings.MaxSpeed, true, constants.drivetrainThings.translationDeadbandPercent)) // Drive forward with negative Y (forward)
+                    .withVelocityY(Tools.getExpoPolar(-joystick.getLeftX(),-joystick.getLeftY(),constants.drivetrainThings.MaxSpeed, false, constants.drivetrainThings.translationDeadbandPercent)) // Drive left with negative X (left)
+                    .withRotationalRate(Tools.getExpoJoystickInput(-joystick.getRightX(), constants.drivetrainThings.MaxAngularRate))
+                     // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -203,7 +216,8 @@ public class RobotContainer {
     {
         
         joystick.povUp().and(MantaState.getAltControlModeEnabled).onTrue(
-            SuperS.Btn_ClimbHookReady()
+            new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.climbReady).andThen(
+            SuperS.Btn_ClimbHookReady())
         );
         joystick.povRight().and(MantaState.getAltControlModeEnabled).onTrue(
             SuperS.Btn_ClimbHookStartFlat()

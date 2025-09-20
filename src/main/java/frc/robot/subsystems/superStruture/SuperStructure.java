@@ -1,6 +1,9 @@
 package frc.robot.subsystems.superStruture;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -27,9 +30,11 @@ import frc.robot.commands.C_ClearRearIntake;
 import frc.robot.commands.C_DropElevateToScore;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_ExtendToPosition;
+import frc.robot.commands.C_PivotGroundIntake;
 import frc.robot.commands.C_PivotToPosition;
 import frc.robot.commands.C_SlideMotorToPosition;
 import frc.robot.commands.C_TridentIntake;
+import frc.robot.commands.C_groundIntakeRoller;
 import frc.robot.subsystems.ArmExtension;
 import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -38,6 +43,8 @@ import frc.robot.subsystems.MantaState;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.RearIntake;
 import frc.robot.subsystems.josiahClimber;
+import frc.robot.subsystems.groundIntake.groundPivot;
+import frc.robot.subsystems.groundIntake.intakeRoller;
 
 public class SuperStructure extends SubsystemBase{
     
@@ -50,6 +57,8 @@ public class SuperStructure extends SubsystemBase{
     public final CANdleSubsystem Candle;
     public final RearIntake ss_RearIntake;
 
+    public final groundPivot ss_GroundPivot;
+    public final intakeRoller ss_IntakeRoller;
     public double TridentEjectMovement = 20;
     public double processorAlgaeScoringDutyCycle = -.35;
     public double BargeAlgaeScoringDutyCycle = -1.0;//-.75;
@@ -60,10 +69,11 @@ public class SuperStructure extends SubsystemBase{
     public double groundintakedutycycle = 1.0;
     public boolean isbargeing = false; 
     public DoubleSupplier getYAxis = ()->{ return RobotContainer.joystick.getLeftX();};
+    public BooleanSupplier getHasCoral;
 
     public SuperStructure(
         MantaRay _ss_Trident,Elevator _ss_Elevator,Pivot _ss_Pivot,ArmExtension _ss_ArmExtension,
-        josiahClimber _ss_Climber,CANdleSubsystem _Candle,RearIntake _ss_RearIntake
+        josiahClimber _ss_Climber,CANdleSubsystem _Candle,RearIntake _ss_RearIntake, groundPivot groundPIVOT, intakeRoller RRRRROOOBBOOOOT
     )
     {
         ss_Trident = _ss_Trident;
@@ -73,6 +83,11 @@ public class SuperStructure extends SubsystemBase{
         ss_Climber = _ss_Climber;
         Candle = _Candle;
         ss_RearIntake = _ss_RearIntake;
+
+        ss_GroundPivot = groundPIVOT;
+        ss_IntakeRoller = RRRRROOOBBOOOOT;
+        getHasCoral = ()->{return ss_IntakeRoller.getHasCoral();};
+
     }
 
     @Override
@@ -84,10 +99,11 @@ public class SuperStructure extends SubsystemBase{
     public void doTravelIfInCorrectPosition()   {
         double _requestedPosition = ss_Elevator.requestedHeight.getAsDouble();
         
-        if(MantaState.ss_RearIntake.LaserDetectsCoral())
-        {
-        return; 
-        }
+        //we're mainly going to be avoiding the rearIntake, so im just going to try and avoid any issues in teleop and hope that nothing goes wrong in auto
+        // if(MantaState.ss_RearIntake.LaserDetectsCoral())
+        // {
+        // return; 
+        // }
         if (ss_Elevator.setpointHeight.getAsDouble() != _requestedPosition) {
         
         //if we are above the CannotFoldBelow position
@@ -438,6 +454,75 @@ public class SuperStructure extends SubsystemBase{
         .finallyDo(groundIntakeReset());
     }
 
+    public Command Btn_newCoralGroundIntakeL1Command(){
+        return new ParallelCommandGroup(
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.maxposition),
+            new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition, true)
+            )
+        .andThen(new ParallelCommandGroup(
+            new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.groundGrab),
+            new C_groundIntakeRoller(ss_IntakeRoller, constants.groundIntake.intakeRoller.fullSpeed)))
+        .finallyDo(newIntakeL1Ready());
+    }
+
+    public Command Btn_newCoralGroundIntakeHandOff(){
+        return new ParallelCommandGroup(
+            new C_ElevateToPosition(ss_Elevator, constants.Elevator.minElevatorHeight),
+            new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.maxposition),
+            new C_ExtendToPosition(ss_ArmExtension, constants.PlasmaExtension.minposition, true)
+            )
+        .andThen(new ParallelCommandGroup(
+            new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.groundGrab),
+            new C_groundIntakeRoller(ss_IntakeRoller, constants.groundIntake.intakeRoller.fullSpeed)))
+        .finallyDo(newIntakeToHead());
+    }
+
+    public Runnable newIntakeToHead(){
+        return()->{
+            new ParallelCommandGroup(
+                new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.handOffReady),
+                new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.newIntakeReadyPosition),
+                ss_IntakeRoller.holdPosition()
+            ).andThen(
+                new ParallelCommandGroup(
+                    new C_TridentIntake(ss_Trident,ss_RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout),
+                    ss_IntakeRoller.reverseHold(),
+                    new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.handOffStage2)
+                ))
+            .andThen(
+                new ParallelCommandGroup(
+                    new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition),
+                    ss_Trident.postRoll(constants.MantaRay.IntakeDutyCycle).asProxy()
+                )
+            )
+            .onlyIf(getHasCoral)
+            .andThen(newGroundIntakeReset())
+            .schedule();
+        };
+    }
+
+    public Runnable newIntakeL1Ready(){
+        return()->{
+            new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.L1Ready)
+            .alongWith(ss_IntakeRoller.holdPosition())
+            .schedule();
+        };
+    }
+
+    public Runnable newGroundIntakeReset(){
+        return()->{
+            if(!ss_IntakeRoller.getHasCoral()){
+                new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.minPosition)
+                .alongWith(ss_IntakeRoller.stop())
+                .schedule();}
+            else{
+                new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.L1Ready)
+                .alongWith(ss_IntakeRoller.stop())
+                .schedule();}
+        };
+    }
+
     public Runnable groundIntakeReset(){
         return ()->{
             GotoTravelPostion().alongWith(new C_ElevateToPosition(ss_Elevator, frc.robot.constants.Elevator.minElevatorHeight)).schedule();
@@ -463,8 +548,7 @@ public class SuperStructure extends SubsystemBase{
 
     public ParallelCommandGroup Btn_ClimbHookReady() {
         return ss_Climber.C_CatchGotoPositon(CatchSide.maxPostion).alongWith(
-        ss_Climber.C_SlideGotoPositon(SlideSide.maxPostion)
-      );
+        ss_Climber.C_SlideGotoPositon(SlideSide.maxPostion));
     }
 
     public ParallelCommandGroup Btn_ClimbHookStartFlat() {
@@ -574,7 +658,7 @@ public class SuperStructure extends SubsystemBase{
 
     public Command Btn_Park()
     {
-        return ParkElevatorAndHead().alongWith(new InstantCommand(()->{isbargeing = false;}));
+        return ParkElevatorAndHead().alongWith(new InstantCommand(()->{isbargeing = false;})).andThen(newGroundIntakeReset());
     }
 
     public ParallelCommandGroup Btn_GotoProcessorPos(RobotContainer robotContainer) {
@@ -594,7 +678,10 @@ public class SuperStructure extends SubsystemBase{
     }
 
     public WrapperCommand Btn_ManualBumpOut(RobotContainer robotContainer) {
-        return TridentBargeAlgaeBumpOut().alongWith(new InstantCommand(()->{robotContainer.ss_RearIntake.GotoDutyCycle(-RearMotorizedIntake.ReversingdutyCyclePercent);})).finallyDo(()->{robotContainer.ss_Trident.HoldPosition(); robotContainer.ss_RearIntake.COAST();});
+        return TridentBargeAlgaeBumpOut()
+        .alongWith(ss_IntakeRoller.dumbDropCoral())
+        .alongWith(new InstantCommand(()->{robotContainer.ss_RearIntake.GotoDutyCycle(-RearMotorizedIntake.ReversingdutyCyclePercent);}))
+        .finallyDo(()->{robotContainer.ss_Trident.HoldPosition(); robotContainer.ss_RearIntake.COAST(); ss_IntakeRoller.stop().schedule();});
     }
 
     public InstantCommand Btn_BypassLimelight() {
@@ -616,9 +703,11 @@ public class SuperStructure extends SubsystemBase{
     public ParallelCommandGroup Btn_EnableClimbMode(RobotContainer robotContainer) {
         return new InstantCommand(()->{MantaState.setAltControlModeEnabled(true);})
         .alongWith(
-        new C_PivotToPosition(robotContainer.ss_Pivot, PlasmaPivot.ParkPosition)
+        new C_PivotToPosition(robotContainer.ss_Pivot, PlasmaPivot.ParkPosition),
+        new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.climbReady)
+        //,new C_PivotGroundIntake(ss_GroundPivot, constants.groundIntake.positions.climbReady)
         ,new C_ExtendToPosition(robotContainer.ss_ArmExtension, PlasmaExtension.climbExtension)
-        ,Btn_ClimbHookReady()
+        //,Btn_ClimbHookReady()
         );
     }
 

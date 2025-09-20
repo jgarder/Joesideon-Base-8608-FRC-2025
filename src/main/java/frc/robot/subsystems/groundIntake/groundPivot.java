@@ -2,6 +2,9 @@ package frc.robot.subsystems.groundIntake;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -20,6 +23,7 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants;
+import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
 import frc.robot.subsystems.MantaState;
 
@@ -34,15 +39,19 @@ public class groundPivot extends SubsystemBase{
       //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_armMotor = new TalonFX(constants.CanBus.groundPivot, constants.CanBus.RioCANBusName);
+  public final TalonFX m_armMotor = new TalonFX(constants.CanBus.groundPivot, constants.CanBus.CanivoreCANBusName);
     private final StatusSignal<Angle> motorPos = m_armMotor.getPosition(false);
     private final StatusSignal<AngularVelocity> motorVel = m_armMotor.getVelocity(false);
-  public final CANcoder armAbsoluteEncoder = new CANcoder(constants.CanBus.groundAbsoluteEncoder, constants.CanBus.RioCANBusName);
+  public final CANcoder armAbsoluteEncoder = new CANcoder(constants.CanBus.groundAbsoluteEncoder, constants.CanBus.CanivoreCANBusName);
 
   private MotionMagicTorqueCurrentFOC armRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
 
   TalonFXConfiguration configuration;
   public double gearRatio = constants.groundIntake.gearRatio;
+
+  double tempkG = 0;
+  LoggedNetworkNumber sfda = new LoggedNetworkNumber("Tuning/" + className + "/" + "KG", tempkG);
+  // DoubleEntry NT_GGain = NT.getDoubleEntry(className , "G Gain",0);
 
   public double armSetpoint;
 
@@ -57,6 +66,8 @@ public class groundPivot extends SubsystemBase{
 
   public groundPivot() {
     System.out.println("Creating " + className + " object"); 
+
+    // NT_GGain.set(constants.groundIntake.kG);
 
     // NT_PGain.set(constants.PlasmaPivot.kP);
     // NT_IGain.set(constants.PlasmaPivot.kI);
@@ -121,14 +132,13 @@ public class groundPivot extends SubsystemBase{
     _configuration.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
 
       CANcoderConfiguration cc_cfg = new CANcoderConfiguration();
-      //cc_cfg.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf; old 2024 and before way. 
       //Setting this to 1 makes the absolute position unsigned [0, 1)
       //Setting this to 0.5 makes the absolute position signed [-0.5, 0.5)
       //Setting this to 0 makes the absolute position always negative [-1, 0) 
       cc_cfg.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
       
-      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-      cc_cfg.MagnetSensor.MagnetOffset = constants.groundIntake.absoMagnetOffset;// ;
+      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+      cc_cfg.MagnetSensor.MagnetOffset = constants.groundIntake.absoMagnetOffset;
       armAbsoluteEncoder.getConfigurator().apply(cc_cfg);
 
     var AbsoluteEncoderFeedbackConfig = new FeedbackConfigs().withFeedbackRemoteSensorID(armAbsoluteEncoder.getDeviceID())
@@ -140,63 +150,37 @@ public class groundPivot extends SubsystemBase{
     return _configuration;
   }
 
-   @Override
+  @Override
   public void periodic() {
+    tempkG = sfda.get();
     //sets the arbitrary feedforward
-    armRequest = armRequest.withFeedForward(calculateArmkG(getPosition()));
+    double calculatedArmkG = calculateArmkG(getPosition());
 
-    boolean ArmIsAtSetpoint = MathUtil.isNear(armSetpoint, getPosition(), constants.groundIntake.armPositionErrorTolerance);
+    armRequest = armRequest.withFeedForward(calculatedArmkG);
+
+    boolean ArmIsAtSetpoint = MathUtil.isNear(armSetpoint, getPosition(), constants.groundIntake.PIDtolerance);
     if(ArmIsAtSetpoint){
         armState = ArmState.inPosition;
     }else{armState = ArmState.outOfPostion;}
 
-    // NT_CurrentPosition.set(currentPosition);
-    // NT_SetpointPosition.set(setPointPosition);
-
-    // // This method will be called once per scheduler run
-    // NT_Rpm.set(m_PivotMotor.getVelocity().getValueAsDouble() * 60);
-    // NT_MotorTemp.set(m_PivotMotor.getDeviceTemp().getValueAsDouble());
-    // NT_StatorCurrent.set(m_PivotMotor.getStatorCurrent().getValueAsDouble());
-
-
-    // NT_FoldedOut.set(IsPivotFoldedOut.getAsBoolean());
-    // //NT_FoldedUpEnough.set(IsPivotFoldedFarOut.getAsBoolean());
-    // NT_FoldedUpFromReef.set(IsPivotAwayFromReef.getAsBoolean());
-    // NT_ElevatorTravelPosition.set(IsPivotinTravelPosition.getAsBoolean());
-
-    // //feedback
-    // double p = NT_PGain.getAsDouble();
-    // double i = NT_IGain.getAsDouble();
-    // double d = NT_DGain.getAsDouble();
-
-    // //feedforward
-    // double a = NT_AGain.getAsDouble();
-    // double v = NT_VGain.getAsDouble();
-    // double s = NT_SGain.getAsDouble();
-    // double g = NT_GGain.getAsDouble();
-
-    // double mA = NT_Acceleration.getAsDouble();
-    // double mJ = NT_Jerk.getAsDouble();
-    // double mC = NT_Cruise.getAsDouble();
-    // boolean motorNeedsConfig = false;
-
-    // if((p != configuration.Slot1.kP)) { configuration.Slot1.kP = p; motorNeedsConfig = true; }
-    // if((i != configuration.Slot1.kI)) { configuration.Slot1.kI = i; motorNeedsConfig = true; }
-    // if((d != configuration.Slot1.kD)) { configuration.Slot1.kD = d; motorNeedsConfig = true; }
-  
-    // if((a != configuration.Slot1.kA)) { configuration.Slot1.kA = a; motorNeedsConfig = true; }
-    // if((v != configuration.Slot1.kV)) { configuration.Slot1.kV = v; motorNeedsConfig = true; }
-    // if((s != configuration.Slot1.kS)) { configuration.Slot1.kS = s; motorNeedsConfig = true; }
-    // //if((g != tempkG)) { tempkG = g; motorNeedsConfig = true; }
-
-    // if((mA != configuration.MotionMagic.MotionMagicAcceleration)) { configuration.MotionMagic.MotionMagicAcceleration = mA; motorNeedsConfig = true; }
-    // if((mJ != configuration.MotionMagic.MotionMagicJerk)) { configuration.MotionMagic.MotionMagicJerk = mJ; motorNeedsConfig = true; }
-    // if((mC != configuration.MotionMagic.MotionMagicCruiseVelocity)) { configuration.MotionMagic.MotionMagicCruiseVelocity = mC; motorNeedsConfig = true; }
+    /*
+    copy paste this for ease
+     Logger.recordOutput(className + "/" + "", null);
+     */
+    Logger.recordOutput(className + "/" + "motor Pos no latency compensation", m_armMotor.getPosition().getValueAsDouble());
+    Logger.recordOutput(className + "/" +"motorPos Latency Compensated", getPosition());
+    Logger.recordOutput(className + "/" + "Aboslutely positioned", armAbsoluteEncoder.getAbsolutePosition().getValueAsDouble());
+    Logger.recordOutput(className + "/" + "PickupIsAtSetpoint", ArmIsAtSetpoint);
+    Logger.recordOutput(className + "/" + "ArmState", armState);  
+    Logger.recordOutput(className + "/" + "arm KG", calculatedArmkG);
+    Logger.recordOutput(className + "/" + "Stator current draw", m_armMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(className + "/" + "motor Temp", m_armMotor.getDeviceTemp().getValueAsDouble());
     
-    // if (motorNeedsConfig){Tools.SetConfigToTalonFX(m_armMotor,configuration,className);}
 
-    //doTravelIfelevatormoving(requestedPosition);
+    // double g = NT_GGain.getAsDouble();
+    // if((g != tempkG)) { tempkG = g;}
   }
+
   public double calculateArmkG(double armCurrentPosition){
     //changes kG depending on whether we need more force, for example if the arm is extended or we have a coral
     // InterpolatingDoubleTreeMap gravityExtensionTable = new InterpolatingDoubleTreeMap();
@@ -205,13 +189,14 @@ public class groundPivot extends SubsystemBase{
     //converts arm position to radians 
     double armCurrentPositionRadians = Units.degreesToRadians(armCurrentPosition * 360);
     //calculates the arbitrary feedforward (used as kG) to be sent to the motor
-    double armKG = constants.groundIntake.kG * Math.cos(armCurrentPositionRadians);//gravityExtensionTable.get(armExtension)
+    double armKG =  tempkG * Math.cos(armCurrentPositionRadians);//gravityExtensionTable.get(armExtension)
     //NT_GGain.set(armKG);
     return armKG;
   }
 
   public void setArmRequest(double position){
       m_armMotor.setControl(armRequest.withPosition(position));
+      armSetpoint = position;
   }
 
   /**
@@ -221,5 +206,9 @@ public class groundPivot extends SubsystemBase{
   public double getPosition(){
     BaseStatusSignal.refreshAll(motorPos, motorVel);
     return BaseStatusSignal.getLatencyCompensatedValueAsDouble(motorPos, motorVel);
+  }
+
+  public ArmState getArmState(){
+      return armState;
   }
 }

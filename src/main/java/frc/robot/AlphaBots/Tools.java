@@ -4,6 +4,7 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -40,6 +41,36 @@ public class Tools {
     //Y for X, X for Y, because FRC? //this doesn't make sense anymore because of code optimizations
     double output = ((0.2*getLeftAxis)+(0.8*Math.pow(getLeftAxis, 3))) * MaxSpeed;
     return output;
+  }
+  /**
+   * 
+   * @param getXAxis
+   * @param getYAxis
+   * @param MaxSpeed
+   * @param isYAxis
+   * @return Y axis cartesian value if set to true, x if false
+   */
+  public static double getExpoPolar(double getXAxis, double getYAxis, double MaxSpeed, boolean isYAxis, double deadzone){
+    //converts the cartesian positon to polar
+    double polarDistance = Math.hypot(getXAxis, getYAxis);
+    double polarAngle = Math.atan2(getYAxis, getXAxis);
+
+    //attempt at a deadzone
+    if(deadzone > Math.abs(polarDistance)){
+      polarDistance = 0;
+    }
+
+    //applies the exponential to the polar coordinates
+    double polarDistanceExpo = ((0.2*polarDistance)+(0.8*Math.pow(polarDistance, 3))) * MaxSpeed;
+
+    //only calculates the axis if it needs to
+    if(isYAxis){
+      double yAxisAfterExpo = polarDistanceExpo * Math.sin(polarAngle);
+      return yAxisAfterExpo;
+    }else{
+      double xAxisAfterExpo = polarDistanceExpo * Math.cos(polarAngle);
+      return xAxisAfterExpo;
+    }
   }
 
   public static double getdistancetopose(Pose2d currentPose2d,Pose2d targetPose2d)
