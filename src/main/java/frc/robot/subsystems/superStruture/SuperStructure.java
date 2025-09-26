@@ -62,7 +62,7 @@ public class SuperStructure extends SubsystemBase{
     public double TridentEjectMovement = 20;
     public double processorAlgaeScoringDutyCycle = -.35;
     public double BargeAlgaeScoringDutyCycle = -1.0;//-.75;
-    public double randomPostRoll = .1;
+    public double randomPostRoll = .5;
     //started working on this, not done yet
     public double intaketimeout = 20;
     public double groundintakeTimeout = 20; //auton this command will run until finished or this timeout.
@@ -448,7 +448,7 @@ public class SuperStructure extends SubsystemBase{
             new C_ExtendToPosition(ss_ArmExtension,constants.PlasmaExtension.maxposition,true),
             new WaitCommand(.1),//small delay to debounce the head moving and causing high amps. 
             new C_TridentIntake(ss_Trident,ss_RearIntake,groundintakedutycycle).withTimeout(groundintakeTimeout)
-            //,ss_Trident.postRoll(randomPostRoll)
+            ,ss_Trident.postRoll(randomPostRoll)
             )
             )
         .finallyDo(groundIntakeReset());

@@ -250,7 +250,7 @@ public class constants {
         public static final double l3ReadyPosition = .107;
         public static final double l4ReadyPosition = l3ReadyPosition + .025;
 
-        public static final double newIntakeReadyPosition = 0.14;
+        public static final double newIntakeReadyPosition = 0.147;
 
 
         //public static final double l1ScorePosition = l3ReadyPosition + -.04;
@@ -292,7 +292,7 @@ public class constants {
 
     public class PlasmaExtension {
         //CURRENTLY EACH "1" POSITION is .33" approx more etenxsion.
-        public static double LiveOffset = 2.0;//-2.0; 
+        public static double LiveOffset = 1.0;//-2.0; 
         //0.7407407
         public static final double gearRatio = 4*5;//3*3*3; //27:1 gear reduction (was60)
   
