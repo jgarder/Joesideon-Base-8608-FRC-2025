@@ -31,9 +31,9 @@ public class RearIntake extends SubsystemBase {
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_Motor = new TalonFX(constants.CanBus.MotorizedRearIntakeCanID, constants.CanBus.RioCANBusName);
+  public final TalonFX m_Motor = new TalonFX(constants.CanBus.CanBusIDs.MotorizedRearIntakeCanID.id, constants.CanBus.RioCANBusName);
   
-  public final CANrange m_CANRange = new CANrange(constants.CanBus.CanRangeRearIntakeCanID, constants.CanBus.RioCANBusName);
+  public final CANrange m_CANRange = new CANrange(constants.CanBus.CanBusIDs.CanRangeRearIntakeCanID.id, constants.CanBus.RioCANBusName);
   TalonFXConfiguration configuration;
   
   BooleanEntry NT_IsLoaded = NT.getBooleanEntry(className , "CanRangedIsLoaded",false);

@@ -36,8 +36,8 @@ public class Elevator extends SubsystemBase {
   //This will make smartdashboardPuts goto the classes subfolder in the network tables. the / does the subfoldering.
   private final String className = this.getClass().getSimpleName(); //+"/"
   
-  public final TalonFX m_ElevatorMotor1 = new TalonFX(constants.CanBus.elevatorMotor1CanID, constants.CanBus.CanivoreCANBusName);
-  public final TalonFX m_ElevatorMotor2 = new TalonFX(constants.CanBus.elevatorMotor2CanID, constants.CanBus.CanivoreCANBusName);
+  public final TalonFX m_ElevatorMotor1 = new TalonFX(constants.CanBus.CanBusIDs.elevatorMotor1CanID.id, constants.CanBus.CanivoreCANBusName);
+  public final TalonFX m_ElevatorMotor2 = new TalonFX(constants.CanBus.CanBusIDs.elevatorMotor2CanID.id, constants.CanBus.CanivoreCANBusName);
 
 
   private final com.ctre.phoenix6.controls.PositionDutyCycle m_positionDC = new PositionDutyCycle(0);
@@ -89,7 +89,7 @@ public class Elevator extends SubsystemBase {
     setMotorConfig();
     
     m_ElevatorMotor2.setControl(
-      new StrictFollower(constants.CanBus.elevatorMotor1CanID)
+      new StrictFollower(constants.CanBus.CanBusIDs.elevatorMotor1CanID.id)
     );
 
     NT_PGain.set(constants.Elevator.kP);

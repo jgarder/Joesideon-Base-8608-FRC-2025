@@ -65,8 +65,8 @@ public class Pivot extends SubsystemBase {
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_PivotMotor = new TalonFX(constants.CanBus.armPivotMotorCanID, constants.CanBus.RioCANBusName);
-  public final CANcoder pivotAbsoluteEncoder = new CANcoder(constants.CanBus.pivotAbsoluteEncoder, constants.CanBus.RioCANBusName);
+  public final TalonFX m_PivotMotor = new TalonFX(constants.CanBus.CanBusIDs.armPivotMotorCanID.id, constants.CanBus.RioCANBusName);
+  public final CANcoder pivotAbsoluteEncoder = new CANcoder(constants.CanBus.CanBusIDs.pivotAbsoluteEncoder.id, constants.CanBus.RioCANBusName);
 
   TalonFXConfiguration configuration;
   

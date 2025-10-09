@@ -26,7 +26,7 @@ public class ArmExtension extends SubsystemBase {
   //Get ClassName to help network tables auto sort by creating a sub Table with the same name.
   String className = this.getClass().getSimpleName();
   
-  public final TalonFX m_ExtensionMotor = new TalonFX(constants.CanBus.armExtensionMotorCanID, constants.CanBus.RioCANBusName);
+  public final TalonFX m_ExtensionMotor = new TalonFX(constants.CanBus.CanBusIDs.armExtensionMotorCanID.id, constants.CanBus.RioCANBusName);
   
   TalonFXConfiguration configuration;
   

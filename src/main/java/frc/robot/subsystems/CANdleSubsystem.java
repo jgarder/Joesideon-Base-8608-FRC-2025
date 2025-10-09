@@ -18,7 +18,7 @@ import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
 
 
 public class CANdleSubsystem extends SubsystemBase {
-    public static CANdle staticCandle = new CANdle(constants.CanBus.CANdleID, constants.CanBus.RioCANBusName);
+    public static CANdle staticCandle = new CANdle(constants.CanBus.CanBusIDs.CANdleID.id, constants.CanBus.RioCANBusName);
     private final CANdle m_candle ;
     private static final int LedCount = 300;
     private static final int BottomLightsSubtraction = 201;

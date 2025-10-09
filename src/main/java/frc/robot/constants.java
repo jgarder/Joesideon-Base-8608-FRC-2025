@@ -66,26 +66,26 @@ public class constants {
         public static final String limelightFrontName = "limelight-front";
         public static final String limelightBackName = "limelight-back";
 
-        public static final int elevatorMotor1CanID = 40;
-        public static final int elevatorMotor2CanID = 41;
-        public static final int MantaRayMotorCanID = 44;
+        public enum CanBusIDs
+        {
+            elevatorMotor1CanID(40,CanivoreCANBusName),
+            elevatorMotor2CanID(41,CanivoreCANBusName),
+            MantaRayMotorCanID(44,RioCANBusName),
+            armExtensionMotorCanID(46,RioCANBusName),
+            armPivotMotorCanID(45,RioCANBusName),
+            pivotAbsoluteEncoder(35,RioCANBusName),
+            josiahClimberCatchMotorCanID(42,CanivoreCANBusName),
+            josiahClimberSlideCanID(43,CanivoreCANBusName),
+            MotorizedRearIntakeCanID(47,RioCANBusName),
+            CanRangeRearIntakeCanID(3,RioCANBusName),
+            CANdleID(2,RioCANBusName);
 
-        public static final int armExtensionMotorCanID = 46;
-        
-        public static final int armPivotMotorCanID = 45;
-        public static final int pivotAbsoluteEncoder = 35;
-
-        public static final int josiahClimberCatchMotorCanID = 42;//42 on canivore
-        public static final int josiahClimberSlideCanID = 43;
-
-        public static final int MotorizedRearIntakeCanID = 47;
-        public static final int CanRangeRearIntakeCanID = 3;
-
-        public static final int CANdleID = 2;
-       
-        
-    
-
+            //Enum structure below
+            public int id;
+            CanBusIDs(int id,String CanBusName){
+                this.id = id;
+            }
+        } 
     }
 
     public class MantaRay {
