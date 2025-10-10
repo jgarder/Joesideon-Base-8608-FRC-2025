@@ -82,8 +82,10 @@ public class constants {
 
             //Enum structure below
             public int id;
+            public String CanbusName;
             CanBusIDs(int id,String CanBusName){
                 this.id = id;
+                this.CanbusName = CanBusName;
             }
         } 
     }
