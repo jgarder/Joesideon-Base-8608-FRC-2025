@@ -42,6 +42,7 @@ import frc.robot.subsystems.MantaRay;
 import frc.robot.subsystems.MantaState;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.RearIntake;
+import frc.robot.subsystems.gamepiecePoseEstimator;
 import frc.robot.subsystems.josiahClimber;
 import frc.robot.subsystems.groundIntake.groundPivot;
 import frc.robot.subsystems.groundIntake.intakeRoller;
@@ -59,6 +60,7 @@ public class SuperStructure extends SubsystemBase{
 
     public final groundPivot ss_GroundPivot;
     public final intakeRoller ss_IntakeRoller;
+
     public double TridentEjectMovement = 20;
     public double processorAlgaeScoringDutyCycle = -.35;
     public double BargeAlgaeScoringDutyCycle = -1.0;//-.75;

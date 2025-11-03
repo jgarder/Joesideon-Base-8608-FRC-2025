@@ -30,7 +30,9 @@ public class Telemetry {
      */
     public Telemetry(double maxSpeed) {
         MaxSpeed = maxSpeed;
-        SignalLogger.start();
+
+        //does this need to be disabled for sysID?
+        //SignalLogger.start();
     }
 
     /* What to publish over networktables for telemetry */

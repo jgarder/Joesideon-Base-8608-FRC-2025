@@ -6,6 +6,7 @@ package frc.robot;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -37,6 +38,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer();
     SetupPathplannerLog();
     //PathfindingCommand.warmupCommand().schedule();
+    SignalLogger.setPath("/home/lvuser/logs/");
   }
 
   @Override

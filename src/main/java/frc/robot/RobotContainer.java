@@ -8,6 +8,7 @@ package frc.robot;
 
 import java.util.function.IntSupplier;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -17,9 +18,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.C_ClearRearIntake;
 import frc.robot.commands.C_ElevateToPosition;
 import frc.robot.commands.C_PivotGroundIntake;
@@ -41,6 +44,7 @@ import frc.robot.subsystems.groundIntake.groundPivot;
 import frc.robot.subsystems.groundIntake.intakeRoller;
 import frc.robot.subsystems.superStruture.SuperStructure;
 import frc.robot.subsystems.RearIntake;
+import frc.robot.subsystems.gamepiecePoseEstimator;
 
 public class RobotContainer {
     //fields
@@ -64,9 +68,10 @@ public class RobotContainer {
     public final RearIntake ss_RearIntake = new RearIntake();
 
     public final MantaState MS = new MantaState(drivetrain, ss_Elevator, ss_Pivot, ss_ArmExtension,ss_RearIntake);
+    public final gamepiecePoseEstimator piecePoseEst = new gamepiecePoseEstimator(drivetrain);
+
     public final SuperStructure SuperS = new SuperStructure(ss_Trident, ss_Elevator, ss_Pivot, ss_ArmExtension, ss_Climber, Candle, ss_RearIntake, ss_GroundPivot, ss_IntakeRoller);
     
-   
 
     /* Setting up bindings for necessary control of the swerve drive platform */
 
@@ -127,6 +132,21 @@ public class RobotContainer {
         //     .onTrue(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.ParkPosition))
         //     .onFalse(new C_PivotToPosition(ss_Pivot, constants.PlasmaPivot.GroundPickupPosition));
 
+        // joystick.start().onTrue(Commands.runOnce(SignalLogger::start));
+        // joystick.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+
+        // /*
+        // * Joystick Y = quasistatic forward
+        // * Joystick A = quasistatic reverse
+        // * Joystick B = dynamic forward
+        // * Joystick X = dyanmic reverse
+        // */
+        // joystick.y().whileTrue(ss_GroundPivot.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // joystick.a().whileTrue(ss_GroundPivot.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // joystick.b().whileTrue(ss_GroundPivot.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // joystick.x().whileTrue(ss_GroundPivot.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        
+        //DISABLED TO TEST SYSID
         joystick.a().and(joystick.x().negate())
         .whileTrue(SuperS.DebugIntake());
         //Algae 
@@ -149,6 +169,8 @@ public class RobotContainer {
         }
         
         joystick.y().onTrue(SuperS.Btn_ScoreBarge());
+
+
         // joystick.y().onTrue(new InstantCommand(()->{
         //     System.out.println(LimelightHelpers.getTargetPose3dThing(constants.CanBus.limelightFrontName));}));
 

@@ -1,20 +1,27 @@
 package frc.robot.subsystems.groundIntake;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -30,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants;
 import frc.robot.AlphaBots.NT;
 import frc.robot.AlphaBots.Tools;
@@ -44,7 +52,10 @@ public class groundPivot extends SubsystemBase{
     private final StatusSignal<AngularVelocity> motorVel = m_armMotor.getVelocity(false);
   public final CANcoder armAbsoluteEncoder = new CANcoder(constants.CanBus.groundAbsoluteEncoder, constants.CanBus.CanivoreCANBusName);
 
-  private MotionMagicTorqueCurrentFOC armRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
+  //private MotionMagicTorqueCurrentFOC armRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
+  private MotionMagicExpoTorqueCurrentFOC armRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(1).withFeedForward(0);
+
+  private TorqueCurrentFOC m_torqueReq = new TorqueCurrentFOC(0);
 
   TalonFXConfiguration configuration;
   public double gearRatio = constants.groundIntake.gearRatio;
@@ -103,8 +114,8 @@ public class groundPivot extends SubsystemBase{
     _configuration.Slot1.kA = constants.groundIntake.kA;
     _configuration.Slot1.kV = constants.groundIntake.kV;
 
-    _configuration.Slot1.kG = 0.0;
-    //_configuration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
+    _configuration.Slot1.kG = constants.groundIntake.kG;
+    _configuration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
 
     _configuration.Slot1.kS = constants.groundIntake.kS;
     _configuration.Slot1.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -122,6 +133,12 @@ public class groundPivot extends SubsystemBase{
     _configuration.MotionMagic.MotionMagicAcceleration = constants.groundIntake.Accel;
     _configuration.MotionMagic.MotionMagicJerk = constants.groundIntake.Jerk;
     _configuration.MotionMagic.MotionMagicCruiseVelocity = constants.groundIntake.Cruise;
+
+    //Lower kA = more acceleration
+    //Lower kV = higher top speed
+    //CruiseVelocity seems useless, but is supposed to do something i just set it to zero for Expo profiles
+    _configuration.MotionMagic.MotionMagicExpo_kA = 2;
+    _configuration.MotionMagic.MotionMagicExpo_kV = 1;
 
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _configuration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.groundIntake.maxPosition;
@@ -175,6 +192,8 @@ public class groundPivot extends SubsystemBase{
     Logger.recordOutput(className + "/" + "arm KG", calculatedArmkG);
     Logger.recordOutput(className + "/" + "Stator current draw", m_armMotor.getStatorCurrent().getValueAsDouble());
     Logger.recordOutput(className + "/" + "motor Temp", m_armMotor.getDeviceTemp().getValueAsDouble());
+    Logger.recordOutput(className + "/" + "armSetpointPosition", armSetpoint);
+    Logger.recordOutput(className + "/" + "MotorRPM", m_armMotor.getRotorVelocity().getValueAsDouble() * 60);
     
 
     // double g = NT_GGain.getAsDouble();
@@ -211,4 +230,29 @@ public class groundPivot extends SubsystemBase{
   public ArmState getArmState(){
       return armState;
   }
+
+  
+private final SysIdRoutine m_sysIdRoutine =
+   new SysIdRoutine(
+      new SysIdRoutine.Config(
+         Volts.of(5).per(Second),        // Use default ramp rate (1 V/s)
+         Volts.of(10), // Reduce dynamic step voltage to 7 to prevent brownout
+         null,        // Use default timeout (10 s)
+                      // Log state with Phoenix SignalLogger class
+         (state) -> SignalLogger.writeString("state", state.toString())
+      ),
+      new SysIdRoutine.Mechanism(
+         (volts) -> m_armMotor.setControl(m_torqueReq.withOutput(volts.in(Volts))),
+         null,
+         this
+      )
+   );
+
+   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+      return m_sysIdRoutine.quasistatic(direction);
+    }
+    
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+      return m_sysIdRoutine.dynamic(direction);
+    }
 }

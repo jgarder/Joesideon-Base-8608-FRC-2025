@@ -97,31 +97,32 @@ public class constants {
         public static final double gearRatio = (50.0/9.0) * (48.0/16.0) * (48.0/16.0) * (38.0/17.0);
         public static final double maxStatorCurrent = 60;
 
-        public static final double maxPosition = 0.5; //.5;
+        public static final double maxPosition = 0.51; //.5;
         public static final double minPosition = 0.0; //0;
 
         //PID+FF
-        public static final double kP = 240;
+        public static final double kP = 120;
         public static final double kI = 0;
-        public static final double kD = 30;
+        public static final double kD = 60;
 
-        public static final double kS = 0;
-        public static final double kA = 0.2;
-        public static final double kV = 0;
+        //sysID Numbers
+        public static final double kS = 3.4949;
+        public static final double kA = 2.3823;
+        public static final double kV = 4.7626;
 
-        public static final double kG = 0;
+        public static final double kG = 0;//1.2346;
 
         //Motion Magic
         public static final double Jerk = 0;
         public static final double Accel = 6.0;
-        public static final double Cruise = 8.0;
+        public static final double Cruise = 0;//8.0;
         public static final double absoMagnetOffset = 0.338134765625;
         public static final double PIDtolerance = 0.015;
         public static final double MovementDebounceTime = 0.02;
 
 
         public class positions{
-            public static final double groundGrab = 0.5;
+            public static final double groundGrab = 0.51;
             public static final double climbReady = 0.27;
             public static final double handOffReady = 0.29;
             public static final double handOffStage2 = 0.16;
